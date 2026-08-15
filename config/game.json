@@ -1,0 +1,63 @@
+{
+  "caracteristiques": {
+    "feu": {
+      "max": 100,
+      "seuilMin": 40,
+      "seuilMax": 70,
+      "variationParHeure": -4,
+      "actions": { "ajouterBois": { "effet": 20 } },
+      "affecteCroissance": true,
+      "etapesActives": ["oeuf", "bebe", "jeune", "adulte"],
+      "indicateur": { "type": "qualitatifPermanent", "etats": ["froid", "parfait", "chaud"] }
+    },
+    "nourriture": {
+      "max": 100,
+      "seuilMin": 70,
+      "variationParHeure": -5,
+      "actions": { "nourrir": { "effet": 30 } },
+      "affecteCroissance": true,
+      "etapesActives": ["bebe", "jeune", "adulte"],
+      "indicateur": { "type": "ponctuel", "declencheur": "bon", "dureeSecondes": 3, "message": "Il a assez mangé !" }
+    },
+    "hygiene": {
+      "max": 100,
+      "seuilMin": 25,
+      "variationParHeure": -4,
+      "actions": { "laver": { "effet": 30 } },
+      "affecteCroissance": true,
+      "etapesActives": ["bebe", "jeune", "adulte"],
+      "indicateur": { "type": "persistant", "declencheur": "mauvais", "message": "Il est très sale !" }
+    },
+    "joie": {
+      "max": 100,
+      "seuilMin": 30,
+      "variationParHeure": 0,
+      "actions": { "jouer": { "effet": 25 }, "eduquer": { "effet": -15 } },
+      "multiplicateurActionSiMauvais": { "jouer": 0.5 },
+      "affecteCroissance": true,
+      "etapesActives": ["jeune", "adulte"],
+      "bloque": { "nourrir": "siMauvais" }
+    },
+    "apprentissage": {
+      "max": 100,
+      "variationParHeure": 0,
+      "actions": { "eduquer": { "effet": 20 } },
+      "affecteCroissance": false,
+      "etapesActives": ["jeune", "adulte"]
+    },
+    "energie": {
+      "max": 100,
+      "variationParHeure": 5,
+      "actions": { "jouer": { "effet": -10 }, "eduquer": { "effet": -15 } },
+      "affecteCroissance": false,
+      "etapesActives": ["jeune", "adulte"],
+      "bloque": { "jouer": "siVide", "eduquer": "siVide" }
+    }
+  },
+  "etapes": {
+    "oeuf": { "dureeHeures": 72 },
+    "bebe": { "dureeHeures": 168 },
+    "jeune": { "dureeHeures": 336 }
+  },
+  "multiplicateurRalentissement": 0.5
+}
