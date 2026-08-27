@@ -22,6 +22,37 @@ export function estDansBonneZone(carac, valeur) {
   return true;
 }
 
+export function etatQualitatif(carac, valeur) {
+  const [froid, parfait, chaud] = carac.indicateur.etats;
+  if (carac.seuilMin != null && valeur < carac.seuilMin) return froid;
+  if (carac.seuilMax != null && valeur > carac.seuilMax) return chaud;
+  return parfait;
+}
+
+// Ne renvoie jamais les valeurs brutes des jauges au client, seulement
+// l'état qualitatif calculé (cohérent avec la section 4 de la spec).
+function indicateursActifs(dragon, nomEtapeCourante) {
+  const indicateurs = {};
+  for (const [nom, carac] of Object.entries(config.caracteristiques)) {
+    if (!carac.etapesActives.includes(nomEtapeCourante)) continue;
+    if (carac.indicateur?.type === "qualitatifPermanent") {
+      indicateurs[nom] = etatQualitatif(carac, dragon[carac.champDb]);
+    }
+  }
+  return indicateurs;
+}
+
+export function dragonPourClient(dragon) {
+  const etapeCourante = nomEtape(dragon.stage);
+  return {
+    stage: dragon.stage,
+    etape: etapeCourante,
+    named: dragon.named,
+    name: dragon.name,
+    indicateurs: indicateursActifs(dragon, etapeCourante),
+  };
+}
+
 function clamp(valeur, max) {
   return Math.min(max, Math.max(0, valeur));
 }
