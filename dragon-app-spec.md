@@ -43,24 +43,6 @@ create table dragon (
 alter table dragon enable row level security;
 ```
 
-### Stratégie RLS
-
-Un seul dragon, pas de compte utilisateur pour l'instant : **aucune policy pour la clé `anon`**, donc zéro accès direct depuis le navigateur. Toutes les lectures/écritures passent par les routes Next.js (API routes ou Server Actions), côté serveur, avec la clé `service_role` (jamais exposée au client, stockée dans les variables d'environnement Vercel). RLS agit comme filet de sécurité — même en cas de fuite de la clé publique, personne ne peut lire/modifier la table directement.
-
-Si un jour il faut plusieurs dragons/utilisateurs (Supabase Auth) :
-
-```sql
-alter table dragon add column user_id uuid references auth.users(id);
-
-create policy "Chacun voit son propre dragon"
-  on dragon for select
-  using (auth.uid() = user_id);
-
-create policy "Chacun modifie son propre dragon"
-  on dragon for update
-  using (auth.uid() = user_id);
-```
-
 ## 4. Configuration (constantes ajustables)
 
 Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, jamais en dur dans le code. Structure modulaire : chaque **caractéristique** (feu, nourriture, hygiène, joie, apprentissage, énergie) est une unité autonome et auto-descriptive — elle porte ses propres seuils, son effet par action, si elle influence la croissance, et à quelles étapes elle est active. Les étapes elles-mêmes ne contiennent plus que leur durée.
@@ -72,6 +54,7 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
 {
   "caracteristiques": {
     "feu": {
+      "champDb": "fire",
       "max": 100,
       "seuilMin": 40,
       "seuilMax": 70,
@@ -82,6 +65,7 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
       "indicateur": { "type": "qualitatifPermanent", "etats": ["froid", "parfait", "chaud"] }
     },
     "nourriture": {
+      "champDb": "hunger",
       "max": 100,
       "seuilMin": 70,
       "variationParHeure": -5,
@@ -91,6 +75,7 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
       "indicateur": { "type": "ponctuel", "declencheur": "bon", "dureeSecondes": 3, "message": "Il a assez mangé !" }
     },
     "hygiene": {
+      "champDb": "clean",
       "max": 100,
       "seuilMin": 25,
       "variationParHeure": -4,
@@ -100,6 +85,7 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
       "indicateur": { "type": "persistant", "declencheur": "mauvais", "message": "Il est très sale !" }
     },
     "joie": {
+      "champDb": "joy",
       "max": 100,
       "seuilMin": 30,
       "variationParHeure": 0,
@@ -110,6 +96,7 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
       "bloque": { "nourrir": "siMauvais" }
     },
     "apprentissage": {
+      "champDb": "learning",
       "max": 100,
       "variationParHeure": 0,
       "actions": { "eduquer": { "effet": 20 } },
@@ -117,6 +104,7 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
       "etapesActives": ["jeune", "adulte"]
     },
     "energie": {
+      "champDb": "energy",
       "max": 100,
       "variationParHeure": 5,
       "actions": { "jouer": { "effet": -10 }, "eduquer": { "effet": -15 } },
@@ -124,6 +112,10 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
       "etapesActives": ["jeune", "adulte"],
       "bloque": { "jouer": "siVide", "eduquer": "siVide" }
     }
+  },
+  "personnalite": {
+    "margeEgalite": 5,
+    "ordrePriorite": ["feu", "nourriture", "hygiene", "joie", "apprentissage"]
   },
   "etapes": {
     "oeuf": { "dureeHeures": 72 },
@@ -138,6 +130,7 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
 
 | Champ | Rôle |
 |---|---|
+| `champDb` | nom de la colonne correspondante dans la table `dragon` (section 3) |
 | `max` | valeur plafond de la jauge |
 | `seuilMin` / `seuilMax` | bornes de la "bonne zone" — l'un des deux, les deux (feu), ou aucun (apprentissage) |
 | `variationParHeure` | évolution automatique par heure réelle : négatif = décroissance (feu, nourriture, hygiène), positif = régénération (énergie), 0/absent = pas de variation passive (joie, apprentissage) |
@@ -178,12 +171,45 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
 - Durée : `etapes.jeune.dureeHeures` = 336h (14 jours), proposé par défaut — à confirmer.
 - Au passage à Adulte : instantané de `{ feu, nourriture, hygiene, joie, apprentissage }` dans `adult_stats` (énergie exclue, ce n'est pas un trait de personnalité). Ces valeurs deviennent les stats fixes du dragon adulte.
 
-### Étape 4 — Dragon adulte 🟡 (partiel)
+### Étape 4 — Dragon adulte ✅ (validé)
 
 - `adult_stats` contient l'instantané figé des 5 caractéristiques au moment du passage à l'âge adulte.
-- Un **archétype de personnalité** (`personality`) sera dérivé de `adult_stats` — règles de mapping et liste des archétypes **à définir plus tard**.
-- `feu`, `nourriture`, `hygiene` restent actives (`etapesActives` les inclut) mais sans enjeu de croissance puisqu'il n'y a plus de `stage_progress` à faire avancer à ce stade — entretien léger/cosmétique.
-- **Activités à cette étape : à définir plus tard.** Pistes envisagées mais non tranchées — tours liés à l'apprentissage figé, carte d'identité/portrait révélant l'archétype, ou autre chose. Pas bloquant pour la suite du projet.
+- `feu`, `nourriture`, `hygiene` restent actives (`etapesActives` les inclut) mais sans enjeu de croissance puisqu'il n'y a plus de `stage_progress` à faire avancer à ce stade — entretien léger/cosmétique. **Aucune autre activité à cette étape pour l'instant** (tours et carte d'identité/portrait : voir backlog section 10).
+
+#### Détermination de l'archétype (`personality`)
+
+Calculée une seule fois, au moment du passage à Adulte, à partir de `adult_stats` :
+
+1. Comparer les 5 valeurs (`feu`, `nourriture`, `hygiene`, `joie`, `apprentissage`).
+2. Repérer la valeur la plus haute, puis tous les traits dont l'écart avec ce maximum est ≤ `personnalite.margeEgalite` (config, 5 points).
+3. **1 seul trait retenu** → archétype de base (trait dominant).
+4. **2 traits retenus** → archétype hybride (combinaison des 2).
+5. **3 traits ou plus retenus** → appliquer l'ordre de priorité fixe `personnalite.ordrePriorite` (`feu > nourriture > hygiene > joie > apprentissage`) pour ne garder que les 2 premiers de cet ordre parmi les traits à égalité, puis traiter comme un cas à 2 traits.
+
+**Archétypes de base** (trait dominant) :
+
+| Trait | Archétype |
+|---|---|
+| feu | Ardent |
+| nourriture | Gourmand |
+| hygiene | Coquet |
+| joie | Farceur |
+| apprentissage | Érudit |
+
+**Archétypes hybrides** (2 traits à égalité) :
+
+| Combo | Archétype |
+|---|---|
+| feu + nourriture | Vorace |
+| feu + hygiene | Flamboyant |
+| feu + joie | Fantasque |
+| feu + apprentissage | Visionnaire |
+| nourriture + hygiene | Méticuleux |
+| nourriture + joie | Bon Vivant |
+| nourriture + apprentissage | Épicurien |
+| hygiene + joie | Charmeur |
+| hygiene + apprentissage | Perfectionniste |
+| joie + apprentissage | Curieux |
 
 ## 6. API (routes ou Server Actions, au choix)
 
@@ -222,7 +248,7 @@ Brancher `feu` sur le moteur générique, route `POST /api/dragon/add-wood`, rou
 Brancher `nourriture`/`hygiene`, routes `feed`/`wash`, indicateurs ponctuel/persistant (section 4). Transition vers Jeune.
 
 **Phase 4 — Étape Jeune**
-Brancher `joie`/`apprentissage`/`energie`, routes `play`/`educate`, blocages croisés (triste → nourrir bloqué, énergie vide → jouer/éduquer bloqués). Transition vers Adulte + instantané `adult_stats`.
+Brancher `joie`/`apprentissage`/`energie`, routes `play`/`educate`, blocages croisés (triste → nourrir bloqué, énergie vide → jouer/éduquer bloqués). Transition vers Adulte + instantané `adult_stats` + calcul de l'archétype (`personality`, règles section 5).
 
 **Phase 5 — Intégration des illustrations**
 Remplacer les visuels placeholder par les images du dessinateur, au fur et à mesure que chaque étape est prête (pas besoin d'attendre la fin du projet).
@@ -231,7 +257,7 @@ Remplacer les visuels placeholder par les images du dessinateur, au fur et à me
 Transitions/animations, modale de nom, confirmation de reset, responsive mobile.
 
 **Phase 7 — Fonctionnalités en attente de spec (backlog, section 10)**
-Système de tours, archétypes de personnalité, activités Adulte — à démarrer une fois ces specs détaillées.
+Système de tours, activités Adulte additionnelles (carte d'identité/portrait) — à démarrer une fois ces specs détaillées.
 
 **Phase 8 — Déploiement final**
 Variables d'environnement en prod, test complet sur mobile avant de l'offrir.
@@ -243,6 +269,5 @@ Variables d'environnement en prod, test complet sur mobile avant de l'offrir.
 
 ## 10. À spécifier plus tard (backlog)
 
-- **Système de tours** : quels tours, comment on les débloque/enseigne, lien avec `learning` (l'apprentissage accumulé au Jeune devrait influencer ça) **et avec l'archétype** — les tours accessibles à l'Adulte pourraient dépendre de `personality`. Route `POST /api/dragon/train` déjà réservée en section 6, en attente du détail.
-- **Archétypes de personnalité** : liste des archétypes et règles de mapping depuis `adult_stats` (section 5, étape Adulte) — à définir avant/en même temps que le système de tours vu le lien ci-dessus.
-- **Activités Adulte** : au-delà des tours, ce qu'on fait concrètement une fois adulte (carte d'identité/portrait envisagée, non tranchée).
+- **Système de tours** : quels tours, comment on les débloque/enseigne, lien avec `learning` (l'apprentissage accumulé au Jeune devrait influencer ça) **et avec l'archétype** (`personality`, défini en section 5) — les tours accessibles à l'Adulte pourraient en dépendre. Route `POST /api/dragon/train` déjà réservée en section 6, en attente du détail.
+- **Carte d'identité / portrait Adulte** : écran révélant l'archétype et un résumé du parcours du dragon (`adult_stats`) — envisagé, non prioritaire pour l'instant (l'étape Adulte se limite à l'entretien cosmétique, section 5).

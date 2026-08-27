@@ -1,6 +1,7 @@
 {
   "caracteristiques": {
     "feu": {
+      "champDb": "fire",
       "max": 100,
       "seuilMin": 40,
       "seuilMax": 70,
@@ -11,6 +12,7 @@
       "indicateur": { "type": "qualitatifPermanent", "etats": ["froid", "parfait", "chaud"] }
     },
     "nourriture": {
+      "champDb": "hunger",
       "max": 100,
       "seuilMin": 70,
       "variationParHeure": -5,
@@ -20,6 +22,7 @@
       "indicateur": { "type": "ponctuel", "declencheur": "bon", "dureeSecondes": 3, "message": "Il a assez mangé !" }
     },
     "hygiene": {
+      "champDb": "clean",
       "max": 100,
       "seuilMin": 25,
       "variationParHeure": -4,
@@ -29,6 +32,7 @@
       "indicateur": { "type": "persistant", "declencheur": "mauvais", "message": "Il est très sale !" }
     },
     "joie": {
+      "champDb": "joy",
       "max": 100,
       "seuilMin": 30,
       "variationParHeure": 0,
@@ -39,6 +43,7 @@
       "bloque": { "nourrir": "siMauvais" }
     },
     "apprentissage": {
+      "champDb": "learning",
       "max": 100,
       "variationParHeure": 0,
       "actions": { "eduquer": { "effet": 20 } },
@@ -46,6 +51,7 @@
       "etapesActives": ["jeune", "adulte"]
     },
     "energie": {
+      "champDb": "energy",
       "max": 100,
       "variationParHeure": 5,
       "actions": { "jouer": { "effet": -10 }, "eduquer": { "effet": -15 } },
@@ -53,6 +59,10 @@
       "etapesActives": ["jeune", "adulte"],
       "bloque": { "jouer": "siVide", "eduquer": "siVide" }
     }
+  },
+  "personnalite": {
+    "margeEgalite": 5,
+    "ordrePriorite": ["feu", "nourriture", "hygiene", "joie", "apprentissage"]
   },
   "etapes": {
     "oeuf": { "dureeHeures": 72 },
