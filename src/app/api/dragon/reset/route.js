@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { reinitialiserDragon } from "@/lib/dragonRepository";
-import { dragonPourClient, numeroEtape } from "@/lib/dragonEngine";
+import { numeroEtape } from "@/lib/dragonEngine";
+import { repondreDragon } from "@/lib/dragonActionRoute";
 
 // Corps optionnel `{ "etape": "bebe" }` pour démarrer directement à une étape (tests).
 export async function POST(request) {
@@ -10,5 +11,5 @@ export async function POST(request) {
     return NextResponse.json({ erreur: `Étape inconnue : ${etape}` }, { status: 400 });
   }
   const dragon = await reinitialiserDragon(stage);
-  return NextResponse.json(dragonPourClient(dragon));
+  return repondreDragon(dragon);
 }

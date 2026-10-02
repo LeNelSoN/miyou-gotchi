@@ -1,8 +1,7 @@
-import { NextResponse } from "next/server";
 import { recupererDragonSynchronise } from "@/lib/dragonRepository";
-import { dragonPourClient } from "@/lib/dragonEngine";
+import { repondreDragon } from "@/lib/dragonActionRoute";
 
 export async function GET() {
   const dragon = await recupererDragonSynchronise();
-  return NextResponse.json(dragonPourClient(dragon));
+  return repondreDragon(dragon);
 }

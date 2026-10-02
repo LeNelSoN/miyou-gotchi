@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import DebugPanel from "./DebugPanel";
 
-const EMOJIS_ETAPE = { oeuf: "🥚", bebe: "🐲" };
+const EMOJIS_ETAPE = { oeuf: "🥚", bebe: "🐲", jeune: "🦖", adulte: "🐉" };
 const EMOJIS_FEU = { froid: "🥶", parfait: "🔥", chaud: "🥵" };
 const MESSAGES_FEU = {
   froid: "Il a froid...",
@@ -13,6 +14,8 @@ const ACTIONS = {
   ajouterBois: { libelle: "Ajouter du bois", route: "add-wood" },
   nourrir: { libelle: "Nourrir", route: "feed" },
   laver: { libelle: "Laver", route: "wash" },
+  jouer: { libelle: "Jouer", route: "play" },
+  eduquer: { libelle: "Éduquer", route: "educate" },
 };
 
 export default function Home() {
@@ -32,23 +35,22 @@ export default function Home() {
     return () => clearTimeout(minuteur);
   }, [toast]);
 
-  async function lancerAction(nom) {
+  async function envoyer(route, corps) {
     setEnCours(true);
-    const res = await fetch(`/api/dragon/${ACTIONS[nom].route}`, { method: "POST" });
-    const { toasts, ...data } = await res.json();
+    const res = await fetch(`/api/dragon/${route}`, {
+      method: "POST",
+      body: corps ? JSON.stringify(corps) : undefined,
+    });
+    const { toasts = [], ...data } = await res.json();
     setDragon(data);
     // Nouvel objet à chaque fois pour relancer le minuteur si le message se répète.
     setToast(toasts[0] ? { ...toasts[0] } : null);
     setEnCours(false);
   }
 
-  async function reinitialiser() {
+  function reinitialiser() {
     if (!window.confirm("Repartir d'un œuf tout neuf ?")) return;
-    setEnCours(true);
-    const res = await fetch("/api/dragon/reset", { method: "POST" });
-    setDragon(await res.json());
-    setToast(null);
-    setEnCours(false);
+    envoyer("reset");
   }
 
   const etapeImplementee = dragon && EMOJIS_ETAPE[dragon.etape];
@@ -86,7 +88,7 @@ export default function Home() {
               {dragon.actions.map(({ nom, bloquee }) => (
                 <button
                   key={nom}
-                  onClick={() => lancerAction(nom)}
+                  onClick={() => envoyer(ACTIONS[nom].route)}
                   disabled={enCours || bloquee}
                   className="rounded-full bg-foreground px-6 py-3 text-background font-medium transition-colors hover:bg-[#383838] disabled:opacity-50 dark:hover:bg-[#ccc]"
                 >
@@ -97,13 +99,15 @@ export default function Home() {
           </>
         )}
 
-        {dragon && (
+        {dragon?.debug && <DebugPanel dragon={dragon} enCours={enCours} envoyer={envoyer} />}
+
+        {dragon && !dragon.debug && (
           <button
             onClick={reinitialiser}
             disabled={enCours}
             className="text-sm text-zinc-400 underline disabled:opacity-50"
           >
-            Réinitialiser (test)
+            Réinitialiser
           </button>
         )}
       </main>
