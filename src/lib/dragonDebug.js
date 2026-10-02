@@ -1,8 +1,11 @@
+import { readFile, writeFile } from "fs/promises";
+import path from "path";
 import config from "../../config/game.json";
 import { nomEtape } from "./dragonEngine";
 import { recupererDragonSynchronise, sauvegarderDragon } from "./dragonRepository";
 
 const HEURE_MS = 3600000;
+const CHEMIN_CONFIG = path.join(process.cwd(), "config", "game.json");
 
 // Activé uniquement par variable d'environnement serveur : jamais en production.
 export function modeDebugActif() {
@@ -24,7 +27,38 @@ export function infosDebug(dragon) {
     dureeEtape: config.etapes[nomEtape(dragon.stage)]?.dureeHeures ?? null,
     adultStats: dragon.adult_stats,
     personality: dragon.personality,
+    config: calibrationPossible() ? config : null,
   };
+}
+
+// La calibration réécrit `config/game.json` : possible seulement avec `next dev`
+// (fichier modifiable et rechargé à chaud), jamais sur un build déployé.
+export function calibrationPossible() {
+  return process.env.NODE_ENV === "development";
+}
+
+// Ne modifie qu'une constante numérique déjà présente dans la config.
+function definirConstante(racine, chemin, valeur) {
+  let noeud = racine;
+  for (const cle of chemin.slice(0, -1)) {
+    if (noeud === null || typeof noeud !== "object" || !Object.hasOwn(noeud, cle)) return false;
+    noeud = noeud[cle];
+  }
+  const derniere = chemin.at(-1);
+  if (noeud === null || typeof noeud !== "object" || !Object.hasOwn(noeud, derniere)) return false;
+  if (typeof noeud[derniere] !== "number") return false;
+  noeud[derniere] = valeur;
+  return true;
+}
+
+export async function calibrerConfig(chemin, valeur) {
+  if (!Array.isArray(chemin) || !Number.isFinite(valeur)) return false;
+  const configDisque = JSON.parse(await readFile(CHEMIN_CONFIG, "utf8"));
+  if (!definirConstante(configDisque, chemin, valeur)) return false;
+  await writeFile(CHEMIN_CONFIG, JSON.stringify(configDisque, null, 2) + "\n");
+  // Met aussi à jour la config en mémoire, sans attendre le rechargement à chaud.
+  definirConstante(config, chemin, valeur);
+  return true;
 }
 
 // Recule `last_seen` puis laisse le moteur rejouer les heures, pour passer
