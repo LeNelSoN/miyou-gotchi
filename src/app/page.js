@@ -48,11 +48,6 @@ export default function Home() {
     setEnCours(false);
   }
 
-  function reinitialiser() {
-    if (!window.confirm("Repartir d'un œuf tout neuf ?")) return;
-    envoyer("reset");
-  }
-
   const etapeImplementee = dragon && EMOJIS_ETAPE[dragon.etape];
 
   return (
@@ -100,16 +95,6 @@ export default function Home() {
         )}
 
         {dragon?.debug && <DebugPanel dragon={dragon} enCours={enCours} envoyer={envoyer} />}
-
-        {dragon && !dragon.debug && (
-          <button
-            onClick={reinitialiser}
-            disabled={enCours}
-            className="text-sm text-zinc-400 underline disabled:opacity-50"
-          >
-            Réinitialiser
-          </button>
-        )}
       </main>
     </div>
   );
