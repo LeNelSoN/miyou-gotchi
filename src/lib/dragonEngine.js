@@ -7,6 +7,10 @@ export function nomEtape(stage) {
   return NOMS_ETAPES[stage];
 }
 
+export function numeroEtape(nom) {
+  return NOMS_ETAPES.indexOf(nom);
+}
+
 function caracteristiquesActives(nomEtapeCourante) {
   return Object.values(config.caracteristiques).filter((carac) =>
     carac.etapesActives.includes(nomEtapeCourante)
@@ -42,6 +46,48 @@ function indicateursActifs(dragon, nomEtapeCourante) {
   return indicateurs;
 }
 
+function declencheurAtteint(carac, valeur) {
+  const dansBonneZone = estDansBonneZone(carac, valeur);
+  return carac.indicateur.declencheur === "bon" ? dansBonneZone : !dansBonneZone;
+}
+
+// Indicateurs "persistant" : affichés tant que la condition reste vraie.
+function alertesActives(dragon, nomEtapeCourante) {
+  return caracteristiquesActives(nomEtapeCourante)
+    .filter((carac) => carac.indicateur?.type === "persistant")
+    .filter((carac) => declencheurAtteint(carac, dragon[carac.champDb]))
+    .map((carac) => carac.indicateur.message);
+}
+
+// Indicateurs "ponctuel" : émis uniquement en réponse à une action qui touche
+// la caractéristique, puis masqués par le client après `dureeSecondes`.
+export function messagesPonctuels(dragon, actionName) {
+  return caracteristiquesActives(nomEtape(dragon.stage))
+    .filter((carac) => carac.indicateur?.type === "ponctuel" && carac.actions?.[actionName])
+    .filter((carac) => declencheurAtteint(carac, dragon[carac.champDb]))
+    .map((carac) => ({
+      message: carac.indicateur.message,
+      dureeSecondes: carac.indicateur.dureeSecondes,
+    }));
+}
+
+function estActionBloquee(dragon, actives, actionName) {
+  return actives.some((carac) => {
+    const condition = carac.bloque?.[actionName];
+    if (!condition) return false;
+    const valeur = dragon[carac.champDb];
+    if (condition === "siMauvais") return !estDansBonneZone(carac, valeur);
+    if (condition === "siVide") return valeur <= 0;
+    return false;
+  });
+}
+
+function actionsDisponibles(dragon, nomEtapeCourante) {
+  const actives = caracteristiquesActives(nomEtapeCourante);
+  const noms = new Set(actives.flatMap((carac) => Object.keys(carac.actions ?? {})));
+  return [...noms].map((nom) => ({ nom, bloquee: estActionBloquee(dragon, actives, nom) }));
+}
+
 export function dragonPourClient(dragon) {
   const etapeCourante = nomEtape(dragon.stage);
   return {
@@ -50,6 +96,8 @@ export function dragonPourClient(dragon) {
     named: dragon.named,
     name: dragon.name,
     indicateurs: indicateursActifs(dragon, etapeCourante),
+    alertes: alertesActives(dragon, etapeCourante),
+    actions: actionsDisponibles(dragon, etapeCourante),
   };
 }
 
@@ -112,14 +160,7 @@ export function appliquerAction(dragon, actionName) {
   const etapeCourante = nomEtape(dragon.stage);
   const actives = caracteristiquesActives(etapeCourante);
 
-  const estBloquee = actives.some((carac) => {
-    const condition = carac.bloque?.[actionName];
-    if (!condition) return false;
-    const valeur = dragon[carac.champDb];
-    if (condition === "siMauvais") return !estDansBonneZone(carac, valeur);
-    if (condition === "siVide") return valeur <= 0;
-    return false;
-  });
+  const estBloquee = estActionBloquee(dragon, actives, actionName);
 
   const concernees = actives.filter((carac) => carac.actions?.[actionName]);
 

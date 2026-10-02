@@ -1,5 +1,5 @@
 import { repondreAction } from "@/lib/dragonActionRoute";
 
 export async function POST() {
-  return repondreAction("ajouterBois");
+  return repondreAction("nourrir");
 }

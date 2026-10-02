@@ -29,3 +29,15 @@ export async function appliquerActionEtSauvegarder(actionName) {
   }
   return resultat;
 }
+
+// Supprime puis recrée la ligne pour repartir des valeurs par défaut du schéma
+// (section 3 de la spec), sans dupliquer ces valeurs dans le code.
+export async function reinitialiserDragon(stage = 0) {
+  const supabase = getSupabaseServerClient();
+  const { error: erreurSuppression } = await supabase.from("dragon").delete().not("id", "is", null);
+  if (erreurSuppression) throw new Error(erreurSuppression.message);
+
+  const { data: dragon, error } = await supabase.from("dragon").insert({ stage }).select("*").single();
+  if (error) throw new Error(error.message);
+  return dragon;
+}

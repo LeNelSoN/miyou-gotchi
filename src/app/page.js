@@ -2,16 +2,23 @@
 
 import { useEffect, useState } from "react";
 
+const EMOJIS_ETAPE = { oeuf: "🥚", bebe: "🐲" };
 const EMOJIS_FEU = { froid: "🥶", parfait: "🔥", chaud: "🥵" };
 const MESSAGES_FEU = {
   froid: "Il a froid...",
   parfait: "Il est bien au chaud !",
   chaud: "Il a trop chaud !",
 };
+const ACTIONS = {
+  ajouterBois: { libelle: "Ajouter du bois", route: "add-wood" },
+  nourrir: { libelle: "Nourrir", route: "feed" },
+  laver: { libelle: "Laver", route: "wash" },
+};
 
 export default function Home() {
   const [dragon, setDragon] = useState(null);
   const [enCours, setEnCours] = useState(false);
+  const [toast, setToast] = useState(null);
 
   useEffect(() => {
     fetch("/api/dragon")
@@ -19,40 +26,85 @@ export default function Home() {
       .then(setDragon);
   }, []);
 
-  async function ajouterDuBois() {
+  useEffect(() => {
+    if (!toast) return;
+    const minuteur = setTimeout(() => setToast(null), toast.dureeSecondes * 1000);
+    return () => clearTimeout(minuteur);
+  }, [toast]);
+
+  async function lancerAction(nom) {
     setEnCours(true);
-    const res = await fetch("/api/dragon/add-wood", { method: "POST" });
-    const data = await res.json();
+    const res = await fetch(`/api/dragon/${ACTIONS[nom].route}`, { method: "POST" });
+    const { toasts, ...data } = await res.json();
     setDragon(data);
+    // Nouvel objet à chaque fois pour relancer le minuteur si le message se répète.
+    setToast(toasts[0] ? { ...toasts[0] } : null);
     setEnCours(false);
   }
+
+  async function reinitialiser() {
+    if (!window.confirm("Repartir d'un œuf tout neuf ?")) return;
+    setEnCours(true);
+    const res = await fetch("/api/dragon/reset", { method: "POST" });
+    setDragon(await res.json());
+    setToast(null);
+    setEnCours(false);
+  }
+
+  const etapeImplementee = dragon && EMOJIS_ETAPE[dragon.etape];
 
   return (
     <div className="flex flex-1 items-center justify-center bg-zinc-50 dark:bg-black">
       <main className="flex flex-col items-center gap-6 p-8">
         {!dragon && <p className="text-zinc-500">Chargement...</p>}
 
-        {dragon && dragon.etape !== "oeuf" && (
+        {dragon && !etapeImplementee && (
           <p className="text-zinc-500">
             Étape « {dragon.etape} » — pas encore implémentée.
           </p>
         )}
 
-        {dragon && dragon.etape === "oeuf" && (
+        {etapeImplementee && (
           <>
-            <div className="text-8xl">🥚</div>
+            <div className="text-8xl">{EMOJIS_ETAPE[dragon.etape]}</div>
             <div className="text-5xl">{EMOJIS_FEU[dragon.indicateurs.feu]}</div>
             <p className="text-lg text-zinc-700 dark:text-zinc-300">
               {MESSAGES_FEU[dragon.indicateurs.feu]}
             </p>
-            <button
-              onClick={ajouterDuBois}
-              disabled={enCours}
-              className="rounded-full bg-foreground px-6 py-3 text-background font-medium transition-colors hover:bg-[#383838] disabled:opacity-50 dark:hover:bg-[#ccc]"
-            >
-              Ajouter du bois
-            </button>
+
+            {dragon.alertes.map((message) => (
+              <p key={message} className="font-medium text-red-600 dark:text-red-400">
+                {message}
+              </p>
+            ))}
+
+            <p className="h-6 font-medium text-green-600 dark:text-green-400">
+              {toast?.message}
+            </p>
+
+            <div className="flex flex-wrap justify-center gap-3">
+              {dragon.actions.map(({ nom, bloquee }) => (
+                <button
+                  key={nom}
+                  onClick={() => lancerAction(nom)}
+                  disabled={enCours || bloquee}
+                  className="rounded-full bg-foreground px-6 py-3 text-background font-medium transition-colors hover:bg-[#383838] disabled:opacity-50 dark:hover:bg-[#ccc]"
+                >
+                  {ACTIONS[nom].libelle}
+                </button>
+              ))}
+            </div>
           </>
+        )}
+
+        {dragon && (
+          <button
+            onClick={reinitialiser}
+            disabled={enCours}
+            className="text-sm text-zinc-400 underline disabled:opacity-50"
+          >
+            Réinitialiser (test)
+          </button>
         )}
       </main>
     </div>
