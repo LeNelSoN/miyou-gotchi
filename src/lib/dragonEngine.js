@@ -98,7 +98,18 @@ export function dragonPourClient(dragon) {
     indicateurs: indicateursActifs(dragon, etapeCourante),
     alertes: alertesActives(dragon, etapeCourante),
     actions: actionsDisponibles(dragon, etapeCourante),
+    nomLongueurMax: config.nom.longueurMax,
   };
+}
+
+// Le dragon se nomme une seule fois, après l'éclosion. Renvoie le nom nettoyé,
+// ou `null` s'il est refusé.
+export function validerNom(dragon, nom) {
+  if (dragon.named || nomEtape(dragon.stage) === "oeuf") return null;
+  if (typeof nom !== "string") return null;
+  const nomNettoye = nom.trim();
+  if (nomNettoye.length === 0 || nomNettoye.length > config.nom.longueurMax) return null;
+  return nomNettoye;
 }
 
 function clamp(valeur, max) {

@@ -173,5 +173,8 @@
       "dureeHeures": 336
     }
   },
-  "multiplicateurRalentissement": 0.5
+  "multiplicateurRalentissement": 0.5,
+  "nom": {
+    "longueurMax": 20
+  }
 }

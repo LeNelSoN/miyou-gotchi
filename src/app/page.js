@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import DebugPanel from "./DebugPanel";
+import NameModal from "./NameModal";
 
 const EMOJIS_ETAPE = { oeuf: "🥚", bebe: "🐲", jeune: "🦖", adulte: "🐉" };
 const EMOJIS_FEU = { froid: "🥶", parfait: "🔥", chaud: "🥵" };
@@ -11,11 +12,11 @@ const MESSAGES_FEU = {
   chaud: "Il a trop chaud !",
 };
 const ACTIONS = {
-  ajouterBois: { libelle: "Ajouter du bois", route: "add-wood" },
-  nourrir: { libelle: "Nourrir", route: "feed" },
-  laver: { libelle: "Laver", route: "wash" },
-  jouer: { libelle: "Jouer", route: "play" },
-  eduquer: { libelle: "Éduquer", route: "educate" },
+  ajouterBois: { libelle: "Ajouter du bois", court: "Bois", icone: "🪵", route: "add-wood" },
+  nourrir: { libelle: "Nourrir", court: "Nourrir", icone: "🍖", route: "feed" },
+  laver: { libelle: "Laver", court: "Laver", icone: "🫧", route: "wash" },
+  jouer: { libelle: "Jouer", court: "Jouer", icone: "🎾", route: "play" },
+  eduquer: { libelle: "Éduquer", court: "Éduquer", icone: "📖", route: "educate" },
 };
 
 export default function Home() {
@@ -35,6 +36,7 @@ export default function Home() {
     return () => clearTimeout(minuteur);
   }, [toast]);
 
+  // Renvoie le message d'erreur du serveur, ou `null` si tout s'est bien passé.
   async function envoyer(route, corps) {
     setEnCours(true);
     const res = await fetch(`/api/dragon/${route}`, {
@@ -42,60 +44,97 @@ export default function Home() {
       body: corps ? JSON.stringify(corps) : undefined,
     });
     const { toasts = [], ...data } = await res.json();
+    setEnCours(false);
+    if (!res.ok) return data.erreur ?? "Une erreur est survenue.";
+
     setDragon(data);
     // Nouvel objet à chaque fois pour relancer le minuteur si le message se répète.
     setToast(toasts[0] ? { ...toasts[0] } : null);
-    setEnCours(false);
+    return null;
   }
 
-  const etapeImplementee = dragon && EMOJIS_ETAPE[dragon.etape];
+  const nomAttendu = dragon && dragon.etape !== "oeuf" && !dragon.named;
 
   return (
-    <div className="flex flex-1 items-center justify-center bg-zinc-50 dark:bg-black">
-      <main className="flex flex-col items-center gap-6 p-8">
-        {!dragon && <p className="text-zinc-500">Chargement...</p>}
+    <div
+      className={`antre relative flex flex-1 items-center justify-center overflow-hidden ${
+        dragon?.debug ? "pb-[50dvh] sm:pb-0" : ""
+      }`}
+    >
+      <div className="lueur-braise pointer-events-none absolute inset-x-0 bottom-0 h-1/2 motion-safe:animate-braise" />
 
-        {dragon && !etapeImplementee && (
-          <p className="text-zinc-500">
-            Étape « {dragon.etape} » — pas encore implémentée.
+      <main className="relative w-full max-w-sm px-5 py-10">
+        <div className="coque flex flex-col items-center gap-5 px-[18%] pb-[20%] pt-[20%]">
+          <p className="font-pixel text-sm tracking-[0.3em] text-amber-200 drop-shadow-[0_2px_0_rgba(0,0,0,0.6)]">
+            MIYOU-GOTCHI
           </p>
-        )}
 
-        {etapeImplementee && (
-          <>
-            <div className="text-8xl">{EMOJIS_ETAPE[dragon.etape]}</div>
-            <div className="text-5xl">{EMOJIS_FEU[dragon.indicateurs.feu]}</div>
-            <p className="text-lg text-zinc-700 dark:text-zinc-300">
-              {MESSAGES_FEU[dragon.indicateurs.feu]}
-            </p>
+          <div className="ecran flex aspect-square w-full flex-col overflow-hidden rounded-xl p-3 font-pixel">
+            {!dragon && (
+              <p className="m-auto text-lg motion-safe:animate-pulse">Chargement...</p>
+            )}
 
-            {dragon.alertes.map((message) => (
-              <p key={message} className="font-medium text-red-600 dark:text-red-400">
-                {message}
-              </p>
-            ))}
+            {dragon && (
+              <>
+                <div className="flex items-center justify-between text-lg leading-none">
+                  <h1 className="truncate">{dragon.named ? dragon.name : "???"}</h1>
+                  <span aria-hidden="true">{EMOJIS_FEU[dragon.indicateurs.feu]}</span>
+                </div>
 
-            <p className="h-6 font-medium text-green-600 dark:text-green-400">
-              {toast?.message}
-            </p>
+                {/* La clé relance l'animation d'apparition à chaque changement d'étape. */}
+                <div
+                  key={dragon.etape}
+                  className="flex flex-1 items-center justify-center motion-safe:animate-apparition"
+                >
+                  <div className="text-[clamp(3rem,18vw,4.5rem)] leading-none drop-shadow-[0_6px_0_rgba(31,42,23,0.25)] motion-safe:animate-flotter">
+                    {EMOJIS_ETAPE[dragon.etape]}
+                  </div>
+                </div>
 
-            <div className="flex flex-wrap justify-center gap-3">
-              {dragon.actions.map(({ nom, bloquee }) => (
+                <div className="flex min-h-12 flex-col justify-end text-center leading-tight" aria-live="polite">
+                  {dragon.alertes.map((message) => (
+                    <p key={message} className="text-red-800 motion-safe:animate-fondu">
+                      ⚠ {message}
+                    </p>
+                  ))}
+                  {/* Le message ponctuel remplace temporairement l'état du feu. */}
+                  <p key={toast?.message} className={toast ? "motion-safe:animate-fondu" : ""}>
+                    {toast ? toast.message : MESSAGES_FEU[dragon.indicateurs.feu]}
+                  </p>
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className="flex min-h-20 flex-wrap items-start justify-center gap-x-3 gap-y-2">
+            {dragon?.actions.map(({ nom, bloquee }) => (
+              <div key={nom} className="flex w-14 flex-col items-center gap-1.5">
                 <button
-                  key={nom}
                   onClick={() => envoyer(ACTIONS[nom].route)}
                   disabled={enCours || bloquee}
-                  className="rounded-full bg-foreground px-6 py-3 text-background font-medium transition-colors hover:bg-[#383838] disabled:opacity-50 dark:hover:bg-[#ccc]"
+                  aria-label={ACTIONS[nom].libelle}
+                  className="bouton-coque flex h-12 w-12 items-center justify-center rounded-full text-2xl transition disabled:opacity-50 disabled:grayscale"
                 >
-                  {ACTIONS[nom].libelle}
+                  {ACTIONS[nom].icone}
                 </button>
-              ))}
-            </div>
-          </>
-        )}
-
-        {dragon?.debug && <DebugPanel dragon={dragon} enCours={enCours} envoyer={envoyer} />}
+                <span className="font-pixel text-xs text-amber-100" aria-hidden="true">
+                  {ACTIONS[nom].court}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
       </main>
+
+      {nomAttendu && (
+        <NameModal
+          longueurMax={dragon.nomLongueurMax}
+          enCours={enCours}
+          nommer={(name) => envoyer("name", { name })}
+        />
+      )}
+
+      {dragon?.debug && <DebugPanel dragon={dragon} enCours={enCours} envoyer={envoyer} />}
     </div>
   );
 }

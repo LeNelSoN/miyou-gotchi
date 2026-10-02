@@ -1,5 +1,5 @@
 import { getSupabaseServerClient } from "./supabaseServer";
-import { avancerDragon, appliquerAction } from "./dragonEngine";
+import { avancerDragon, appliquerAction, validerNom } from "./dragonEngine";
 
 export async function sauvegarderDragon(dragon) {
   const supabase = getSupabaseServerClient();
@@ -28,6 +28,16 @@ export async function appliquerActionEtSauvegarder(actionName) {
     await sauvegarderDragon(resultat.dragon);
   }
   return resultat;
+}
+
+export async function nommerDragon(nom) {
+  const dragon = await recupererDragonSynchronise();
+  const nomValide = validerNom(dragon, nom);
+  if (nomValide == null) return { dragon, applique: false };
+
+  const resultat = { ...dragon, name: nomValide, named: true };
+  await sauvegarderDragon(resultat);
+  return { dragon: resultat, applique: true };
 }
 
 // Supprime puis recrée la ligne pour repartir des valeurs par défaut du schéma

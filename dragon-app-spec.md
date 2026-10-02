@@ -122,7 +122,8 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
     "bebe": { "dureeHeures": 168 },
     "jeune": { "dureeHeures": 336 }
   },
-  "multiplicateurRalentissement": 0.5
+  "multiplicateurRalentissement": 0.5,
+  "nom": { "longueurMax": 20 }
 }
 ```
 

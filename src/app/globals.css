@@ -10,6 +10,32 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-pixel: var(--font-pixelify-sans);
+}
+
+@theme {
+  --animate-flotter: flotter 3s ease-in-out infinite;
+  --animate-apparition: apparition 0.6s ease-out;
+  --animate-fondu: fondu 0.25s ease-out;
+  --animate-braise: braise 4s ease-in-out infinite;
+
+  @keyframes flotter {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-0.5rem); }
+  }
+  @keyframes apparition {
+    0% { transform: scale(0.4) rotate(-8deg); opacity: 0; }
+    60% { transform: scale(1.15) rotate(4deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0); }
+  }
+  @keyframes braise {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 1; }
+  }
+  @keyframes fondu {
+    from { opacity: 0; transform: translateY(0.25rem); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,4 +49,57 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* --- Habillage « tamagotchi dragon » : antre sombre, coque en écailles, écran LCD --- */
+
+.antre {
+  background: radial-gradient(ellipse at 50% 0%, #2a1410 0%, #120706 60%, #080303 100%);
+}
+
+/* Lueur de braises en bas de l'antre. */
+.lueur-braise {
+  background: radial-gradient(ellipse at 50% 100%, rgba(234, 88, 12, 0.55) 0%, rgba(154, 52, 18, 0.25) 35%, transparent 70%);
+}
+
+.coque {
+  border-radius: 50% 50% 47% 47% / 46% 46% 42% 42%;
+  background:
+    radial-gradient(circle at 50% 0, transparent 58%, rgba(0, 0, 0, 0.22) 60%, transparent 70%) 0 0 / 28px 20px,
+    radial-gradient(circle at 50% 0, transparent 58%, rgba(0, 0, 0, 0.22) 60%, transparent 70%) 14px 10px / 28px 20px,
+    radial-gradient(ellipse at 35% 20%, #ef4444 0%, #b91c1c 45%, #641212 100%);
+  box-shadow:
+    inset 0 6px 10px rgba(255, 255, 255, 0.25),
+    inset 0 -14px 24px rgba(0, 0, 0, 0.45),
+    0 18px 40px rgba(0, 0, 0, 0.6),
+    0 0 60px rgba(234, 88, 12, 0.25);
+}
+
+.ecran {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px) 0 0 / 100% 4px,
+    linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px) 0 0 / 4px 100%,
+    linear-gradient(160deg, #cfdcb4, #a9bd8f);
+  color: #1f2a17;
+  box-shadow:
+    inset 0 4px 10px rgba(0, 0, 0, 0.45),
+    0 0 0 4px #1c1917,
+    0 0 0 8px #d4a017,
+    0 0 0 10px #78350f;
+}
+
+.bouton-coque {
+  background: radial-gradient(circle at 35% 30%, #fde68a, #d97706 60%, #92400e);
+  box-shadow:
+    inset 0 2px 2px rgba(255, 255, 255, 0.6),
+    0 4px 0 #451a03,
+    0 6px 8px rgba(0, 0, 0, 0.5);
+}
+
+.bouton-coque:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow:
+    inset 0 2px 2px rgba(255, 255, 255, 0.6),
+    0 1px 0 #451a03,
+    0 2px 4px rgba(0, 0, 0, 0.5);
 }
