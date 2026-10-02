@@ -62,7 +62,24 @@
   },
   "personnalite": {
     "margeEgalite": 5,
-    "ordrePriorite": ["feu", "nourriture", "hygiene", "joie", "apprentissage"]
+    "ordrePriorite": ["feu", "nourriture", "hygiene", "joie", "apprentissage"],
+    "archetypes": {
+      "feu": "Ardent",
+      "nourriture": "Gourmand",
+      "hygiene": "Coquet",
+      "joie": "Farceur",
+      "apprentissage": "Érudit",
+      "feu+nourriture": "Vorace",
+      "feu+hygiene": "Flamboyant",
+      "feu+joie": "Fantasque",
+      "feu+apprentissage": "Visionnaire",
+      "nourriture+hygiene": "Méticuleux",
+      "nourriture+joie": "Bon Vivant",
+      "nourriture+apprentissage": "Épicurien",
+      "hygiene+joie": "Charmeur",
+      "hygiene+apprentissage": "Perfectionniste",
+      "joie+apprentissage": "Curieux"
+    }
   },
   "etapes": {
     "oeuf": { "dureeHeures": 72 },

@@ -126,7 +126,27 @@ function tenterPassageEtapeSuivante(dragon, nomEtapeCourante) {
   if (dragon.stage_progress >= duree) {
     dragon.stage += 1;
     dragon.stage_progress = 0;
+    if (nomEtape(dragon.stage) === "adulte") figerPersonnalite(dragon);
   }
+}
+
+// Les traits de personnalité sont ceux listés dans `personnalite.ordrePriorite`
+// (l'énergie n'en fait pas partie). Les clés d'archétypes hybrides de la config
+// suivent ce même ordre, jointes par "+".
+export function determinerArchetype(stats) {
+  const { margeEgalite, ordrePriorite, archetypes } = config.personnalite;
+  const maximum = Math.max(...ordrePriorite.map((trait) => stats[trait]));
+  const retenus = ordrePriorite.filter((trait) => maximum - stats[trait] <= margeEgalite);
+  return archetypes[retenus.slice(0, 2).join("+")];
+}
+
+function figerPersonnalite(dragon) {
+  const stats = {};
+  for (const trait of config.personnalite.ordrePriorite) {
+    stats[trait] = dragon[config.caracteristiques[trait].champDb];
+  }
+  dragon.adult_stats = stats;
+  dragon.personality = determinerArchetype(stats);
 }
 
 // Simule heure par heure (et non en un seul calcul) car les caractéristiques actives
