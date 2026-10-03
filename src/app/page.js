@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import DebugPanel from "./DebugPanel";
 import Illustration, { ILLUSTRATIONS } from "./Illustration";
 import NameModal from "./NameModal";
@@ -49,19 +50,21 @@ function nomIllustration(dragon, toast, eclosion) {
 }
 
 export default function Home() {
+  const router = useRouter();
   const [dragon, setDragon] = useState(null);
   const [eclosion, setEclosion] = useState(false);
   const [enCours, setEnCours] = useState(false);
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
-    fetch("/api/dragon")
-      .then((res) => res.json())
-      .then((data) => {
-        if (eclosionAVoir(data.etape)) setEclosion(true);
-        setDragon(data);
-      });
-  }, []);
+    fetch("/api/dragon").then(async (res) => {
+      // Session absente ou expirée : retour à l'écran de mot de passe.
+      if (res.status === 401) return router.replace("/connexion");
+      const data = await res.json();
+      if (eclosionAVoir(data.etape)) setEclosion(true);
+      setDragon(data);
+    });
+  }, [router]);
 
   useEffect(() => {
     if (!eclosion) return;
@@ -82,6 +85,10 @@ export default function Home() {
       method: "POST",
       body: corps ? JSON.stringify(corps) : undefined,
     });
+    if (res.status === 401) {
+      router.replace("/connexion");
+      return null;
+    }
     const { toasts = [], ...data } = await res.json();
     setEnCours(false);
     if (!res.ok) return data.erreur ?? "Une erreur est survenue.";
