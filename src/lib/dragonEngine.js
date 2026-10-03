@@ -59,6 +59,13 @@ function alertesActives(dragon, nomEtapeCourante) {
     .map((carac) => carac.indicateur.message);
 }
 
+// Humeurs illustrées (sans texte) tant que la caractéristique est hors de sa bonne zone.
+function humeursActives(dragon, nomEtapeCourante) {
+  return caracteristiquesActives(nomEtapeCourante)
+    .filter((carac) => carac.humeurSiMauvais && !estDansBonneZone(carac, dragon[carac.champDb]))
+    .map((carac) => carac.humeurSiMauvais);
+}
+
 // Indicateurs "ponctuel" : émis uniquement en réponse à une action qui touche
 // la caractéristique, puis masqués par le client après `dureeSecondes`.
 export function messagesPonctuels(dragon, actionName) {
@@ -97,6 +104,7 @@ export function dragonPourClient(dragon) {
     name: dragon.name,
     indicateurs: indicateursActifs(dragon, etapeCourante),
     alertes: alertesActives(dragon, etapeCourante),
+    humeurs: humeursActives(dragon, etapeCourante),
     actions: actionsDisponibles(dragon, etapeCourante),
     nomLongueurMax: config.nom.longueurMax,
   };

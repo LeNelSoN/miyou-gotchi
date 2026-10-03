@@ -48,7 +48,8 @@
         "declencheur": "bon",
         "dureeSecondes": 3,
         "message": "Il a assez mangé !"
-      }
+      },
+      "humeurSiMauvais": "faim"
     },
     "hygiene": {
       "champDb": "clean",

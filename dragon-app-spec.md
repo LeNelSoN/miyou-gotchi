@@ -72,7 +72,8 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
       "actions": { "nourrir": { "effet": 30 } },
       "affecteCroissance": true,
       "etapesActives": ["bebe", "jeune", "adulte"],
-      "indicateur": { "type": "ponctuel", "declencheur": "bon", "dureeSecondes": 3, "message": "Il a assez mangé !" }
+      "indicateur": { "type": "ponctuel", "declencheur": "bon", "dureeSecondes": 3, "message": "Il a assez mangé !" },
+      "humeurSiMauvais": "faim"
     },
     "hygiene": {
       "champDb": "clean",
@@ -141,6 +142,7 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
 | `etapesActives` | à quelles étapes cette caractéristique est active |
 | `bloque` | actions bloquées quand hors zone (`"siMauvais"`) ou à 0 (`"siVide"`) |
 | `indicateur` | ce qui est montré au joueur : `qualitatifPermanent` (feu, toujours visible), `ponctuel` (toast temporaire), `persistant` (reste affiché tant que vrai) |
+| `humeurSiMauvais` | humeur illustrée (sans texte) tant que la jauge est hors de sa bonne zone (ex: `"faim"` → bulle avec le morceau de viande) |
 
 `energie.affecteCroissance` est mis à `false` : son rôle est de bloquer les actions Jouer/Éduquer (via `bloque`), pas de ralentir directement la croissance — l'effet se répercute déjà indirectement (énergie vide → impossible de jouer → joie qui stagne). À confirmer si tu préfères qu'elle compte aussi en direct.
 
@@ -159,7 +161,7 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
 ### Étape 2 — Bébé ✅ (validé)
 
 - Caractéristiques actives : `feu` (inchangé), `nourriture`, `hygiene`.
-- **Nourriture** (`hunger`) : bouton "Nourrir", indicateur ponctuel positif ("Il a assez mangé !", disparaît après `dureeSecondes`).
+- **Nourriture** (`hunger`) : bouton "Nourrir", indicateur ponctuel positif ("Il a assez mangé !", disparaît après `dureeSecondes`). Hors zone, le bébé est illustré affamé (bulle avec un morceau de viande), sans message.
 - **Hygiène** (`clean`) : bouton "Laver", indicateur persistant négatif ("Il est très sale !", reste affiché tant que hors zone).
 - Durée : `etapes.bebe.dureeHeures` = 168h (7 jours).
 

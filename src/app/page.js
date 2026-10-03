@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import DebugPanel from "./DebugPanel";
+import Illustration, { ILLUSTRATIONS } from "./Illustration";
 import NameModal from "./NameModal";
 
-const EMOJIS_ETAPE = { oeuf: "🥚", bebe: "🐲", jeune: "🦖", adulte: "🐉" };
+// Étapes dont les illustrations ne sont pas encore livrées.
+const EMOJIS_ETAPE = { jeune: "🦖", adulte: "🐉" };
 const EMOJIS_FEU = { froid: "🥶", parfait: "🔥", chaud: "🥵" };
 const MESSAGES_FEU = {
   froid: "Il a froid...",
@@ -19,16 +21,53 @@ const ACTIONS = {
   eduquer: { libelle: "Éduquer", court: "Éduquer", icone: "📖", route: "educate" },
 };
 
+const CLE_ETAPE_VUE = "miyou-gotchi:etape";
+
+// L'éclosion a souvent lieu en l'absence du joueur : on retient la dernière étape
+// vue sur cet appareil pour pouvoir la lui montrer à son retour.
+function eclosionAVoir(etape) {
+  try {
+    const etapeVue = localStorage.getItem(CLE_ETAPE_VUE);
+    localStorage.setItem(CLE_ETAPE_VUE, etape);
+    return etapeVue === "oeuf" && etape === "bebe";
+  } catch {
+    return false;
+  }
+}
+
+function nomIllustration(dragon, toast, eclosion) {
+  if (eclosion) return "eclosion";
+  if (dragon.etape === "oeuf") return `oeuf-${dragon.indicateurs.feu}`;
+  if (dragon.etape === "bebe") {
+    if (toast) return "bebe-content";
+    // La faim n'a pas de message à l'écran : elle passe avant le feu, qui a le sien.
+    if (dragon.humeurs.includes("faim")) return "bebe-faim";
+    if (dragon.indicateurs.feu !== "parfait") return `bebe-fache-${dragon.indicateurs.feu}`;
+    return "bebe";
+  }
+  return null;
+}
+
 export default function Home() {
   const [dragon, setDragon] = useState(null);
+  const [eclosion, setEclosion] = useState(false);
   const [enCours, setEnCours] = useState(false);
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
     fetch("/api/dragon")
       .then((res) => res.json())
-      .then(setDragon);
+      .then((data) => {
+        if (eclosionAVoir(data.etape)) setEclosion(true);
+        setDragon(data);
+      });
   }, []);
+
+  useEffect(() => {
+    if (!eclosion) return;
+    const minuteur = setTimeout(() => setEclosion(false), ILLUSTRATIONS.eclosion.dureeMs);
+    return () => clearTimeout(minuteur);
+  }, [eclosion]);
 
   useEffect(() => {
     if (!toast) return;
@@ -47,13 +86,15 @@ export default function Home() {
     setEnCours(false);
     if (!res.ok) return data.erreur ?? "Une erreur est survenue.";
 
+    if (eclosionAVoir(data.etape)) setEclosion(true);
     setDragon(data);
     // Nouvel objet à chaque fois pour relancer le minuteur si le message se répète.
     setToast(toasts[0] ? { ...toasts[0] } : null);
     return null;
   }
 
-  const nomAttendu = dragon && dragon.etape !== "oeuf" && !dragon.named;
+  const nomAttendu = dragon && dragon.etape !== "oeuf" && !dragon.named && !eclosion;
+  const illustration = dragon && nomIllustration(dragon, toast, eclosion);
 
   return (
     <div
@@ -63,7 +104,7 @@ export default function Home() {
     >
       <div className="lueur-braise pointer-events-none absolute inset-x-0 bottom-0 h-1/2 motion-safe:animate-braise" />
 
-      <main className="relative w-full max-w-sm px-5 py-10">
+      <main className="relative w-full max-w-sm px-5 py-10 sm:max-w-md">
         <div className="coque flex flex-col items-center gap-5 px-[18%] pb-[20%] pt-[20%]">
           <p className="font-pixel text-sm tracking-[0.3em] text-amber-200 drop-shadow-[0_2px_0_rgba(0,0,0,0.6)]">
             MIYOU-GOTCHI
@@ -78,17 +119,23 @@ export default function Home() {
               <>
                 <div className="flex items-center justify-between text-lg leading-none">
                   <h1 className="truncate">{dragon.named ? dragon.name : "???"}</h1>
-                  <span aria-hidden="true">{EMOJIS_FEU[dragon.indicateurs.feu]}</span>
+                  {/* Avec une illustration, l'état du feu se lit sur le dessin et le message. */}
+                  {!illustration && <span aria-hidden="true">{EMOJIS_FEU[dragon.indicateurs.feu]}</span>}
                 </div>
 
-                {/* La clé relance l'animation d'apparition à chaque changement d'étape. */}
+                {/* La clé relance l'animation d'apparition à chaque changement d'étape
+                    (après l'éclosion, pour ne pas la perturber). */}
                 <div
-                  key={dragon.etape}
-                  className="flex flex-1 items-center justify-center motion-safe:animate-apparition"
+                  key={eclosion ? "oeuf" : dragon.etape}
+                  className="flex min-h-0 flex-1 items-center justify-center motion-safe:animate-apparition"
                 >
-                  <div className="text-[clamp(3rem,18vw,4.5rem)] leading-none drop-shadow-[0_6px_0_rgba(31,42,23,0.25)] motion-safe:animate-flotter">
-                    {EMOJIS_ETAPE[dragon.etape]}
-                  </div>
+                  {illustration ? (
+                    <Illustration nom={illustration} />
+                  ) : (
+                    <div className="text-[clamp(3rem,18vw,4.5rem)] leading-none drop-shadow-[0_6px_0_rgba(31,42,23,0.25)] motion-safe:animate-flotter">
+                      {EMOJIS_ETAPE[dragon.etape]}
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex min-h-12 flex-col justify-end text-center leading-tight" aria-live="polite">

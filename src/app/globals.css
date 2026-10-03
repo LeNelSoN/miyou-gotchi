@@ -3,6 +3,20 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  /* Taille d'un pixel physique de l'écran, pour agrandir le pixel art sans le déformer. */
+  --pixel-ecran: 1px;
+}
+
+@media (min-resolution: 2dppx) {
+  :root {
+    --pixel-ecran: 0.5px;
+  }
+}
+
+@media (min-resolution: 3dppx) {
+  :root {
+    --pixel-ecran: calc(1px / 3);
+  }
 }
 
 @theme inline {
