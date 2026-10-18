@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import DebugPanel from "./DebugPanel";
 import Illustration, { ILLUSTRATIONS } from "./Illustration";
 import NameModal from "./NameModal";
+import CarteIdentite from "./CarteIdentite";
 import { INTERVALLE_PENSEES_MS, penser } from "@/lib/pensees";
 
 // Étapes dont les illustrations ne sont pas encore livrées.
@@ -22,6 +23,7 @@ const ACTIONS = {
   jouer: { libelle: "Jouer", court: "Jouer", icone: "🎾", route: "play" },
   eduquer: { libelle: "Éduquer", court: "Éduquer", icone: "📖", route: "educate" },
 };
+const CARTE = { libelle: "Carte d'identité", court: "Carte", icone: "🪪" };
 const DODO = {
   coucher: { libelle: "Coucher", court: "Dodo", icone: "🌙", route: "sleep" },
   reveiller: { libelle: "Réveiller", court: "Réveil", icone: "☀️", route: "wake" },
@@ -71,6 +73,7 @@ export default function Home() {
   const [enCours, setEnCours] = useState(false);
   const [toast, setToast] = useState(null);
   const [pensee, setPensee] = useState(null);
+  const [carteOuverte, setCarteOuverte] = useState(false);
 
   useEffect(() => {
     fetch("/api/dragon").then(async (res) => {
@@ -105,6 +108,8 @@ export default function Home() {
   function afficher(data, evenement) {
     const passage = passageAVoir(data.etape);
     if (passage === "eclosion") setEclosion(true);
+    // Le passage à Adulte révèle son caractère.
+    if (passage === "grandir" && data.archetype) setCarteOuverte(true);
     setDragon(data);
     if (passage) setPensee(penser(data, { moment: passage }));
     else setPensee(data.souvenirReve ?? penser(data, evenement));
@@ -235,6 +240,20 @@ export default function Home() {
                 </span>
               </div>
             ))}
+            {dragon?.archetype && (
+              <div className="flex w-14 flex-col items-center gap-1.5">
+                <button
+                  onClick={() => setCarteOuverte(true)}
+                  aria-label={CARTE.libelle}
+                  className="bouton-coque flex h-12 w-12 items-center justify-center rounded-full text-2xl transition"
+                >
+                  {CARTE.icone}
+                </button>
+                <span className="font-pixel text-xs text-amber-100" aria-hidden="true">
+                  {CARTE.court}
+                </span>
+              </div>
+            )}
             {boutonDodo && (
               <div className="flex w-14 flex-col items-center gap-1.5">
                 <button
@@ -259,6 +278,15 @@ export default function Home() {
           longueurMax={dragon.nomLongueurMax}
           enCours={enCours}
           nommer={(name) => envoyer("name", { name })}
+        />
+      )}
+
+      {carteOuverte && dragon?.archetype && (
+        <CarteIdentite
+          nom={dragon.named ? dragon.name : "Ton dragon"}
+          archetype={dragon.archetype}
+          description={dragon.descriptionArchetype}
+          fermer={() => setCarteOuverte(false)}
         />
       )}
 

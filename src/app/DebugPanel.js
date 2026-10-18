@@ -58,10 +58,12 @@ export default function DebugPanel({ dragon, enCours, envoyer }) {
           </div>
         ))}
 
-        {debug.personality && (
+        {debug.personality ? (
           <p>
             archétype : {debug.personality} · {JSON.stringify(debug.adultStats)}
           </p>
+        ) : (
+          <p>scores (rapidité) : {JSON.stringify(debug.scoresBesoins)}</p>
         )}
 
         <div className="flex flex-wrap gap-2">

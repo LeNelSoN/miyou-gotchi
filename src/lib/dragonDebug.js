@@ -1,7 +1,7 @@
 import { readFile, writeFile } from "fs/promises";
 import path from "path";
 import config from "../../config/game.json";
-import { nomEtape } from "./dragonEngine";
+import { nomEtape, scoresBesoins } from "./dragonEngine";
 import { recupererDragonSynchronise, sauvegarderDragon } from "./dragonRepository";
 import { decalerReves } from "./revesRepository";
 
@@ -27,6 +27,7 @@ export function infosDebug(dragon) {
     progression: dragon.stage_progress,
     dureeEtape: config.etapes[nomEtape(dragon.stage)]?.dureeHeures ?? null,
     adultStats: dragon.adult_stats,
+    scoresBesoins: scoresBesoins(dragon),
     personality: dragon.personality,
     config: calibrationPossible() ? config : null,
   };

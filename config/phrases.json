@@ -8,7 +8,8 @@
     "froid",
     "chaud",
     "sale",
-    "triste"
+    "triste",
+    "envieApprendre"
   ],
   "etapes": {
     "oeuf": {
@@ -373,6 +374,23 @@
           "Ça me ferait du bien de jouer...",
           "Je voudrais une balle à attraper !",
           "Un câlin et un jeu, et ça ira mieux."
+        ],
+        "envieApprendre": [
+          "Tu m'apprends quelque chose ? J'ai envie de savoir plein de trucs !",
+          "J'ai oublié ce que tu m'as appris... on recommence ?",
+          "Ma tête est toute vide, remplis-la d'idées !",
+          "C'est quoi, la leçon d'aujourd'hui ?",
+          "Je veux apprendre à compter jusqu'à cent !",
+          "Tu me racontes comment marche le monde ?",
+          "J'ai une question ! Enfin... j'ai oublié la question.",
+          "On fait une petite leçon ? Je serai sage !",
+          "Je m'ennuie un peu, apprends-moi un truc !",
+          "Je veux devenir un dragon savant, aide-moi !",
+          "Mes idées s'envolent... rattrape-les avec moi ?",
+          "Dis, c'est quoi un arc-en-ciel, en vrai ?",
+          "Je connais pas encore assez de mots !",
+          "Une leçon, s'il te plaît ? Juste une petite !",
+          "Je sens que mon cerveau a faim !"
         ]
       },
       "soins": {
@@ -626,6 +644,23 @@
           "Tu veux bien me changer les idées ?",
           "Je me sens tout terne...",
           "Un moment de jeu, rien que nous deux ?"
+        ],
+        "envieApprendre": [
+          "Il me semble que j'oublie des choses... tu me rafraîchis la mémoire ?",
+          "J'ai envie d'apprendre quelque chose de nouveau aujourd'hui.",
+          "Une petite leçon me ferait le plus grand bien.",
+          "Mon esprit a soif de découvertes.",
+          "Tu m'enseignes quelque chose ? Je t'écouterai bien.",
+          "Je n'ai rien appris depuis longtemps, ça me manque.",
+          "Raconte-moi quelque chose que je ne sais pas.",
+          "Un dragon qui n'apprend plus, c'est un dragon qui s'endort.",
+          "J'aimerais comprendre comment poussent les arbres.",
+          "Ma mémoire a besoin d'un peu d'exercice.",
+          "Tu as appris quelque chose de nouveau ? Tu me l'apprends ?",
+          "J'ai l'impression que mes connaissances s'envolent comme des feuilles.",
+          "Une question me trotte dans la tête... on cherche la réponse ensemble ?",
+          "J'ai envie de lire un nouveau livre avec toi.",
+          "Apprendre avec toi, c'est mon moment préféré... et ça fait longtemps."
         ]
       },
       "soins": {

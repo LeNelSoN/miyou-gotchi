@@ -78,7 +78,7 @@
       "champDb": "joy",
       "max": 100,
       "seuilMin": 30,
-      "variationParHeure": 0,
+      "variationParHeure": -1,
       "actions": {
         "jouer": {
           "effet": 25
@@ -103,7 +103,8 @@
     "apprentissage": {
       "champDb": "learning",
       "max": 100,
-      "variationParHeure": 0,
+      "seuilMin": 40,
+      "variationParHeure": -1,
       "actions": {
         "eduquer": {
           "effet": 20
@@ -113,7 +114,8 @@
       "etapesActives": [
         "jeune",
         "adulte"
-      ]
+      ],
+      "humeurSiMauvais": "envieApprendre"
     },
     "energie": {
       "champDb": "energy",
@@ -139,6 +141,16 @@
     }
   },
   "personnalite": {
+    "suivi": {
+      "etapes": [
+        "bebe",
+        "jeune"
+      ],
+      "delaiParfaitHeures": 1,
+      "demiVieHeures": 3,
+      "noteNeutre": 50,
+      "poidsNeutre": 1
+    },
     "margeEgalite": 5,
     "ordrePriorite": [
       "feu",
@@ -163,6 +175,23 @@
       "hygiene+joie": "Charmeur",
       "hygiene+apprentissage": "Perfectionniste",
       "joie+apprentissage": "Curieux"
+    },
+    "descriptions": {
+      "Ardent": "Tu as toujours veillé sur son feu. Il est devenu un dragon plein d'énergie et de courage, qui brûle d'envie de vivre mille aventures avec toi.",
+      "Gourmand": "Tu as toujours su quand il avait faim. Il adore les bons repas, et encore plus les partager avec toi.",
+      "Coquet": "Grâce à tes bains, il a toujours brillé. Il prend soin de lui et aime que tout soit beau autour de vous.",
+      "Farceur": "Tu as toujours su lui rendre le sourire. Il est devenu un vrai farceur, qui ne pense qu'à te faire rire.",
+      "Érudit": "Tu lui as appris tant de choses ! Il est devenu un dragon savant, curieux de tout, qui adore partager ce qu'il sait.",
+      "Vorace": "Feu et repas, tu n'as rien laissé s'éteindre. Il croque la vie à pleines dents, avec un appétit de volcan.",
+      "Flamboyant": "Bien au chaud et toujours propre grâce à toi, il est devenu un dragon éclatant, qui aime briller rien que pour toi.",
+      "Fantasque": "Tu as entretenu son feu et sa joie. Il est devenu un dragon plein de fantaisie, aux idées les plus folles.",
+      "Visionnaire": "Tu as nourri son feu et son esprit. Il est devenu un grand rêveur, qui imagine un avenir merveilleux avec toi.",
+      "Méticuleux": "Repas et bains, toujours à l'heure : il est devenu un dragon soigneux, qui aime l'ordre et les choses bien faites.",
+      "Bon Vivant": "Tu as toujours pensé à son ventre et à sa bonne humeur. Il est devenu un joyeux gourmand qui adore faire la fête.",
+      "Épicurien": "Bons repas et belles leçons : il est devenu un fin gourmet, qui aime savourer et comprendre chaque chose.",
+      "Charmeur": "Toujours propre et toujours joyeux grâce à toi, il est devenu un dragon charmant, qui a toujours un compliment pour toi.",
+      "Perfectionniste": "Propre et studieux grâce à toi, il est devenu un dragon appliqué, qui veut tout faire de son mieux.",
+      "Curieux": "Tu as su le faire rire et apprendre. Il est devenu un explorateur curieux, qui pose mille questions sur le monde."
     }
   },
   "etapes": {

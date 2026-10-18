@@ -30,8 +30,9 @@ create table dragon (
   joy                 numeric not null default 100,  -- joie, active à partir de l'étape Jeune
   learning            numeric not null default 0,    -- apprentissage, actif à partir de l'étape Jeune
   energy              numeric not null default 100,  -- énergie, active à partir de l'étape Jeune
-  adult_stats         jsonb,                          -- instantané {fire, hunger, clean, joy, learning} au passage à Adulte
-  personality         text,                           -- archétype dérivé de adult_stats (règles à définir)
+  adult_stats         jsonb,                          -- scores de rapidité {feu, nourriture, hygiene, joie, apprentissage} figés au passage à Adulte
+  personality         text,                           -- archétype dérivé de adult_stats (section 5)
+  besoins             jsonb not null default '{}',    -- suivi des besoins pendant la croissance, par trait : {notes, nombre, ouvert}
   tricks_learned      jsonb not null default '[]',
   available_tricks    jsonb not null default '[]',
   training_progress   jsonb not null default '{}',
@@ -115,7 +116,7 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
       "champDb": "joy",
       "max": 100,
       "seuilMin": 30,
-      "variationParHeure": 0,
+      "variationParHeure": -1,
       "actions": { "jouer": { "effet": 25 }, "eduquer": { "effet": -15 } },
       "multiplicateurActionSiMauvais": { "jouer": 0.5 },
       "affecteCroissance": true,
@@ -126,10 +127,12 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
     "apprentissage": {
       "champDb": "learning",
       "max": 100,
-      "variationParHeure": 0,
+      "seuilMin": 40,
+      "variationParHeure": -1,
       "actions": { "eduquer": { "effet": 20 } },
       "affecteCroissance": false,
-      "etapesActives": ["jeune", "adulte"]
+      "etapesActives": ["jeune", "adulte"],
+      "humeurSiMauvais": "envieApprendre"
     },
     "energie": {
       "champDb": "energy",
@@ -142,8 +145,11 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
     }
   },
   "personnalite": {
+    "suivi": { "etapes": ["bebe", "jeune"], "delaiParfaitHeures": 1, "demiVieHeures": 3, "noteNeutre": 50, "poidsNeutre": 1 },
     "margeEgalite": 5,
-    "ordrePriorite": ["feu", "nourriture", "hygiene", "joie", "apprentissage"]
+    "ordrePriorite": ["feu", "nourriture", "hygiene", "joie", "apprentissage"],
+    "archetypes": { "feu": "Ardent", "...": "..." },
+    "descriptions": { "Ardent": "Tu as toujours veillé sur son feu. ...", "...": "..." }
   },
   "etapes": {
     "oeuf": { "dureeHeures": 72, "paliers": 6 },
@@ -243,26 +249,29 @@ Une IA légère tournant sur un homelab (Ollama) écrit chaque nuit un rêve con
 ### Étape 3 — Jeune dragon ✅ (validé)
 
 - Caractéristiques actives : `feu`, `nourriture`, `hygiene` (inchangées) + `joie`, `apprentissage`, `energie`.
-- **Joie** (`joy`) : "Jouer" l'augmente, "Éduquer" la diminue. Hors zone (triste) → "Jouer" devient moins efficace (`multiplicateurActionSiMauvais`) **et** "Nourrir" est complètement bloqué (`bloque.nourrir = "siMauvais"`).
-- **Apprentissage** (`learning`) : "Éduquer" l'augmente. N'affecte pas la croissance (`affecteCroissance: false`) — progression à part, base pour les tours plus tard.
+- **Joie** (`joy`) : baisse lentement d'elle-même (il s'ennuie), "Jouer" l'augmente, "Éduquer" la diminue. Hors zone (triste) → "Jouer" devient moins efficace (`multiplicateurActionSiMauvais`) **et** "Nourrir" est complètement bloqué (`bloque.nourrir = "siMauvais"`).
+- **Apprentissage** (`learning`) : baisse lentement d'elle-même (il oublie), "Éduquer" l'augmente. Sous `seuilMin` (40), il a envie d'apprendre (humeur `envieApprendre`, visible dans ses pensées). N'affecte pas la croissance (`affecteCroissance: false`) — progression à part, base pour les tours plus tard.
 - **Énergie** (`energy`) : "Jouer" et "Éduquer" en coûtent, régénération passive avec le temps. À 0 → "Jouer" et "Éduquer" bloqués (`bloque.jouer/eduquer = "siVide"`). N'affecte pas la croissance directement (voir note section 4).
 - Durée : `etapes.jeune.dureeHeures` = 336h (14 jours), proposé par défaut — à confirmer.
-- Au passage à Adulte : instantané de `{ feu, nourriture, hygiene, joie, apprentissage }` dans `adult_stats` (énergie exclue, ce n'est pas un trait de personnalité). Ces valeurs deviennent les stats fixes du dragon adulte.
+- Au passage à Adulte : les scores de rapidité des 5 traits sont figés dans `adult_stats` et l'archétype est calculé (voir « Détermination de l'archétype » ci-dessous).
 
 ### Étape 4 — Dragon adulte ✅ (validé)
 
-- `adult_stats` contient l'instantané figé des 5 caractéristiques au moment du passage à l'âge adulte.
+- `adult_stats` contient les scores de rapidité figés au passage à l'âge adulte.
+- Au passage à Adulte, une **carte d'identité** s'ouvre : nom du dragon, archétype et sa description (`personnalite.descriptions`). Un bouton "Carte" permet de la rouvrir.
 - `feu`, `nourriture`, `hygiene` restent actives (`etapesActives` les inclut) mais sans enjeu de croissance puisqu'il n'y a plus de `stage_progress` à faire avancer à ce stade — entretien léger/cosmétique. **Aucune autre activité à cette étape pour l'instant** (tours et carte d'identité/portrait : voir backlog section 10).
 
 #### Détermination de l'archétype (`personality`)
 
-Calculée une seule fois, au moment du passage à Adulte, à partir de `adult_stats` :
+Le caractère reflète **la rapidité avec laquelle la joueuse a comblé chaque besoin**, pendant toute la croissance (Bébé et Jeune, `personnalite.suivi.etapes` ; l'œuf ne compte pas, ses nuits froides étant inévitables).
 
-1. Comparer les 5 valeurs (`feu`, `nourriture`, `hygiene`, `joie`, `apprentissage`).
-2. Repérer la valeur la plus haute, puis tous les traits dont l'écart avec ce maximum est ≤ `personnalite.margeEgalite` (config, 5 points).
-3. **1 seul trait retenu** → archétype de base (trait dominant).
-4. **2 traits retenus** → archétype hybride (combinaison des 2).
-5. **3 traits ou plus retenus** → appliquer l'ordre de priorité fixe `personnalite.ordrePriorite` (`feu > nourriture > hygiene > joie > apprentissage`) pour ne garder que les 2 premiers de cet ordre parmi les traits à égalité, puis traiter comme un cas à 2 traits.
+1. **Besoin** : un trait (`feu`, `nourriture`, `hygiene`, `joie`, `apprentissage`) sort de sa bonne zone. Pour le feu, les deux sens comptent : trop de bois ouvre un besoin « trop chaud ».
+2. **Comblé** seulement quand la jauge revient en bonne zone (un soin insuffisant ne ferme pas le besoin).
+3. **Note du besoin** : 100 s'il est comblé en `delaiParfaitHeures` (1h) ou moins, puis divisée par deux toutes les `demiVieHeures` (3h) : 50 à 4h, 25 à 7h... Seules les **heures éveillé** comptent : pendant le sommeil, elle ne peut rien faire.
+4. **Score du trait** (0 à 100) : moyenne des notes, besoin encore ouvert compris, avec `poidsNeutre` note(s) fictive(s) à `noteNeutre` (50). Un trait presque jamais en manque reste vers 50 : les jauges faciles à tenir ne gagnent pas d'office.
+5. Au passage à Adulte, les scores sont figés dans `adult_stats` ; on retient le meilleur et ceux à `margeEgalite` (5 points) ou moins : **1 trait** → archétype de base ; **2 traits** → hybride ; **3 ou plus** → deux tirés au hasard parmi eux, puis hybride. Les clés d'hybrides suivent `ordrePriorite`.
+
+Le suivi est tenu dans la colonne `besoins` par le moteur (tick horaire et chaque soin).
 
 **Archétypes de base** (trait dominant) :
 
@@ -338,6 +347,9 @@ Remplacer les visuels placeholder par les images du dessinateur, au fur et à me
 **Phase 6 — Finitions**
 Transitions/animations, modale de nom, confirmation de reset, responsive mobile.
 
+**Phase 6 bis — Second écran : ce que dit le dragon**
+Ajouter sur la coque un deuxième petit écran, de taille fixe, dédié aux paroles du dragon (section 5, « Pensées du dragon ») : la bulle quitte l'écran principal, qui garde le dragon, l'état du feu et les alertes. Taille fixe pour que rien ne saute d'une phrase à l'autre : prévue pour le texte le plus long, soit 81 caractères dans la banque (`config/phrases.json`) et jusqu'à 160 pour le récit d'un rêve généré par l'IA (`config/ia.json`), en même police pixel, lisible sur mobile. Il s'éteint avec l'écran principal pendant le Dodo, tout en continuant d'afficher le rêve.
+
 **Phase 7 — Fonctionnalités en attente de spec (backlog, section 10)**
 Système de tours, activités Adulte additionnelles (carte d'identité/portrait) — à démarrer une fois ces specs détaillées.
 
@@ -352,4 +364,4 @@ Variables d'environnement en prod, test complet sur mobile avant de l'offrir.
 ## 10. À spécifier plus tard (backlog)
 
 - **Système de tours** : quels tours, comment on les débloque/enseigne, lien avec `learning` (l'apprentissage accumulé au Jeune devrait influencer ça) **et avec l'archétype** (`personality`, défini en section 5) — les tours accessibles à l'Adulte pourraient en dépendre. Route `POST /api/dragon/train` déjà réservée en section 6, en attente du détail.
-- **Carte d'identité / portrait Adulte** : écran révélant l'archétype et un résumé du parcours du dragon (`adult_stats`) — envisagé, non prioritaire pour l'instant (l'étape Adulte se limite à l'entretien cosmétique, section 5).
+- **Portrait Adulte** : la carte d'identité (archétype + description) existe ; reste à envisager un résumé illustré du parcours du dragon (`adult_stats`).

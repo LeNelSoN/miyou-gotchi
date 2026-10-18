@@ -193,8 +193,10 @@ export function dragonPourClient(dragon, maintenant = new Date()) {
     etape: etapeCourante,
     named: dragon.named,
     name: dragon.name,
-    // Archétype figé au passage à Adulte (`null` avant) : il donne sa voix aux pensées.
+    // Archétype figé au passage à Adulte (`null` avant) : il donne sa voix aux pensées
+    // et s'affiche sur la carte d'identité.
     archetype: dragon.personality ?? null,
+    descriptionArchetype: config.personnalite.descriptions[dragon.personality] ?? null,
     indicateurs: indicateursActifs(dragon, etapeCourante),
     alertes: alertesActives(dragon, etapeCourante),
     humeurs: humeursActives(dragon, etapeCourante),
@@ -250,22 +252,75 @@ function tenterPassageEtapeSuivante(dragon, nomEtapeCourante) {
 }
 
 // Les traits de personnalité sont ceux listés dans `personnalite.ordrePriorite`
-// (l'énergie n'en fait pas partie). Les clés d'archétypes hybrides de la config
-// suivent ce même ordre, jointes par "+".
-export function determinerArchetype(stats) {
+// (l'énergie n'en fait pas partie). Pendant les étapes `personnalite.suivi.etapes`,
+// chaque fois qu'un trait sort de sa bonne zone, un besoin s'ouvre ; il se ferme quand
+// la jauge y revient, avec une note de rapidité. `besoins` garde, par trait :
+// `{ notes, nombre, ouvert }`, `ouvert` comptant les heures éveillé depuis l'ouverture.
+function traitsSuivis(dragon) {
+  const etape = nomEtape(dragon.stage);
+  if (!config.personnalite.suivi.etapes.includes(etape)) return [];
+  return config.personnalite.ordrePriorite.filter((trait) =>
+    config.caracteristiques[trait].etapesActives.includes(etape)
+  );
+}
+
+// 100 si le besoin est comblé dans le délai parfait, puis moitié moins à chaque demi-vie.
+function noteReponse(heures) {
+  const { delaiParfaitHeures, demiVieHeures } = config.personnalite.suivi;
+  return 100 * 0.5 ** (Math.max(0, heures - delaiParfaitHeures) / demiVieHeures);
+}
+
+// `heureEcoulee` : appel du tick horaire (le temps d'attente avance), et non d'une action.
+// Les heures de sommeil ne comptent pas : la joueuse ne peut rien faire pendant ce temps.
+function suivreBesoins(dragon, heureEcoulee) {
+  const traits = traitsSuivis(dragon);
+  if (traits.length === 0) return;
+  const besoins = { ...dragon.besoins };
+  for (const trait of traits) {
+    const carac = config.caracteristiques[trait];
+    const suivi = { notes: 0, nombre: 0, ouvert: null, ...besoins[trait] };
+    if (suivi.ouvert != null && heureEcoulee && !estEndormi(dragon)) suivi.ouvert += 1;
+    const enManque = !estDansBonneZone(carac, dragon[carac.champDb]);
+    if (enManque && suivi.ouvert == null) suivi.ouvert = 0;
+    if (!enManque && suivi.ouvert != null) {
+      suivi.notes += noteReponse(suivi.ouvert);
+      suivi.nombre += 1;
+      suivi.ouvert = null;
+    }
+    besoins[trait] = suivi;
+  }
+  dragon.besoins = besoins;
+}
+
+// Score de 0 à 100 par trait : moyenne des notes, besoin encore ouvert compris, tirée
+// vers `noteNeutre` quand il y a eu peu de besoins (un trait jamais en manque ne gagne pas).
+export function scoresBesoins(dragon) {
+  const { noteNeutre, poidsNeutre } = config.personnalite.suivi;
+  const scores = {};
+  for (const trait of config.personnalite.ordrePriorite) {
+    const { notes = 0, nombre = 0, ouvert = null } = dragon.besoins?.[trait] ?? {};
+    const total = notes + (ouvert != null ? noteReponse(ouvert) : 0) + noteNeutre * poidsNeutre;
+    const compte = nombre + (ouvert != null ? 1 : 0) + poidsNeutre;
+    scores[trait] = Math.round((total / compte) * 10) / 10;
+  }
+  return scores;
+}
+
+// Un meilleur score → archétype de base ; deux à moins de `margeEgalite` → hybride ;
+// trois ou plus → deux tirés au hasard parmi eux. Les clés d'hybrides suivent
+// l'ordre de `ordrePriorite`, jointes par "+".
+export function determinerArchetype(scores, aleatoire = Math.random) {
   const { margeEgalite, ordrePriorite, archetypes } = config.personnalite;
-  const maximum = Math.max(...ordrePriorite.map((trait) => stats[trait]));
-  const retenus = ordrePriorite.filter((trait) => maximum - stats[trait] <= margeEgalite);
-  return archetypes[retenus.slice(0, 2).join("+")];
+  const maximum = Math.max(...ordrePriorite.map((trait) => scores[trait]));
+  const retenus = ordrePriorite.filter((trait) => maximum - scores[trait] <= margeEgalite);
+  while (retenus.length > 2) retenus.splice(Math.floor(aleatoire() * retenus.length), 1);
+  return archetypes[retenus.join("+")];
 }
 
 function figerPersonnalite(dragon) {
-  const stats = {};
-  for (const trait of config.personnalite.ordrePriorite) {
-    stats[trait] = dragon[config.caracteristiques[trait].champDb];
-  }
-  dragon.adult_stats = stats;
-  dragon.personality = determinerArchetype(stats);
+  const scores = scoresBesoins(dragon);
+  dragon.adult_stats = scores;
+  dragon.personality = determinerArchetype(scores);
 }
 
 // Simule heure par heure (et non en un seul calcul) car les caractéristiques actives
@@ -281,6 +336,7 @@ export function avancerDragon(dragon, maintenant = new Date()) {
     appliquerRythme(resultat, decaler(dernierPassage, i));
     const etapeCourante = nomEtape(resultat.stage);
     appliquerDecroissanceHoraire(resultat, etapeCourante);
+    suivreBesoins(resultat, true);
 
     const dureeEtape = config.etapes[etapeCourante]?.dureeHeures;
     if (dureeEtape != null) {
@@ -322,6 +378,8 @@ export function appliquerAction(dragon, actionName) {
     }
     resultat[carac.champDb] = clamp(resultat[carac.champDb] + effet, carac.max);
   }
+  // Un soin peut combler un besoin (ou en créer un : trop de bois, une leçon qui attriste).
+  suivreBesoins(resultat, false);
 
   return { dragon: resultat, applique: true };
 }

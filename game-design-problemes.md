@@ -24,7 +24,7 @@ Analyse du 3 octobre 2026, à partir de `config/game.json`, du moteur (`src/lib/
 
 Piste : le dragon ne peut être couché que lorsqu'il est fatigué (après une douzaine d'heures éveillé) et se réveille seul après 10 h environ. Le GIF aux yeux mi-clos, aujourd'hui inutilisé, signale qu'il est l'heure de le coucher.
 
-### 2. L'archétype est joué d'avance
+### 2. L'archétype est joué d'avance — ✅ corrigé (rapidité à combler chaque besoin + carte d'identité, à valider)
 
 - Il est calculé sur un instantané des jauges au passage à l'Adulte, pas sur la façon dont le dragon a été élevé.
 - Joie et apprentissage ne décroissent jamais : un joueur attentif les a toutes deux à 100 et obtient « Curieux » presque à coup sûr.
@@ -34,7 +34,7 @@ Piste : le dragon ne peut être couché que lorsqu'il est fatigué (après une d
 
 Piste : compter les soins donnés pendant la croissance (bois, repas, bains, jeux, leçons) et retenir les dominants ; révéler le résultat sur une carte d'identité de l'Adulte.
 
-### 3. L'étape Jeune s'épuise en une session
+### 3. L'étape Jeune s'épuise en une session — 🟡 en partie (joie et apprentissage baissent seuls, -1/h)
 
 - Cinq clics sur « Éduquer » amènent l'apprentissage à 100, et l'énergie de départ suffit.
 - La joie ne baisse que si on éduque : une fois l'apprentissage plein, elle ne bouge plus.
