@@ -66,6 +66,14 @@ function humeursActives(dragon, nomEtapeCourante) {
     .map((carac) => carac.humeurSiMauvais);
 }
 
+// Avancement de l'étape, réduit à un numéro de palier (0 = tout début) pour ne pas
+// exposer la progression brute. `null` si l'étape n'a pas de paliers.
+function palierProgression(dragon, nomEtapeCourante) {
+  const { dureeHeures, paliers } = config.etapes[nomEtapeCourante] ?? {};
+  if (!paliers) return null;
+  return Math.min(paliers - 1, Math.floor((dragon.stage_progress / dureeHeures) * paliers));
+}
+
 // Indicateurs "ponctuel" : émis uniquement en réponse à une action qui touche
 // la caractéristique, puis masqués par le client après `dureeSecondes`.
 export function messagesPonctuels(dragon, actionName) {
@@ -78,7 +86,90 @@ export function messagesPonctuels(dragon, actionName) {
     }));
 }
 
+export function estEndormi(dragon) {
+  return dragon.sleeping_since != null;
+}
+
+function decaler(horodatage, heures) {
+  return new Date(new Date(horodatage).getTime() + heures * HEURE_MS);
+}
+
+// Rythme veille/sommeil de l'étape, `undefined` aux étapes où le dragon ne dort pas.
+function rythme(dragon) {
+  return config.dodo.etapes[nomEtape(dragon.stage)];
+}
+
+function heureReveilPossible(dragon) {
+  return decaler(dragon.sleeping_since, config.dodo.dureeMinHeures);
+}
+
+function heureReveilNaturel(dragon) {
+  return decaler(dragon.sleeping_since, rythme(dragon).sommeilHeures);
+}
+
+function heureFatigue(dragon) {
+  return decaler(dragon.awake_since, rythme(dragon).eveilHeures);
+}
+
+function heureEndormissement(dragon) {
+  return decaler(heureFatigue(dragon), config.dodo.endormissementHeures);
+}
+
+function estFatigue(dragon, maintenant) {
+  return Boolean(rythme(dragon)) && !estEndormi(dragon) && maintenant >= heureFatigue(dragon);
+}
+
+// Réveil naturel au bout de son temps de sommeil, endormissement seul quand il est
+// resté fatigué trop longtemps. Les horodatages sont ceux du rythme, pas `instant`,
+// pour ne pas dépendre de l'heure à laquelle le joueur revient.
+function appliquerRythme(dragon, instant) {
+  if (!rythme(dragon)) return;
+  if (estEndormi(dragon)) {
+    const reveil = heureReveilNaturel(dragon);
+    if (instant >= reveil) {
+      dragon.sleeping_since = null;
+      dragon.awake_since = reveil.toISOString();
+    }
+  } else {
+    const endormissement = heureEndormissement(dragon);
+    if (instant >= endormissement) dragon.sleeping_since = endormissement.toISOString();
+  }
+}
+
+// `null` aux étapes où le dragon ne peut pas dormir.
+function etatDodo(dragon, maintenant) {
+  if (!rythme(dragon)) return null;
+  const endormi = estEndormi(dragon);
+  return {
+    endormi,
+    fatigue: estFatigue(dragon, maintenant),
+    messageFatigue: config.dodo.fatigue.message,
+    dureeMinHeures: config.dodo.dureeMinHeures,
+    sommeilHeures: rythme(dragon).sommeilHeures,
+    reveilA: endormi ? heureReveilNaturel(dragon).toISOString() : null,
+  };
+}
+
+// Renvoie le dragon endormi, ou `null` s'il ne peut pas être couché (pas encore fatigué).
+export function coucher(dragon, maintenant = new Date()) {
+  if (!estFatigue(dragon, maintenant)) return null;
+  return { ...dragon, sleeping_since: maintenant.toISOString() };
+}
+
+// Message ponctuel affiché quand un réveil est refusé parce qu'il dort depuis trop peu de temps.
+export function messagesRefusReveil(dragon) {
+  return estEndormi(dragon) ? [config.dodo.refusReveil] : [];
+}
+
+// Renvoie le dragon réveillé, ou `null` s'il ne dort pas ou pas depuis assez longtemps.
+export function reveiller(dragon, maintenant = new Date()) {
+  if (!estEndormi(dragon) || maintenant < heureReveilPossible(dragon)) return null;
+  return { ...dragon, sleeping_since: null, awake_since: maintenant.toISOString() };
+}
+
+// Un dragon endormi ne peut rien faire : toutes ses actions sont bloquées.
 function estActionBloquee(dragon, actives, actionName) {
+  if (estEndormi(dragon)) return true;
   return actives.some((carac) => {
     const condition = carac.bloque?.[actionName];
     if (!condition) return false;
@@ -95,7 +186,7 @@ function actionsDisponibles(dragon, nomEtapeCourante) {
   return [...noms].map((nom) => ({ nom, bloquee: estActionBloquee(dragon, actives, nom) }));
 }
 
-export function dragonPourClient(dragon) {
+export function dragonPourClient(dragon, maintenant = new Date()) {
   const etapeCourante = nomEtape(dragon.stage);
   return {
     stage: dragon.stage,
@@ -105,6 +196,8 @@ export function dragonPourClient(dragon) {
     indicateurs: indicateursActifs(dragon, etapeCourante),
     alertes: alertesActives(dragon, etapeCourante),
     humeurs: humeursActives(dragon, etapeCourante),
+    palier: palierProgression(dragon, etapeCourante),
+    dodo: etatDodo(dragon, maintenant),
     actions: actionsDisponibles(dragon, etapeCourante),
     nomLongueurMax: config.nom.longueurMax,
   };
@@ -127,7 +220,12 @@ function clamp(valeur, max) {
 function appliquerDecroissanceHoraire(dragon, nomEtapeCourante) {
   for (const carac of caracteristiquesActives(nomEtapeCourante)) {
     if (!carac.variationParHeure) continue;
-    dragon[carac.champDb] = clamp(dragon[carac.champDb] + carac.variationParHeure, carac.max);
+    let variation = carac.variationParHeure;
+    // Le sommeil ralentit les pertes et accélère les gains (régénération de l'énergie).
+    if (estEndormi(dragon)) {
+      variation *= variation < 0 ? config.dodo.multiplicateurPerte : config.dodo.multiplicateurGain;
+    }
+    dragon[carac.champDb] = clamp(dragon[carac.champDb] + variation, carac.max);
   }
 }
 
@@ -173,13 +271,12 @@ function figerPersonnalite(dragon) {
 // la décroissance/progression sur les nouvelles caractéristiques dès l'heure suivante.
 export function avancerDragon(dragon, maintenant = new Date()) {
   const dernierPassage = new Date(dragon.last_seen);
-  const heuresEcoulees = Math.floor((maintenant.getTime() - dernierPassage.getTime()) / HEURE_MS);
-
-  if (heuresEcoulees <= 0) return dragon;
+  const heuresEcoulees = Math.max(0, Math.floor((maintenant.getTime() - dernierPassage.getTime()) / HEURE_MS));
 
   const resultat = { ...dragon };
 
   for (let i = 0; i < heuresEcoulees; i++) {
+    appliquerRythme(resultat, decaler(dernierPassage, i));
     const etapeCourante = nomEtape(resultat.stage);
     appliquerDecroissanceHoraire(resultat, etapeCourante);
 
@@ -187,11 +284,18 @@ export function avancerDragon(dragon, maintenant = new Date()) {
     if (dureeEtape != null) {
       avancerProgressionEtape(resultat, etapeCourante);
       tenterPassageEtapeSuivante(resultat, etapeCourante);
+      // L'éclosion ouvre le premier cycle de veille.
+      if (!config.dodo.etapes[etapeCourante] && rythme(resultat)) {
+        resultat.awake_since = decaler(dernierPassage, i + 1).toISOString();
+      }
     }
   }
 
+  // Le réveil ou l'endormissement survenu depuis la dernière heure pleine est visible tout de suite.
+  appliquerRythme(resultat, maintenant);
+
   // Les minutes restantes (heures fractionnaires) sont conservées pour le prochain appel.
-  resultat.last_seen = new Date(dernierPassage.getTime() + heuresEcoulees * HEURE_MS).toISOString();
+  resultat.last_seen = decaler(dernierPassage, heuresEcoulees).toISOString();
   return resultat;
 }
 

@@ -21,6 +21,15 @@ const ACTIONS = {
   jouer: { libelle: "Jouer", court: "Jouer", icone: "🎾", route: "play" },
   eduquer: { libelle: "Éduquer", court: "Éduquer", icone: "📖", route: "educate" },
 };
+const DODO = {
+  coucher: { libelle: "Coucher", court: "Dodo", icone: "🌙", route: "sleep" },
+  reveiller: { libelle: "Réveiller", court: "Réveil", icone: "☀️", route: "wake" },
+};
+
+function messageSommeil(dodo) {
+  const heure = new Date(dodo.reveilA).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+  return `Zzz... (debout vers ${heure})`;
+}
 
 const CLE_ETAPE_VUE = "miyou-gotchi:etape";
 
@@ -36,15 +45,18 @@ function eclosionAVoir(etape) {
   }
 }
 
-function nomIllustration(dragon, toast, eclosion) {
-  if (eclosion) return "eclosion";
-  if (dragon.etape === "oeuf") return `oeuf-${dragon.indicateurs.feu}`;
+// Renvoie les props de <Illustration>, ou `null` si l'étape n'est pas encore illustrée.
+function choisirIllustration(dragon, toast, eclosion) {
+  const { feu } = dragon.indicateurs;
+  if (eclosion) return { nom: "eclosion" };
+  if (dragon.etape === "oeuf") return { nom: "oeuf", variante: `${feu}-${dragon.palier}` };
   if (dragon.etape === "bebe") {
-    if (toast) return "bebe-content";
+    if (toast) return { nom: "bebe-content" };
     // La faim n'a pas de message à l'écran : elle passe avant le feu, qui a le sien.
-    if (dragon.humeurs.includes("faim")) return "bebe-faim";
-    if (dragon.indicateurs.feu !== "parfait") return `bebe-fache-${dragon.indicateurs.feu}`;
-    return "bebe";
+    if (dragon.humeurs.includes("faim")) return { nom: "bebe-faim" };
+    if (dragon.dodo.fatigue) return { nom: "bebe-fatigue" };
+    if (feu !== "parfait") return { nom: "bebe-fache", variante: feu };
+    return { nom: "bebe" };
   }
   return null;
 }
@@ -100,8 +112,18 @@ export default function Home() {
     return null;
   }
 
+  function basculerDodo() {
+    const { endormi, sommeilHeures, dureeMinHeures } = dragon.dodo;
+    const question = `Le coucher ? Il dormira ${sommeilHeures} h (réveil possible après ${dureeMinHeures} h).`;
+    if (!endormi && !window.confirm(question)) return;
+    envoyer(endormi ? DODO.reveiller.route : DODO.coucher.route);
+  }
+
+  const endormi = dragon?.dodo?.endormi;
+  const fatigue = dragon?.dodo?.fatigue;
+  const boutonDodo = dragon?.dodo && (endormi ? DODO.reveiller : DODO.coucher);
   const nomAttendu = dragon && dragon.etape !== "oeuf" && !dragon.named && !eclosion;
-  const illustration = dragon && nomIllustration(dragon, toast, eclosion);
+  const illustration = dragon && choisirIllustration(dragon, toast, eclosion);
 
   return (
     <div
@@ -117,7 +139,12 @@ export default function Home() {
             MIYOU-GOTCHI
           </p>
 
-          <div className="ecran flex aspect-square w-full flex-col overflow-hidden rounded-xl p-3 font-pixel">
+          {/* Pendant le Dodo, l'écran s'assombrit et le dragon n'est plus visible. */}
+          <div
+            className={`ecran flex aspect-square w-full flex-col overflow-hidden rounded-xl p-3 font-pixel transition-colors duration-700 ${
+              endormi ? "ecran-eteint" : ""
+            }`}
+          >
             {!dragon && (
               <p className="m-auto text-lg motion-safe:animate-pulse">Chargement...</p>
             )}
@@ -127,7 +154,7 @@ export default function Home() {
                 <div className="flex items-center justify-between text-lg leading-none">
                   <h1 className="truncate">{dragon.named ? dragon.name : "???"}</h1>
                   {/* Avec une illustration, l'état du feu se lit sur le dessin et le message. */}
-                  {!illustration && <span aria-hidden="true">{EMOJIS_FEU[dragon.indicateurs.feu]}</span>}
+                  {!illustration && !endormi && <span aria-hidden="true">{EMOJIS_FEU[dragon.indicateurs.feu]}</span>}
                 </div>
 
                 {/* La clé relance l'animation d'apparition à chaque changement d'étape
@@ -136,8 +163,8 @@ export default function Home() {
                   key={eclosion ? "oeuf" : dragon.etape}
                   className="flex min-h-0 flex-1 items-center justify-center motion-safe:animate-apparition"
                 >
-                  {illustration ? (
-                    <Illustration nom={illustration} />
+                  {endormi ? null : illustration ? (
+                    <Illustration {...illustration} />
                   ) : (
                     <div className="text-[clamp(3rem,18vw,4.5rem)] leading-none drop-shadow-[0_6px_0_rgba(31,42,23,0.25)] motion-safe:animate-flotter">
                       {EMOJIS_ETAPE[dragon.etape]}
@@ -146,14 +173,19 @@ export default function Home() {
                 </div>
 
                 <div className="flex min-h-12 flex-col justify-end text-center leading-tight" aria-live="polite">
-                  {dragon.alertes.map((message) => (
+                  {!endormi && dragon.alertes.map((message) => (
                     <p key={message} className="text-red-800 motion-safe:animate-fondu">
                       ⚠ {message}
                     </p>
                   ))}
-                  {/* Le message ponctuel remplace temporairement l'état du feu. */}
+                  {fatigue && <p className="motion-safe:animate-fondu">{dragon.dodo.messageFatigue}</p>}
+                  {/* Le message ponctuel remplace temporairement l'état du feu (ou du sommeil). */}
                   <p key={toast?.message} className={toast ? "motion-safe:animate-fondu" : ""}>
-                    {toast ? toast.message : MESSAGES_FEU[dragon.indicateurs.feu]}
+                    {toast
+                      ? toast.message
+                      : endormi
+                        ? messageSommeil(dragon.dodo)
+                        : MESSAGES_FEU[dragon.indicateurs.feu]}
                   </p>
                 </div>
               </>
@@ -176,6 +208,21 @@ export default function Home() {
                 </span>
               </div>
             ))}
+            {boutonDodo && (
+              <div className="flex w-14 flex-col items-center gap-1.5">
+                <button
+                  onClick={basculerDodo}
+                  disabled={enCours || (!endormi && !fatigue)}
+                  aria-label={boutonDodo.libelle}
+                  className="bouton-coque flex h-12 w-12 items-center justify-center rounded-full text-2xl transition disabled:opacity-50 disabled:grayscale"
+                >
+                  {boutonDodo.icone}
+                </button>
+                <span className="font-pixel text-xs text-amber-100" aria-hidden="true">
+                  {boutonDodo.court}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </main>

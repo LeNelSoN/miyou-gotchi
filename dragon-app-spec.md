@@ -35,6 +35,8 @@ create table dragon (
   tricks_learned      jsonb not null default '[]',
   available_tricks    jsonb not null default '[]',
   training_progress   jsonb not null default '{}',
+  sleeping_since      timestamptz,                    -- heure du coucher (mode Dodo), null = éveillé
+  awake_since         timestamptz not null default now(), -- heure du dernier réveil (ou de l'éclosion), base de la fatigue
   last_seen           timestamptz not null default now(),
   last_trick_refresh  timestamptz not null default now(),
   created_at          timestamptz not null default now()
@@ -119,11 +121,24 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
     "ordrePriorite": ["feu", "nourriture", "hygiene", "joie", "apprentissage"]
   },
   "etapes": {
-    "oeuf": { "dureeHeures": 72 },
+    "oeuf": { "dureeHeures": 72, "paliers": 6 },
     "bebe": { "dureeHeures": 168 },
     "jeune": { "dureeHeures": 336 }
   },
   "multiplicateurRalentissement": 0.5,
+  "dodo": {
+    "etapes": {
+      "bebe": { "eveilHeures": 8, "sommeilHeures": 12 },
+      "jeune": { "eveilHeures": 12, "sommeilHeures": 10 },
+      "adulte": { "eveilHeures": 14, "sommeilHeures": 8 }
+    },
+    "endormissementHeures": 3,
+    "dureeMinHeures": 4,
+    "multiplicateurPerte": 0.5,
+    "multiplicateurGain": 2,
+    "fatigue": { "message": "Il tombe de sommeil..." },
+    "refusReveil": { "dureeSecondes": 3, "message": "Il dort trop profondément..." }
+  },
   "nom": { "longueurMax": 20 }
 }
 ```
@@ -152,11 +167,25 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
 
 À chaque heure réelle écoulée, pour l'étape en cours : si **toutes** les caractéristiques actives à cette étape avec `affecteCroissance: true` sont dans leur bonne zone → `stage_progress += 1h`. Sinon (au moins une hors zone) → `stage_progress += 1h × multiplicateurRalentissement`. Jamais bloqué complètement, juste plus long si négligé (cohérent avec "jamais de mort"). Quand `stage_progress >= etapes.<étape>.dureeHeures` → passage à l'étape suivante, `stage_progress` repart à 0.
 
+### Mode Dodo (Bébé, Jeune, Adulte)
+
+Le dragon suit un rythme veille/sommeil propre à chaque étape (`dodo.etapes`) : un bébé dort plus qu'un adulte.
+
+- Après `eveilHeures` passées éveillé (comptées depuis son dernier réveil, ou l'éclosion), il est **fatigué** : le message `dodo.fatigue` s'affiche (GIF « fatigué » pour le Bébé) et le bouton "Dodo" devient utilisable. Avant, impossible de le coucher.
+- Si le joueur ne le couche pas, il s'endort seul après `endormissementHeures` (3h) de fatigue — sans avoir été préparé.
+- Il se réveille seul après `sommeilHeures`. Le joueur peut le réveiller plus tôt (bouton "Réveil"), mais pas avant `dodo.dureeMinHeures` (4h) de sommeil — un réveil demandé plus tôt est refusé (`dodo.refusReveil`).
+
+- Pendant le sommeil, les pertes (`variationParHeure` négatives) sont multipliées par `dodo.multiplicateurPerte` (0.5) et les gains (régénération de l'énergie) par `dodo.multiplicateurGain` (2) ; la règle de progression continue de s'appliquer normalement.
+- Toutes les actions sont bloquées tant qu'il dort : il faut le préparer avant de le coucher.
+- Pendant le sommeil, l'écran du tamagotchi s'assombrit et le dragon n'est plus visible : seuls restent son nom et l'heure de son réveil naturel.
+- Le rythme est rejoué heure par heure avec le reste du moteur : un réveil ou un endormissement survenu en l'absence du joueur a lieu à l'heure exacte, et change les multiplicateurs dès cette heure-là.
+
 ### Étape 1 — Œuf ✅ (validé)
 
 - Caractéristique active : `feu` uniquement.
 - Bouton "Ajouter du bois", indicateur qualitatif permanent (🥶 trop froid / 🔥 parfait / 🥵 trop chaud), aucune valeur brute affichée.
 - Durée : `etapes.oeuf.dureeHeures` = 72h.
+- Jauge de progression : l'œuf se fissure au fil de `stage_progress`, découpé en `etapes.oeuf.paliers` paliers égaux (6 : intact, puis 5 stades de fissures, soit un nouveau stade toutes les 12h de progression). Seul le numéro de palier est envoyé au client.
 
 ### Étape 2 — Bébé ✅ (validé)
 
@@ -224,6 +253,8 @@ Calculée une seule fois, au moment du passage à Adulte, à partir de `adult_st
 | `POST /api/dragon/wash` | Laver (étape Bébé+) |
 | `POST /api/dragon/play` | Jouer — augmente la joie, coûte de l'énergie (étape Jeune+) |
 | `POST /api/dragon/educate` | Éduquer — augmente l'apprentissage, baisse la joie, coûte de l'énergie (étape Jeune+) |
+| `POST /api/dragon/sleep` | Coucher le dragon (mode Dodo, étape Bébé+) |
+| `POST /api/dragon/wake` | Réveiller le dragon, refusé avant la durée minimale de sommeil |
 | `POST /api/dragon/train` | `{ trickId }` — entraîner un tour *(à définir)* |
 | `POST /api/dragon/name` | `{ name }` — nommer le dragon après éclosion |
 | `POST /api/dragon/reset` | Optionnel, pratique pour les tests |
@@ -232,7 +263,7 @@ Avec l'App Router, des **Server Actions** directement dans les composants peuven
 
 ## 7. Illustrations nécessaires (pour le dessinateur)
 
-- Œuf : un état de base + une variante visuelle par indicateur de température (🥶 trop froid / 🔥 parfait / 🥵 trop chaud) — pas de fissures, la mécanique n'est plus basée sur des taps
+- Œuf : un état de base + une variante visuelle par indicateur de température (🥶 trop froid / 🔥 parfait / 🥵 trop chaud) et par stade de fissures (jauge de progression de l'étape, section 5)
 - Bébé, Jeune, Adulte : détails à définir avec chaque étape
 - Icônes par tour — à définir à l'étape correspondante
 

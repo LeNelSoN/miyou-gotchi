@@ -165,7 +165,8 @@
   },
   "etapes": {
     "oeuf": {
-      "dureeHeures": 72
+      "dureeHeures": 72,
+      "paliers": 6
     },
     "bebe": {
       "dureeHeures": 168
@@ -175,6 +176,33 @@
     }
   },
   "multiplicateurRalentissement": 0.5,
+  "dodo": {
+    "etapes": {
+      "bebe": {
+        "eveilHeures": 8,
+        "sommeilHeures": 12
+      },
+      "jeune": {
+        "eveilHeures": 12,
+        "sommeilHeures": 10
+      },
+      "adulte": {
+        "eveilHeures": 14,
+        "sommeilHeures": 8
+      }
+    },
+    "endormissementHeures": 3,
+    "dureeMinHeures": 4,
+    "multiplicateurPerte": 0.5,
+    "multiplicateurGain": 2,
+    "fatigue": {
+      "message": "Il tombe de sommeil..."
+    },
+    "refusReveil": {
+      "dureeSecondes": 3,
+      "message": "Il dort trop profondément..."
+    }
+  },
   "nom": {
     "longueurMax": 20
   }

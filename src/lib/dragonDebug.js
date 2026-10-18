@@ -65,8 +65,12 @@ export async function calibrerConfig(chemin, valeur) {
 // exactement par le même code que le temps réel.
 export async function avancerTemps(heures) {
   const dragon = await recupererDragonSynchronise();
-  const lastSeen = new Date(new Date(dragon.last_seen).getTime() - heures * HEURE_MS).toISOString();
-  await sauvegarderDragon({ ...dragon, last_seen: lastSeen });
+  // Les heures du coucher et du réveil reculent d'autant, pour que le rythme de sommeil s'écoule aussi.
+  const reculs = {};
+  for (const champ of ["last_seen", "sleeping_since", "awake_since"]) {
+    if (dragon[champ]) reculs[champ] = new Date(new Date(dragon[champ]).getTime() - heures * HEURE_MS).toISOString();
+  }
+  await sauvegarderDragon({ ...dragon, ...reculs });
   return recupererDragonSynchronise();
 }
 

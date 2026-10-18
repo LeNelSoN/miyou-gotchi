@@ -1,5 +1,5 @@
 import { getSupabaseServerClient } from "./supabaseServer";
-import { avancerDragon, appliquerAction, validerNom } from "./dragonEngine";
+import { avancerDragon, appliquerAction, coucher, reveiller, validerNom } from "./dragonEngine";
 
 export async function sauvegarderDragon(dragon) {
   const supabase = getSupabaseServerClient();
@@ -14,7 +14,8 @@ export async function recupererDragonSynchronise() {
   if (error) throw new Error(error.message);
 
   const dragonAJour = avancerDragon(dragon);
-  if (dragonAJour.last_seen !== dragon.last_seen) {
+  const champsTemps = ["last_seen", "sleeping_since", "awake_since"];
+  if (champsTemps.some((champ) => dragonAJour[champ] !== dragon[champ])) {
     await sauvegarderDragon(dragonAJour);
   }
 
@@ -38,6 +39,22 @@ export async function nommerDragon(nom) {
   const resultat = { ...dragon, name: nomValide, named: true };
   await sauvegarderDragon(resultat);
   return { dragon: resultat, applique: true };
+}
+
+async function basculerDodo(transition) {
+  const dragon = await recupererDragonSynchronise();
+  const resultat = transition(dragon);
+  if (!resultat) return { dragon, applique: false };
+  await sauvegarderDragon(resultat);
+  return { dragon: resultat, applique: true };
+}
+
+export function coucherDragon() {
+  return basculerDodo(coucher);
+}
+
+export function reveillerDragon() {
+  return basculerDodo(reveiller);
 }
 
 // Supprime puis recrée la ligne pour repartir des valeurs par défaut du schéma

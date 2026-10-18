@@ -1,16 +1,14 @@
 // Chaque GIF du dessinateur a son propre cadrage : `centre` et `sol` situent le
 // personnage (en pixels du GIF) pour qu'il ne saute pas d'une illustration à l'autre.
 export const ILLUSTRATIONS = {
-  // Une variante par état du feu (échange de couleurs à partir de l'œuf "parfait").
-  "oeuf-froid": { largeur: 62, centre: 29.5, sol: 5 },
-  "oeuf-parfait": { largeur: 62, centre: 29.5, sol: 5 },
-  "oeuf-chaud": { largeur: 62, centre: 29.5, sol: 5 },
+  // Variantes `<feu>-<palier>` : couleur selon le feu, fissures selon l'avancement de l'étape
+  // (dérivées du GIF d'éclosion du dessinateur).
+  oeuf: { largeur: 62, centre: 29.5, sol: 5 },
   // Jouée une seule fois : le fichier n'a pas de boucle et reste sur sa dernière image.
   eclosion: { largeur: 62, centre: 29.5, sol: 5, dureeMs: 6000 },
   bebe: { largeur: 64, centre: 32.5, sol: 4 },
-  // Échange de couleurs à partir de bebe-fache.gif (l'original du dessinateur).
-  "bebe-fache-froid": { largeur: 63, centre: 31.5, sol: 4 },
-  "bebe-fache-chaud": { largeur: 63, centre: 31.5, sol: 4 },
+  // Variantes `froid` et `chaud` : échange de couleurs à partir de l'original du dessinateur.
+  "bebe-fache": { largeur: 63, centre: 31.5, sol: 4 },
   "bebe-content": { largeur: 89, centre: 26.5, sol: 1 },
   "bebe-faim": { largeur: 94, centre: 28.5, sol: 1 },
   "bebe-fatigue": { largeur: 94, centre: 34.5, sol: 6 },
@@ -20,7 +18,7 @@ export const ILLUSTRATIONS = {
 // personnage posé en bas au centre.
 const SCENE = { largeur: 96, hauteur: 80 };
 
-export default function Illustration({ nom }) {
+export default function Illustration({ nom, variante }) {
   const { largeur, centre, sol } = ILLUSTRATIONS[nom];
 
   return (
@@ -28,7 +26,7 @@ export default function Illustration({ nom }) {
       {/* GIF animé : next/image ne l'optimiserait pas. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={`/illustrations/${nom}.gif`}
+        src={`/illustrations/${variante ? `${nom}-${variante}` : nom}.gif`}
         alt=""
         className="absolute max-w-none"
         style={{
