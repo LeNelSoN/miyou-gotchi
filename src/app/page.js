@@ -103,7 +103,7 @@ export default function Home() {
     return () => clearTimeout(minuteur);
   }, [toast]);
 
-  // Après une éclosion, le premier mot attend la fin de l'animation (la bulle est masquée pendant).
+  // Après une éclosion, le premier mot attend la fin de l'animation (l'écran de dialogue reste vide pendant).
   // Le récit du rêve de la nuit (IA), envoyé une seule fois après le réveil, passe avant le reste.
   function afficher(data, evenement) {
     const passage = passageAVoir(data.etape);
@@ -183,12 +183,6 @@ export default function Home() {
                   {!illustration && !endormi && <span aria-hidden="true">{EMOJIS_FEU[dragon.indicateurs.feu]}</span>}
                 </div>
 
-                {pensee && !eclosion && (
-                  <p key={pensee} className="bulle mt-2 self-center text-sm motion-safe:animate-fondu">
-                    {pensee}
-                  </p>
-                )}
-
                 {/* La clé relance l'animation d'apparition à chaque changement d'étape
                     (après l'éclosion, pour ne pas la perturber). */}
                 <div
@@ -221,6 +215,21 @@ export default function Home() {
                   </p>
                 </div>
               </>
+            )}
+          </div>
+
+          {/* Second écran, de taille fixe : ce que dit le dragon. Six lignes suffisent au texte le
+              plus long (récit d'un rêve de l'IA, 160 caractères) sur mobile, pour que rien ne saute. */}
+          <div
+            className={`ecran ecran-dialogue flex w-full items-center justify-center overflow-hidden rounded-xl px-3 py-2 text-center font-pixel transition-colors duration-700 ${
+              endormi ? "ecran-eteint" : ""
+            }`}
+            aria-live="polite"
+          >
+            {pensee && !eclosion && (
+              <p key={pensee} className="motion-safe:animate-fondu">
+                {pensee}
+              </p>
             )}
           </div>
 

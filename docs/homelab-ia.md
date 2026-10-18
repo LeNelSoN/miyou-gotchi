@@ -123,7 +123,7 @@ Si `node` n'est pas trouvé par cron, mettre son chemin complet (`which node`).
 
 1. Coucher le dragon (ou attendre qu'il s'endorme seul).
 2. Lancer le relais à la main (ou attendre le cron).
-3. Recharger la page : la bulle affiche le rêve sur l'écran noir.
+3. Recharger la page : l'écran de dialogue, éteint, affiche le rêve.
 4. Le réveiller : il raconte son rêve une seule fois.
 
 Sans homelab, on peut simuler le relais depuis n'importe quel terminal :

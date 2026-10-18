@@ -213,7 +213,7 @@ Le dragon suit un rythme veille/sommeil propre à chaque étape (`dodo.etapes`) 
 
 ### Pensées du dragon
 
-Le dragon s'adresse à la joueuse (une petite fille) dans une bulle, en la tutoyant, sur un ton tendre — varié selon l'archétype à l'âge adulte. Tout accord qui la concerne est au féminin ; le dragon, lui, reste masculin. Son langage grandit avec lui : sensations dans l'œuf, babillage du Bébé, phrases courtes du Jeune, phrases complètes de l'Adulte.
+Le dragon s'adresse à la joueuse (une petite fille) sur le second écran de la coque (écran de dialogue, taille fixe de six lignes), en la tutoyant, sur un ton tendre — varié selon l'archétype à l'âge adulte. Tout accord qui la concerne est au féminin ; le dragon, lui, reste masculin. Son langage grandit avec lui : sensations dans l'œuf, babillage du Bébé, phrases courtes du Jeune, phrases complètes de l'Adulte.
 
 - Les phrases sont pré-écrites dans `config/phrases.json` (objectif : 1000), par étape : `etats` (content + chaque humeur), `soins` (réaction à une action réussie), `reves` (pendant le Dodo), `moments` (premier mot après l'éclosion, premier mot après un passage d'étape `grandir`, réveil) et, pour l'Adulte, une voix par archétype.
 - La catégorie se déduit uniquement des états qualitatifs envoyés au client (`humeurs`, état du feu, fatigue, sommeil), l'état le plus urgent selon `priorite`. Aucune valeur brute n'est nécessaire.
@@ -230,7 +230,7 @@ Une IA légère tournant sur un homelab (Ollama) écrit chaque nuit un rêve con
 
 - Le contexte ne contient que le nom du dragon, son étape, son archétype, l'heure du coucher (et s'il s'est endormi seul), ses soins depuis son réveil (table `journal`), un thème tiré au hasard et ses derniers rêves (pour éviter les répétitions). Aucune donnée sur l'enfant.
 - Prompt, thèmes, limites et mots interdits vivent dans `config/ia.json`. Les garde-fous du code vérifient le JSON, les longueurs, l'absence d'emoji et de mots interdits ; l'accord au féminin pour l'enfant repose sur le prompt et la relecture des rêves en base.
-- Pendant le sommeil, la bulle affiche `pendant` à la place des rêves de la banque ; après le réveil, `reveil` est raconté une seule fois (`raconte`). Sans rêve généré (homelab éteint), la banque prend le relais sans que rien ne casse.
+- Pendant le sommeil, l'écran de dialogue (éteint lui aussi) affiche `pendant` à la place des rêves de la banque ; après le réveil, `reveil` est raconté une seule fois (`raconte`). Sans rêve généré (homelab éteint), la banque prend le relais sans que rien ne casse.
 
 ### Étape 1 — Œuf ✅ (validé)
 
@@ -347,8 +347,8 @@ Remplacer les visuels placeholder par les images du dessinateur, au fur et à me
 **Phase 6 — Finitions**
 Transitions/animations, modale de nom, confirmation de reset, responsive mobile.
 
-**Phase 6 bis — Second écran : ce que dit le dragon**
-Ajouter sur la coque un deuxième petit écran, de taille fixe, dédié aux paroles du dragon (section 5, « Pensées du dragon ») : la bulle quitte l'écran principal, qui garde le dragon, l'état du feu et les alertes. Taille fixe pour que rien ne saute d'une phrase à l'autre : prévue pour le texte le plus long, soit 81 caractères dans la banque (`config/phrases.json`) et jusqu'à 160 pour le récit d'un rêve généré par l'IA (`config/ia.json`), en même police pixel, lisible sur mobile. Il s'éteint avec l'écran principal pendant le Dodo, tout en continuant d'afficher le rêve.
+**Phase 6 bis — Second écran : ce que dit le dragon** ✅
+Ajouter sur la coque un deuxième petit écran, de taille fixe, dédié aux paroles du dragon (section 5, « Pensées du dragon ») : les paroles quittent l'écran principal, qui garde le dragon, l'état du feu et les alertes. Taille fixe pour que rien ne saute d'une phrase à l'autre : prévue pour le texte le plus long, soit 81 caractères dans la banque (`config/phrases.json`) et jusqu'à 160 pour le récit d'un rêve généré par l'IA (`config/ia.json`), en même police pixel, lisible sur mobile. Il s'éteint avec l'écran principal pendant le Dodo, tout en continuant d'afficher le rêve.
 
 **Phase 7 — Fonctionnalités en attente de spec (backlog, section 10)**
 Système de tours, activités Adulte additionnelles (carte d'identité/portrait) — à démarrer une fois ces specs détaillées.
