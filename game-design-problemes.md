@@ -30,7 +30,7 @@ Piste : le dragon ne peut être couché que lorsqu'il est fatigué (après une d
 - Joie et apprentissage ne décroissent jamais : un joueur attentif les a toutes deux à 100 et obtient « Curieux » presque à coup sûr.
 - Les archétypes de feu demandent un feu à 95 ou plus, donc un dragon en surchauffe : ils récompensent un mauvais soin.
 - Les archétypes de nourriture et d'hygiène demandent d'avoir soigné dans l'heure précédant un passage que le joueur ne voit pas venir.
-- L'archétype n'est affiché nulle part dans l'appli.
+- L'archétype n'est affiché nulle part dans l'appli. (Il s'entend désormais dans les pensées de l'Adulte, mais n'est pas nommé.)
 
 Piste : compter les soins donnés pendant la croissance (bois, repas, bains, jeux, leçons) et retenir les dominants ; révéler le résultat sur une carte d'identité de l'Adulte.
 

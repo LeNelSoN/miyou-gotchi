@@ -15,8 +15,13 @@ function phrasesPossibles(dragon, evenement) {
   if (dragon.dodo?.endormi) return etape.reves ?? [];
 
   const actifs = new Set([...dragon.humeurs, dragon.indicateurs.feu, dragon.dodo?.fatigue && "fatigue"]);
-  const cle = phrases.priorite.find((etat) => actifs.has(etat) && etape.etats[etat]) ?? "content";
-  return etape.etats[cle] ?? [];
+  const cle = phrases.priorite.find((etat) => actifs.has(etat) && etape.etats[etat]);
+  if (cle) return etape.etats[cle];
+
+  // Sans besoin urgent, l'Adulte parle de temps en temps avec la voix de son archétype.
+  const voix = etape.archetypes?.[dragon.archetype];
+  if (voix && Math.random() < phrases.partArchetype) return voix;
+  return etape.etats.content ?? [];
 }
 
 // Les phrases déjà vues sur cet appareil sont écartées tant qu'il en reste d'autres.

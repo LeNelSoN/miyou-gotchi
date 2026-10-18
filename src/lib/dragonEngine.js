@@ -193,6 +193,8 @@ export function dragonPourClient(dragon, maintenant = new Date()) {
     etape: etapeCourante,
     named: dragon.named,
     name: dragon.name,
+    // Archétype figé au passage à Adulte (`null` avant) : il donne sa voix aux pensées.
+    archetype: dragon.personality ?? null,
     indicateurs: indicateursActifs(dragon, etapeCourante),
     alertes: alertesActives(dragon, etapeCourante),
     humeurs: humeursActives(dragon, etapeCourante),
