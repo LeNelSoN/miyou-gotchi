@@ -186,7 +186,7 @@ Le dragon suit un rythme veille/sommeil propre à chaque étape (`dodo.etapes`) 
 
 Le dragon s'adresse au joueur (un enfant) dans une bulle, en le tutoyant, sur un ton tendre — varié selon l'archétype à l'âge adulte — et sans adjectif genré envers l'enfant. Son langage grandit avec lui : sensations dans l'œuf, babillage du Bébé, phrases courtes du Jeune, phrases complètes de l'Adulte.
 
-- Les phrases sont pré-écrites dans `config/phrases.json` (objectif : 1000), par étape : `etats` (content + chaque humeur), `soins` (réaction à une action réussie), `reves` (pendant le Dodo), `moments` (premier mot après l'éclosion, réveil) et, pour l'Adulte, une voix par archétype.
+- Les phrases sont pré-écrites dans `config/phrases.json` (objectif : 1000), par étape : `etats` (content + chaque humeur), `soins` (réaction à une action réussie), `reves` (pendant le Dodo), `moments` (premier mot après l'éclosion, premier mot après un passage d'étape `grandir`, réveil) et, pour l'Adulte, une voix par archétype.
 - La catégorie se déduit uniquement des états qualitatifs envoyés au client (`humeurs`, état du feu, fatigue, sommeil), l'état le plus urgent selon `priorite`. Aucune valeur brute n'est nécessaire.
 - Une pensée s'affiche au chargement, après chaque soin réussi et toutes les `intervalleSecondes` (30 s). Les `antiRepetition` dernières phrases vues sur l'appareil sont écartées tant qu'il en reste d'autres.
 - Une IA légère (homelab) pourra plus tard faire converser l'Adulte ; la banque de phrases restera alors le repli.

@@ -34,15 +34,17 @@ function messageSommeil(dodo) {
 
 const CLE_ETAPE_VUE = "miyou-gotchi:etape";
 
-// L'éclosion a souvent lieu en l'absence du joueur : on retient la dernière étape
-// vue sur cet appareil pour pouvoir la lui montrer à son retour.
-function eclosionAVoir(etape) {
+// Les passages d'étape ont souvent lieu en l'absence du joueur : on retient la dernière
+// étape vue sur cet appareil pour pouvoir les lui montrer à son retour.
+// Renvoie "eclosion", "grandir" ou `null`.
+function passageAVoir(etape) {
   try {
     const etapeVue = localStorage.getItem(CLE_ETAPE_VUE);
     localStorage.setItem(CLE_ETAPE_VUE, etape);
-    return etapeVue === "oeuf" && etape === "bebe";
+    if (!etapeVue || etapeVue === etape) return null;
+    return etapeVue === "oeuf" && etape === "bebe" ? "eclosion" : "grandir";
   } catch {
-    return false;
+    return null;
   }
 }
 
@@ -100,10 +102,10 @@ export default function Home() {
 
   // Après une éclosion, le premier mot attend la fin de l'animation (la bulle est masquée pendant).
   function afficher(data, evenement) {
-    const vientDEclore = eclosionAVoir(data.etape);
-    if (vientDEclore) setEclosion(true);
+    const passage = passageAVoir(data.etape);
+    if (passage === "eclosion") setEclosion(true);
     setDragon(data);
-    setPensee(penser(data, vientDEclore ? { moment: "eclosion" } : evenement));
+    setPensee(penser(data, passage ? { moment: passage } : evenement));
   }
 
   // Renvoie le message d'erreur du serveur, ou `null` si tout s'est bien passé.
