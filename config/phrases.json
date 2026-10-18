@@ -9,7 +9,12 @@
     "chaud",
     "sale",
     "triste",
-    "envieApprendre"
+    "envieApprendre",
+    "frais",
+    "petitCreux",
+    "gratte",
+    "ennui",
+    "curiosite"
   ],
   "etapes": {
     "oeuf": {
@@ -49,6 +54,18 @@
           "Doucement avec le bois...",
           "Je transpire dans mon œuf !",
           "Pouf... c'est un four ici..."
+        ],
+        "frais": [
+          "Hmm... il fait un peu moins chaud...",
+          "Un petit bout de bois, peut-être ?",
+          "Ma coquille refroidit doucement...",
+          "Toc toc... le feu baisse un peu.",
+          "Je sens un petit courant d'air...",
+          "Encore un peu de chaleur, s'il te plaît ?",
+          "Le feu fait moins de bruit...",
+          "Brr... juste un tout petit peu.",
+          "Tu veux bien remettre une bûche ?",
+          "Il fait bon, mais ça baisse..."
         ]
       }
     },
@@ -155,6 +172,42 @@
           "Toilette ?",
           "Grattouille...",
           "Moi poussiéreux..."
+        ],
+        "frais": [
+          "Feu... petit ?",
+          "Bois ? Bois !",
+          "Un peu frais...",
+          "Flamme toute petite...",
+          "Encore bois ?",
+          "Brr... un peu.",
+          "Crac crac ? Bois ?",
+          "Feu fatigué ?",
+          "Chaud... moins chaud.",
+          "Bûche ? S'te plaît ?"
+        ],
+        "petitCreux": [
+          "Petit creux...",
+          "Miam bientôt ?",
+          "Ventre... un peu vide.",
+          "Goûter ?",
+          "Grignoter ?",
+          "Miam ? Un peu ?",
+          "Ventre fait gloup.",
+          "Bientôt manger ?",
+          "Petit miam ?",
+          "Hmm... faim un peu."
+        ],
+        "gratte": [
+          "Gratte gratte... un peu.",
+          "Un peu sale...",
+          "Poussière !",
+          "Bain bientôt ?",
+          "Pattes un peu noires...",
+          "Plouf ? Bientôt ?",
+          "Ça chatouille... gratte !",
+          "Écailles ternes...",
+          "Un peu de boue...",
+          "Bulles ? Bientôt ?"
         ]
       },
       "soins": {
@@ -391,6 +444,66 @@
           "Je connais pas encore assez de mots !",
           "Une leçon, s'il te plaît ? Juste une petite !",
           "Je sens que mon cerveau a faim !"
+        ],
+        "frais": [
+          "Mon feu baisse un peu, tu as vu ?",
+          "Une petite bûche avant que j'aie froid ?",
+          "Il commence à faire frais par ici...",
+          "Ma flamme rapetisse, je crois.",
+          "Tu remets du bois ? Pas trop, hein !",
+          "Le feu crépite moins fort...",
+          "Je sens un petit courant d'air.",
+          "Encore une bûche et ce sera parfait !",
+          "Mes écailles refroidissent un peu.",
+          "On ravive le feu ensemble ?"
+        ],
+        "petitCreux": [
+          "J'ai un petit creux, pas encore une grosse faim.",
+          "Bientôt l'heure du goûter, non ?",
+          "Mon ventre commence à gargouiller...",
+          "Je grignoterais bien un petit truc.",
+          "Tu as un petit encas pour moi ?",
+          "Je pense déjà au prochain repas...",
+          "Un tout petit morceau, juste pour tenir ?",
+          "Mon ventre me fait des petits signes.",
+          "Ça sent bon quelque part ? J'ai un petit creux.",
+          "Avant d'avoir faim, on mange ?"
+        ],
+        "gratte": [
+          "Ça commence à gratter un peu...",
+          "J'ai un peu de poussière sur les ailes.",
+          "Un petit bain bientôt ?",
+          "Mes écailles brillent moins, tu trouves ?",
+          "J'ai marché dans une flaque, oups.",
+          "Je crois que j'ai une tache sur le nez.",
+          "Un coup d'éponge ne serait pas de refus !",
+          "Mes pattes sont un peu crottées...",
+          "Je commence à sentir le dragon...",
+          "Bientôt l'heure du plouf ?"
+        ],
+        "ennui": [
+          "Je commence à m'ennuyer un tout petit peu...",
+          "On joue bientôt ?",
+          "Tu as une idée de jeu ?",
+          "Je tourne en rond dans mon nid.",
+          "Un petit jeu me ferait plaisir.",
+          "Ma balle s'ennuie, elle aussi !",
+          "J'ai envie de rigoler un peu.",
+          "On fait une partie de cache-cache ?",
+          "Je compte les nuages... c'est long.",
+          "Tu joues avec moi tout à l'heure ?"
+        ],
+        "curiosite": [
+          "J'aimerais bien apprendre un nouveau truc.",
+          "Tu connais une histoire que je ne connais pas ?",
+          "Je me pose plein de questions !",
+          "On fait une petite leçon bientôt ?",
+          "Pourquoi les feuilles tombent ? Tu sais, toi ?",
+          "J'ai envie de découvrir quelque chose.",
+          "Ma tête a envie de grandir aussi !",
+          "Tu m'apprends un mot nouveau ?",
+          "Je commence à oublier ma dernière leçon...",
+          "Raconte-moi quelque chose d'intéressant !"
         ]
       },
       "soins": {
@@ -661,6 +774,66 @@
           "Une question me trotte dans la tête... on cherche la réponse ensemble ?",
           "J'ai envie de lire un nouveau livre avec toi.",
           "Apprendre avec toi, c'est mon moment préféré... et ça fait longtemps."
+        ],
+        "frais": [
+          "Mon feu baisse doucement, une bûche ne serait pas de trop.",
+          "Il commence à faire frais dans mon antre.",
+          "Ma flamme s'assagit... un peu de bois ?",
+          "Je sens la fraîcheur arriver.",
+          "Une bûche maintenant, et la soirée sera douce.",
+          "Le feu crépite moins, tu entends ?",
+          "Un peu de bois, mais pas trop, d'accord ?",
+          "Mes écailles commencent à refroidir.",
+          "Avant d'avoir froid, si on ravivait le feu ?",
+          "Ma flamme réclame un petit encouragement."
+        ],
+        "petitCreux": [
+          "Je commence à avoir un petit creux.",
+          "L'heure du repas approche, je le sens.",
+          "Mon ventre me rappelle doucement à l'ordre.",
+          "Un petit encas ne serait pas de refus.",
+          "Je pense à ce qu'on pourrait manger bientôt.",
+          "Pas encore affamé, mais presque.",
+          "Mon estomac murmure, pour l'instant.",
+          "Un bon repas bientôt, ça te dit ?",
+          "Je me sens un peu creux...",
+          "Avant que mon ventre ne gronde, on mange ?"
+        ],
+        "gratte": [
+          "Un bain bientôt me ferait du bien.",
+          "Mes écailles perdent un peu de leur éclat.",
+          "Je sens la poussière du chemin sur moi.",
+          "Ça commence à me gratter entre les écailles.",
+          "Un petit brin de toilette, bientôt ?",
+          "J'ai quelques brindilles coincées dans les ailes.",
+          "Je ne suis pas encore sale, mais presque.",
+          "Une rivière claire me tenterait bien.",
+          "Mes griffes réclament un coup de brosse.",
+          "Un bain, et je brillerai de nouveau."
+        ],
+        "ennui": [
+          "Je m'ennuie un peu, ces temps-ci.",
+          "On pourrait jouer un moment ?",
+          "J'ai envie de m'amuser avec toi.",
+          "Une petite partie, ça te tente ?",
+          "Les journées sont longues sans jeu.",
+          "Je rêve d'une bonne partie de rigolade.",
+          "Tu as un jeu à me proposer ?",
+          "Même un grand dragon aime jouer.",
+          "J'ai besoin de me dégourdir les ailes.",
+          "Un peu de jeu me redonnerait le sourire."
+        ],
+        "curiosite": [
+          "J'aimerais apprendre quelque chose de nouveau.",
+          "Ma curiosité se réveille.",
+          "Une petite leçon bientôt ?",
+          "Je commence à oublier certaines choses...",
+          "Raconte-moi ce que tu as découvert aujourd'hui.",
+          "J'ai envie de comprendre comment marche le monde.",
+          "Un nouveau livre, peut-être ?",
+          "Mon esprit a soif de nouveautés.",
+          "On réfléchit ensemble à une question ?",
+          "J'ai une question qui me trotte dans la tête."
         ]
       },
       "soins": {

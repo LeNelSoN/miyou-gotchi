@@ -3,9 +3,13 @@
     "feu": {
       "champDb": "fire",
       "max": 100,
-      "seuilMin": 40,
-      "seuilMax": 70,
-      "variationParHeure": -4,
+      "seuilMin": 30,
+      "seuilMax": 80,
+      "variationParHeure": -3,
+      "anticipation": {
+        "seuil": 60,
+        "humeur": "frais"
+      },
       "actions": {
         "ajouterBois": {
           "effet": 20
@@ -31,7 +35,11 @@
       "champDb": "hunger",
       "max": 100,
       "seuilMin": 70,
-      "variationParHeure": -5,
+      "variationParHeure": -3,
+      "anticipation": {
+        "seuil": 85,
+        "humeur": "petitCreux"
+      },
       "actions": {
         "nourrir": {
           "effet": 30
@@ -56,6 +64,10 @@
       "max": 100,
       "seuilMin": 25,
       "variationParHeure": -4,
+      "anticipation": {
+        "seuil": 50,
+        "humeur": "gratte"
+      },
       "actions": {
         "laver": {
           "effet": 30
@@ -79,6 +91,10 @@
       "max": 100,
       "seuilMin": 30,
       "variationParHeure": -1,
+      "anticipation": {
+        "seuil": 70,
+        "humeur": "ennui"
+      },
       "actions": {
         "jouer": {
           "effet": 25
@@ -105,6 +121,10 @@
       "max": 100,
       "seuilMin": 40,
       "variationParHeure": -1,
+      "anticipation": {
+        "seuil": 70,
+        "humeur": "curiosite"
+      },
       "actions": {
         "eduquer": {
           "effet": 20
@@ -149,7 +169,8 @@
       "delaiParfaitHeures": 1,
       "demiVieHeures": 3,
       "noteNeutre": 50,
-      "poidsNeutre": 1
+      "poidsNeutre": 1,
+      "notePrevention": 100
     },
     "margeEgalite": 5,
     "ordrePriorite": [
@@ -210,16 +231,16 @@
   "dodo": {
     "etapes": {
       "bebe": {
-        "eveilHeures": 8,
+        "eveilHeures": 10,
         "sommeilHeures": 12
       },
       "jeune": {
         "eveilHeures": 12,
-        "sommeilHeures": 10
+        "sommeilHeures": 11
       },
       "adulte": {
-        "eveilHeures": 14,
-        "sommeilHeures": 8
+        "eveilHeures": 13,
+        "sommeilHeures": 10
       }
     },
     "endormissementHeures": 3,

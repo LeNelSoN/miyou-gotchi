@@ -82,9 +82,10 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
     "feu": {
       "champDb": "fire",
       "max": 100,
-      "seuilMin": 40,
-      "seuilMax": 70,
-      "variationParHeure": -4,
+      "seuilMin": 30,
+      "seuilMax": 80,
+      "variationParHeure": -3,
+      "anticipation": { "seuil": 60, "humeur": "frais" },
       "actions": { "ajouterBois": { "effet": 20 } },
       "affecteCroissance": true,
       "etapesActives": ["oeuf", "bebe", "jeune", "adulte"],
@@ -94,7 +95,8 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
       "champDb": "hunger",
       "max": 100,
       "seuilMin": 70,
-      "variationParHeure": -5,
+      "variationParHeure": -3,
+      "anticipation": { "seuil": 85, "humeur": "petitCreux" },
       "actions": { "nourrir": { "effet": 30 } },
       "affecteCroissance": true,
       "etapesActives": ["bebe", "jeune", "adulte"],
@@ -106,6 +108,7 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
       "max": 100,
       "seuilMin": 25,
       "variationParHeure": -4,
+      "anticipation": { "seuil": 50, "humeur": "gratte" },
       "actions": { "laver": { "effet": 30 } },
       "affecteCroissance": true,
       "etapesActives": ["bebe", "jeune", "adulte"],
@@ -117,6 +120,7 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
       "max": 100,
       "seuilMin": 30,
       "variationParHeure": -1,
+      "anticipation": { "seuil": 70, "humeur": "ennui" },
       "actions": { "jouer": { "effet": 25 }, "eduquer": { "effet": -15 } },
       "multiplicateurActionSiMauvais": { "jouer": 0.5 },
       "affecteCroissance": true,
@@ -129,6 +133,7 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
       "max": 100,
       "seuilMin": 40,
       "variationParHeure": -1,
+      "anticipation": { "seuil": 70, "humeur": "curiosite" },
       "actions": { "eduquer": { "effet": 20 } },
       "affecteCroissance": false,
       "etapesActives": ["jeune", "adulte"],
@@ -145,7 +150,7 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
     }
   },
   "personnalite": {
-    "suivi": { "etapes": ["bebe", "jeune"], "delaiParfaitHeures": 1, "demiVieHeures": 3, "noteNeutre": 50, "poidsNeutre": 1 },
+    "suivi": { "etapes": ["bebe", "jeune"], "delaiParfaitHeures": 1, "demiVieHeures": 3, "noteNeutre": 50, "poidsNeutre": 1, "notePrevention": 100 },
     "margeEgalite": 5,
     "ordrePriorite": ["feu", "nourriture", "hygiene", "joie", "apprentissage"],
     "archetypes": { "feu": "Ardent", "...": "..." },
@@ -159,9 +164,9 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
   "multiplicateurRalentissement": 0.5,
   "dodo": {
     "etapes": {
-      "bebe": { "eveilHeures": 8, "sommeilHeures": 12 },
-      "jeune": { "eveilHeures": 12, "sommeilHeures": 10 },
-      "adulte": { "eveilHeures": 14, "sommeilHeures": 8 }
+      "bebe": { "eveilHeures": 10, "sommeilHeures": 12 },
+      "jeune": { "eveilHeures": 12, "sommeilHeures": 11 },
+      "adulte": { "eveilHeures": 13, "sommeilHeures": 10 }
     },
     "endormissementHeures": 3,
     "dureeMinHeures": 4,
@@ -189,6 +194,7 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
 | `bloque` | actions bloquées quand hors zone (`"siMauvais"`) ou à 0 (`"siVide"`) |
 | `indicateur` | ce qui est montré au joueur : `qualitatifPermanent` (feu, toujours visible), `ponctuel` (toast temporaire), `persistant` (reste affiché tant que vrai) |
 | `humeurSiMauvais` | humeur illustrée (sans texte) tant que la jauge est hors de sa bonne zone (ex: `"faim"` → bulle avec le morceau de viande) |
+| `anticipation` | `{ seuil, humeur }` : encore en bonne zone mais sous `seuil`, le besoin approche. Le dragon l'annonce dans ses pensées (humeur « bientôt » : `frais`, `petitCreux`, `gratte`, `ennui`, `curiosite`) et un soin donné à ce moment **prévient** le besoin (voir l'archétype). Pour le feu, c'est aussi l'état « frais » de l'indicateur |
 
 `energie.affecteCroissance` est mis à `false` : son rôle est de bloquer les actions Jouer/Éduquer (via `bloque`), pas de ralentir directement la croissance — l'effet se répercute déjà indirectement (énergie vide → impossible de jouer → joie qui stagne). À confirmer si tu préfères qu'elle compte aussi en direct.
 
@@ -200,7 +206,7 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
 
 ### Mode Dodo (Bébé, Jeune, Adulte)
 
-Le dragon suit un rythme veille/sommeil propre à chaque étape (`dodo.etapes`) : un bébé dort plus qu'un adulte.
+Le dragon suit un rythme veille/sommeil propre à chaque étape (`dodo.etapes`) : un bébé dort plus qu'un adulte. Les durées sont choisies pour que **le coucher du soir (vers 20h) cale la journée** : le dragon est fatigué avant (Bébé 18h, Jeune et Adulte 19h s'il s'est levé à son heure) et ne s'endort seul qu'après, puis se réveille à heure stable (Bébé 8h, Jeune 7h, Adulte 6h). Sans coucher par la joueuse, le cycle dure 25 à 26h et se décale d'une à deux heures par jour.
 
 - Après `eveilHeures` passées éveillé (comptées depuis son dernier réveil, ou l'éclosion), il est **fatigué** : le message `dodo.fatigue` s'affiche (GIF « fatigué » pour le Bébé) et le bouton "Dodo" devient utilisable. Avant, impossible de le coucher.
 - Si le joueur ne le couche pas, il s'endort seul après `endormissementHeures` (3h) de fatigue — sans avoir été préparé.
@@ -235,7 +241,7 @@ Une IA légère tournant sur un homelab (Ollama) écrit chaque nuit un rêve con
 ### Étape 1 — Œuf ✅ (validé)
 
 - Caractéristique active : `feu` uniquement.
-- Bouton "Ajouter du bois", indicateur qualitatif permanent (🥶 trop froid / 🔥 parfait / 🥵 trop chaud), aucune valeur brute affichée.
+- Bouton "Ajouter du bois", indicateur qualitatif permanent (🥶 trop froid / 🪵 frais / 🔥 parfait / 🥵 trop chaud), aucune valeur brute affichée. « Frais » (`anticipation`, sous 60) est encore dans la bonne zone : c'est le signal qu'on peut ajouter du bois sans risque, un pas de bois (20) depuis moins de 60 restant sous 80. Rempli ainsi, le feu tient au moins 10h éveillé (une journée d'école). Les illustrations de « frais » sont celles de « parfait ».
 - Durée : `etapes.oeuf.dureeHeures` = 72h.
 - Jauge de progression : l'œuf se fissure au fil de `stage_progress`, découpé en `etapes.oeuf.paliers` paliers égaux (6 : intact, puis 5 stades de fissures, soit un nouveau stade toutes les 12h de progression). Seul le numéro de palier est envoyé au client.
 
@@ -268,8 +274,9 @@ Le caractère reflète **la rapidité avec laquelle la joueuse a comblé chaque 
 1. **Besoin** : un trait (`feu`, `nourriture`, `hygiene`, `joie`, `apprentissage`) sort de sa bonne zone. Pour le feu, les deux sens comptent : trop de bois ouvre un besoin « trop chaud ».
 2. **Comblé** seulement quand la jauge revient en bonne zone (un soin insuffisant ne ferme pas le besoin).
 3. **Note du besoin** : 100 s'il est comblé en `delaiParfaitHeures` (1h) ou moins, puis divisée par deux toutes les `demiVieHeures` (3h) : 50 à 4h, 25 à 7h... Seules les **heures éveillé** comptent : pendant le sommeil, elle ne peut rien faire.
-4. **Score du trait** (0 à 100) : moyenne des notes, besoin encore ouvert compris, avec `poidsNeutre` note(s) fictive(s) à `noteNeutre` (50). Un trait presque jamais en manque reste vers 50 : les jauges faciles à tenir ne gagnent pas d'office.
-5. Au passage à Adulte, les scores sont figés dans `adult_stats` ; on retient le meilleur et ceux à `margeEgalite` (5 points) ou moins : **1 trait** → archétype de base ; **2 traits** → hybride ; **3 ou plus** → deux tirés au hasard parmi eux, puis hybride. Les clés d'hybrides suivent `ordrePriorite`.
+4. **Besoin prévenu** : un soin donné quand le besoin approche (jauge encore en bonne zone mais sous son seuil d'`anticipation`, signalé par le dragon) compte comme un besoin comblé avec `notePrevention` (100). Un soin donné jauge déjà haute, ou répété, ne compte pas. Ainsi, prévenir vaut mieux que réagir, et chaque trait peut s'anticiper autant que les autres.
+5. **Score du trait** (0 à 100) : moyenne des notes, besoin encore ouvert compris, avec `poidsNeutre` note(s) fictive(s) à `noteNeutre` (50). Un trait presque jamais en manque reste vers 50 : les jauges faciles à tenir ne gagnent pas d'office.
+6. Au passage à Adulte, les scores sont figés dans `adult_stats` ; on retient le meilleur et ceux à `margeEgalite` (5 points) ou moins : **1 trait** → archétype de base ; **2 traits** → hybride ; **3 ou plus** → deux tirés au hasard parmi eux, puis hybride. Les clés d'hybrides suivent `ordrePriorite`.
 
 Le suivi est tenu dans la colonne `besoins` par le moteur (tick horaire et chaque soin).
 

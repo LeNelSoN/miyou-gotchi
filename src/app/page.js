@@ -10,9 +10,10 @@ import { INTERVALLE_PENSEES_MS, penser } from "@/lib/pensees";
 
 // Étapes dont les illustrations ne sont pas encore livrées.
 const EMOJIS_ETAPE = { jeune: "🦖", adulte: "🐉" };
-const EMOJIS_FEU = { froid: "🥶", parfait: "🔥", chaud: "🥵" };
+const EMOJIS_FEU = { froid: "🥶", frais: "🪵", parfait: "🔥", chaud: "🥵" };
 const MESSAGES_FEU = {
   froid: "Il a froid...",
+  frais: "Il commence à faire frais...",
   parfait: "Il est bien au chaud !",
   chaud: "Il a trop chaud !",
 };
@@ -52,7 +53,8 @@ function passageAVoir(etape) {
 
 // Renvoie les props de <Illustration>, ou `null` si l'étape n'est pas encore illustrée.
 function choisirIllustration(dragon, toast, eclosion) {
-  const { feu } = dragon.indicateurs;
+  // « Frais » reste dans la bonne zone : mêmes illustrations que « parfait ».
+  const feu = dragon.indicateurs.feu === "frais" ? "parfait" : dragon.indicateurs.feu;
   if (eclosion) return { nom: "eclosion" };
   if (dragon.etape === "oeuf") return { nom: "oeuf", variante: `${feu}-${dragon.palier}` };
   if (dragon.etape === "bebe") {

@@ -26,10 +26,18 @@ export function estDansBonneZone(carac, valeur) {
   return true;
 }
 
+// `anticipation` : encore en bonne zone, mais sous ce seuil le besoin approche. Le dragon
+// l'annonce (humeur « bientôt »), et un soin donné à ce moment prévient le besoin.
+// Pour le feu, c'est aussi le signal qu'on peut ajouter du bois sans risquer la surchauffe.
+function besoinApproche(carac, valeur) {
+  return carac.anticipation != null && estDansBonneZone(carac, valeur) && valeur < carac.anticipation.seuil;
+}
+
 export function etatQualitatif(carac, valeur) {
   const [froid, parfait, chaud] = carac.indicateur.etats;
   if (carac.seuilMin != null && valeur < carac.seuilMin) return froid;
   if (carac.seuilMax != null && valeur > carac.seuilMax) return chaud;
+  if (besoinApproche(carac, valeur)) return carac.anticipation.humeur;
   return parfait;
 }
 
@@ -59,11 +67,17 @@ function alertesActives(dragon, nomEtapeCourante) {
     .map((carac) => carac.indicateur.message);
 }
 
-// Humeurs illustrées (sans texte) tant que la caractéristique est hors de sa bonne zone.
+// Humeurs tant que la caractéristique est hors de sa bonne zone (illustrées, et dites dans
+// les pensées), puis humeurs « bientôt » quand le besoin approche (dites dans les pensées).
 function humeursActives(dragon, nomEtapeCourante) {
-  return caracteristiquesActives(nomEtapeCourante)
+  const actives = caracteristiquesActives(nomEtapeCourante);
+  const enManque = actives
     .filter((carac) => carac.humeurSiMauvais && !estDansBonneZone(carac, dragon[carac.champDb]))
     .map((carac) => carac.humeurSiMauvais);
+  const bientot = actives
+    .filter((carac) => besoinApproche(carac, dragon[carac.champDb]))
+    .map((carac) => carac.anticipation.humeur);
+  return [...enManque, ...bientot];
 }
 
 // Avancement de l'étape, réduit à un numéro de palier (0 = tout début) pour ne pas
@@ -292,7 +306,23 @@ function suivreBesoins(dragon, heureEcoulee) {
   dragon.besoins = besoins;
 }
 
-// Score de 0 à 100 par trait : moyenne des notes, besoin encore ouvert compris, tirée
+// Un soin qui fait monter un trait dont le besoin approche (`anticipation`) prévient ce
+// besoin : il compte comme un besoin comblé avec `notePrevention`. Un soin donné jauge
+// déjà haute (ou répété) ne compte pas.
+function suivrePreventions(dragon, actionName) {
+  const { notePrevention } = config.personnalite.suivi;
+  const besoins = { ...dragon.besoins };
+  for (const trait of traitsSuivis(dragon)) {
+    const carac = config.caracteristiques[trait];
+    if (!(carac.actions?.[actionName]?.effet > 0)) continue;
+    if (!besoinApproche(carac, dragon[carac.champDb])) continue;
+    const suivi = { notes: 0, nombre: 0, ouvert: null, ...besoins[trait] };
+    besoins[trait] = { ...suivi, notes: suivi.notes + notePrevention, nombre: suivi.nombre + 1 };
+  }
+  dragon.besoins = besoins;
+}
+
+// Score de 0 à 100 par trait : moyenne des notes (besoins comblés et besoins prévenus), besoin encore ouvert compris, tirée
 // vers `noteNeutre` quand il y a eu peu de besoins (un trait jamais en manque ne gagne pas).
 export function scoresBesoins(dragon) {
   const { noteNeutre, poidsNeutre } = config.personnalite.suivi;
@@ -370,6 +400,7 @@ export function appliquerAction(dragon, actionName) {
   }
 
   const resultat = { ...dragon };
+  suivrePreventions(resultat, actionName);
   for (const carac of concernees) {
     let effet = carac.actions[actionName].effet;
     const multiplicateur = carac.multiplicateurActionSiMauvais?.[actionName];
