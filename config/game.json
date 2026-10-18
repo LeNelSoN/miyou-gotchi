@@ -71,7 +71,8 @@
         "type": "persistant",
         "declencheur": "mauvais",
         "message": "Il est très sale !"
-      }
+      },
+      "humeurSiMauvais": "sale"
     },
     "joie": {
       "champDb": "joy",
@@ -96,7 +97,8 @@
       ],
       "bloque": {
         "nourrir": "siMauvais"
-      }
+      },
+      "humeurSiMauvais": "triste"
     },
     "apprentissage": {
       "champDb": "learning",

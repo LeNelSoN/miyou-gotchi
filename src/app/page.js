@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import DebugPanel from "./DebugPanel";
 import Illustration, { ILLUSTRATIONS } from "./Illustration";
 import NameModal from "./NameModal";
+import { INTERVALLE_PENSEES_MS, penser } from "@/lib/pensees";
 
 // Étapes dont les illustrations ne sont pas encore livrées.
 const EMOJIS_ETAPE = { jeune: "🦖", adulte: "🐉" };
@@ -67,16 +68,23 @@ export default function Home() {
   const [eclosion, setEclosion] = useState(false);
   const [enCours, setEnCours] = useState(false);
   const [toast, setToast] = useState(null);
+  const [pensee, setPensee] = useState(null);
 
   useEffect(() => {
     fetch("/api/dragon").then(async (res) => {
       // Session absente ou expirée : retour à l'écran de mot de passe.
       if (res.status === 401) return router.replace("/connexion");
       const data = await res.json();
-      if (eclosionAVoir(data.etape)) setEclosion(true);
-      setDragon(data);
+      afficher(data);
     });
   }, [router]);
+
+  // Une nouvelle pensée de temps en temps, tant que la page reste ouverte.
+  useEffect(() => {
+    if (!dragon) return;
+    const minuteur = setInterval(() => setPensee(penser(dragon)), INTERVALLE_PENSEES_MS);
+    return () => clearInterval(minuteur);
+  }, [dragon]);
 
   useEffect(() => {
     if (!eclosion) return;
@@ -90,8 +98,17 @@ export default function Home() {
     return () => clearTimeout(minuteur);
   }, [toast]);
 
+  // Après une éclosion, le premier mot attend la fin de l'animation (la bulle est masquée pendant).
+  function afficher(data, evenement) {
+    const vientDEclore = eclosionAVoir(data.etape);
+    if (vientDEclore) setEclosion(true);
+    setDragon(data);
+    setPensee(penser(data, vientDEclore ? { moment: "eclosion" } : evenement));
+  }
+
   // Renvoie le message d'erreur du serveur, ou `null` si tout s'est bien passé.
-  async function envoyer(route, corps) {
+  // `evenement` (soin ou moment clé) choisit la pensée qui suit, si l'action a abouti.
+  async function envoyer(route, corps, evenement) {
     setEnCours(true);
     const res = await fetch(`/api/dragon/${route}`, {
       method: "POST",
@@ -105,8 +122,7 @@ export default function Home() {
     setEnCours(false);
     if (!res.ok) return data.erreur ?? "Une erreur est survenue.";
 
-    if (eclosionAVoir(data.etape)) setEclosion(true);
-    setDragon(data);
+    afficher(data, data.applique === false ? undefined : evenement);
     // Nouvel objet à chaque fois pour relancer le minuteur si le message se répète.
     setToast(toasts[0] ? { ...toasts[0] } : null);
     return null;
@@ -116,7 +132,8 @@ export default function Home() {
     const { endormi, sommeilHeures, dureeMinHeures } = dragon.dodo;
     const question = `Le coucher ? Il dormira ${sommeilHeures} h (réveil possible après ${dureeMinHeures} h).`;
     if (!endormi && !window.confirm(question)) return;
-    envoyer(endormi ? DODO.reveiller.route : DODO.coucher.route);
+    if (endormi) envoyer(DODO.reveiller.route, undefined, { moment: "reveil" });
+    else envoyer(DODO.coucher.route);
   }
 
   const endormi = dragon?.dodo?.endormi;
@@ -157,6 +174,12 @@ export default function Home() {
                   {!illustration && !endormi && <span aria-hidden="true">{EMOJIS_FEU[dragon.indicateurs.feu]}</span>}
                 </div>
 
+                {pensee && !eclosion && (
+                  <p key={pensee} className="bulle mt-2 self-center text-sm motion-safe:animate-fondu">
+                    {pensee}
+                  </p>
+                )}
+
                 {/* La clé relance l'animation d'apparition à chaque changement d'étape
                     (après l'éclosion, pour ne pas la perturber). */}
                 <div
@@ -196,7 +219,7 @@ export default function Home() {
             {dragon?.actions.map(({ nom, bloquee }) => (
               <div key={nom} className="flex w-14 flex-col items-center gap-1.5">
                 <button
-                  onClick={() => envoyer(ACTIONS[nom].route)}
+                  onClick={() => envoyer(ACTIONS[nom].route, undefined, { soin: nom })}
                   disabled={enCours || bloquee}
                   aria-label={ACTIONS[nom].libelle}
                   className="bouton-coque flex h-12 w-12 items-center justify-center rounded-full text-2xl transition disabled:opacity-50 disabled:grayscale"

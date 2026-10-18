@@ -125,3 +125,32 @@ body {
     0 1px 0 #451a03,
     0 2px 4px rgba(0, 0, 0, 0.5);
 }
+
+/* Bulle de pensée du dragon, avec sa pointe vers le bas. */
+.bulle {
+  position: relative;
+  max-width: 100%;
+  padding: 0.2rem 0.6rem;
+  border: 2px solid currentColor;
+  border-radius: 0.6rem;
+  background: #e2ebcf;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.bulle::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  background: inherit;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.ecran-eteint .bulle {
+  background: #1d2418;
+}
