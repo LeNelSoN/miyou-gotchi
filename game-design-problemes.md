@@ -59,7 +59,7 @@ Même une enfant attentive met **six semaines** pour atteindre l'Adulte.
 
 **Piste rapide :** quand la tristesse bloque le repas, faire passer « triste » avant « faim » dans les pensées (« Je n'ai pas faim, je suis trop triste... joue avec moi ? »). On peut aussi donner la raison du bouton grisé.
 
-### 5. Aucune progression visible après l'œuf
+### 5. Aucune progression visible après l'œuf — écarté (pas de visuels intermédiaires à montrer)
 
 - Le Bébé dure environ 12 jours et le Jeune environ 23, sans aucun signe d'avancement.
 - Rien n'indique non plus que la croissance ralentit à cause d'un manque.
@@ -87,7 +87,7 @@ Même une enfant attentive met **six semaines** pour atteindre l'Adulte.
 - Elle ne descend jamais sous 35. La régénération (environ 180 par jour, sommeil compris) dépasse largement ce que coûtent les jeux et les leçons nécessaires.
 - Elle ne sert qu'à empêcher de marteler les boutons. C'est une jauge de plus à l'écran, sans décision à prendre.
 
-### 9. L'œuf ne peut pas dormir
+### 9. L'œuf ne peut pas dormir — accepté (il apprend le jeu)
 
 - Les nuits et les journées d'école refroidissent l'œuf : il éclot au jour 4,6 au lieu de 3.
 - Chaque matin, l'œuf a froid, quoi qu'elle fasse.
@@ -147,6 +147,10 @@ Anticiper fait aussi grandir plus vite : une enfant qui anticipe tout atteint l'
 ## Correction du 18 octobre (problème 4)
 
 Quand la tristesse bloque « Nourrir » et qu'il a faim (ou un petit creux), le dragon ne réclame plus son repas : un nouvel état `tristeFaim`, prioritaire sur tous les autres, lui fait dire qu'il est trop triste pour manger et qu'il veut jouer d'abord (« J'ai faim... mais je suis trop triste pour manger. On joue d'abord ? »). 15 phrases pour le Jeune, 15 pour l'Adulte.
+
+## Problème 9 réévalué le 18 octobre
+
+Avec le feu à 30-80 et −3/h, l'œuf éclot au jour 3,0 à 3,1 (simulé selon le jour d'arrivée). Il a encore froid certains matins : le soir, un feu « parfait » entre 60 et 80 ne tient pas 11 à 13 h sans visite. C'est gardé volontairement : c'est là que la joueuse découvre le feu, qu'il faut l'anticiper avant la nuit, et l'éclosion n'est presque pas retardée. L'œuf est maintenant créé avec un feu à 80 (`fire default 80`) pour ne pas commencer par un froid.
 
 ## Corrigé depuis l'analyse du 3 octobre
 

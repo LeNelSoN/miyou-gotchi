@@ -23,7 +23,7 @@ create table dragon (
   name                text not null default '',
   named               boolean not null default false,
   stage               int not null default 0,       -- 0=œuf, 1=bébé, 2=jeune, 3=adulte
-  fire                numeric not null default 50,   -- jauge de chaleur, active à chaque étape
+  fire                numeric not null default 80,   -- jauge de chaleur, active à chaque étape (l'œuf arrive bien au chaud)
   stage_progress      numeric not null default 0,    -- heures de progression cumulées vers l'étape suivante (remise à 0 à chaque avancement)
   hunger              numeric not null default 100,  -- nourriture, active à partir de l'étape Bébé
   clean               numeric not null default 100,  -- hygiène, active à partir de l'étape Bébé
