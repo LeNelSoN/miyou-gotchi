@@ -223,6 +223,7 @@ Le dragon s'adresse à la joueuse (une petite fille) sur le second écran de la 
 
 - Les phrases sont pré-écrites dans `config/phrases.json` (objectif : 1000), par étape : `etats` (content + chaque humeur), `soins` (réaction à une action réussie), `reves` (pendant le Dodo), `moments` (premier mot après l'éclosion, premier mot après un passage d'étape `grandir`, réveil) et, pour l'Adulte, une voix par archétype.
 - La catégorie se déduit uniquement des états qualitatifs envoyés au client (`humeurs`, état du feu, fatigue, sommeil), l'état le plus urgent selon `priorite`. Aucune valeur brute n'est nécessaire.
+- Quand la tristesse bloque « Nourrir » alors qu'il a faim, l'état `tristeFaim` passe avant tout : il explique qu'il est trop triste pour manger et demande à jouer, au lieu de réclamer un repas au bouton grisé.
 - À l'Adulte, sans besoin urgent, une pensée sur trois (`partArchetype`) est tirée de la voix de son archétype (`etapes.adulte.archetypes`, 25 phrases par archétype) : l'archétype est désormais envoyé au client (`archetype`), sans être encore affiché en clair.
 - Une pensée s'affiche au chargement, après chaque soin réussi et toutes les `intervalleSecondes` (30 s). Les `antiRepetition` dernières phrases vues sur l'appareil sont écartées tant qu'il en reste d'autres.
 

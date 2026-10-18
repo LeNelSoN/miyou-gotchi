@@ -15,6 +15,9 @@ function phrasesPossibles(dragon, evenement) {
   if (dragon.dodo?.endormi) return etape.reves ?? [];
 
   const actifs = new Set([...dragon.humeurs, dragon.indicateurs.feu, dragon.dodo?.fatigue && "fatigue"]);
+  // Triste, il refuse de manger : il le dit plutôt que de réclamer un repas au bouton grisé.
+  const repasBloque = dragon.actions?.some(({ nom, bloquee }) => nom === "nourrir" && bloquee);
+  if (repasBloque && actifs.has("triste") && (actifs.has("faim") || actifs.has("petitCreux"))) actifs.add("tristeFaim");
   const cle = phrases.priorite.find((etat) => actifs.has(etat) && etape.etats[etat]);
   if (cle) return etape.etats[cle];
 

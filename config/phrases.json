@@ -3,6 +3,7 @@
   "antiRepetition": 40,
   "partArchetype": 0.33,
   "priorite": [
+    "tristeFaim",
     "faim",
     "fatigue",
     "froid",
@@ -411,6 +412,23 @@
           "Un dragon tout sale, c'est pas joli...",
           "Je me suis caché dans la boue, hihi !"
         ],
+        "tristeFaim": [
+          "J'ai faim... mais je suis trop triste pour manger. On joue d'abord ?",
+          "Mon ventre gargouille, mais mon cœur est tout gris. Joue avec moi ?",
+          "Je veux pas manger maintenant... je suis trop triste.",
+          "Un petit jeu, et après je mangerai tout, promis !",
+          "J'ai pas envie de manger, j'ai envie de rigoler avec toi.",
+          "Quand je suis triste, même les bonnes choses ont pas de goût...",
+          "Joue avec moi, et ma faim reviendra !",
+          "Je boude mon assiette... fais-moi sourire d'abord ?",
+          "Mon ventre a faim, mais ma tête a envie de jouer.",
+          "Je mangerai quand j'aurai retrouvé le sourire.",
+          "Un jeu d'abord, s'il te plaît, après je goûte !",
+          "Je suis trop triste pour croquer quoi que ce soit...",
+          "Tu me fais rire ? Après, je mangerai tout !",
+          "J'ai le ventre vide et le cœur lourd... on joue ?",
+          "Pas de repas pour l'instant... juste un jeu avec toi."
+        ],
         "triste": [
           "Tu veux bien jouer avec moi ?",
           "Je m'ennuie un peu...",
@@ -740,6 +758,23 @@
           "Je ne voudrais pas te salir en te faisant un câlin !",
           "Un peu de mousse et beaucoup d'eau, s'il te plaît.",
           "Je crois que les oiseaux ne veulent plus se poser sur moi..."
+        ],
+        "tristeFaim": [
+          "J'ai faim, mais je suis trop triste pour manger. Tu joues avec moi d'abord ?",
+          "Mon ventre réclame, mais le cœur n'y est pas. Un jeu, peut-être ?",
+          "Quand je suis triste, je n'arrive pas à manger. Fais-moi sourire ?",
+          "Je mangerai volontiers... dès que tu m'auras redonné le sourire.",
+          "Un petit jeu ensemble, et l'appétit reviendra, j'en suis sûr.",
+          "Même mon plat préféré me paraît fade aujourd'hui...",
+          "J'ai le ventre creux et la flamme toute pâle. On s'amuse un peu ?",
+          "Je n'ai pas le cœur à manger. Tu veux bien jouer avec moi ?",
+          "Rends-moi ma bonne humeur, et je te promets de tout manger.",
+          "La faim est là, mais la tristesse est plus forte... joue avec moi ?",
+          "Je boude mon repas. Un jeu, et j'arrête de bouder !",
+          "Quelques rires avec toi, et je mangerai comme un ogre.",
+          "Je suis trop triste pour avaler quoi que ce soit...",
+          "Un moment de jeu d'abord ? Après, je me régale.",
+          "Mon assiette attendra un peu... j'ai surtout besoin de toi."
         ],
         "triste": [
           "Je me sens un peu seul aujourd'hui...",

@@ -52,7 +52,7 @@ Même une enfant attentive met **six semaines** pour atteindre l'Adulte.
 
 **Piste :** viser au moins 10 h d'autonomie quand le dragon est bien préparé. Par exemple, la nourriture à −3 par heure, ou un repas qui rassasie plus.
 
-### 4. La tristesse bloque « Nourrir » sans explication
+### 4. La tristesse bloque « Nourrir » sans explication — ✅ corrigé
 
 - Un dragon triste refuse de manger. Mais dans ses pensées, la faim passe avant la tristesse : il dit « J'ai faim ! » alors que le bouton est grisé.
 - Cela arrive 25 à 73 heures pendant l'étape Jeune. Pour une enfant, c'est incompréhensible.
@@ -143,6 +143,10 @@ Simulation, même emploi du temps d'école, elle répond à tous les manques mai
 | la nourriture et l'hygiène | Méticuleux | 32,6 |
 
 Anticiper fait aussi grandir plus vite : une enfant qui anticipe tout atteint l'Adulte dans la durée prévue (24 jours).
+
+## Correction du 18 octobre (problème 4)
+
+Quand la tristesse bloque « Nourrir » et qu'il a faim (ou un petit creux), le dragon ne réclame plus son repas : un nouvel état `tristeFaim`, prioritaire sur tous les autres, lui fait dire qu'il est trop triste pour manger et qu'il veut jouer d'abord (« J'ai faim... mais je suis trop triste pour manger. On joue d'abord ? »). 15 phrases pour le Jeune, 15 pour l'Adulte.
 
 ## Corrigé depuis l'analyse du 3 octobre
 
