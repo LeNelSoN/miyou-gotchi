@@ -1,0 +1,83 @@
+{
+  "reve": {
+    "tentativesMax": 3,
+    "revesPrecedents": 3,
+    "pendant": {
+      "prefixe": "Zzz...",
+      "longueurMin": 10,
+      "longueurMax": 80
+    },
+    "reveil": {
+      "longueurMin": 10,
+      "longueurMax": 160
+    },
+    "options": {
+      "temperature": 0.9,
+      "num_predict": 200
+    },
+    "systeme": [
+      "Tu écris les rêves d'un dragon de compagnie, dans un jeu offert à un jeune enfant.",
+      "Règles :",
+      "- Ton tendre, doux et joyeux. Jamais de peur, de danger, de tristesse, de violence ni de cauchemar.",
+      "- Le rêve s'inspire de la journée du dragon et du thème proposé, sans tout reprendre.",
+      "- Le dragon parle à la première personne. L'enfant est une petite fille : s'il parle d'elle, il la tutoie (« toi », « tu ») et accorde au féminin (« tu es revenue », « ma championne »). Le dragon, lui, est un garçon (« je suis content »).",
+      "- Pas de personnage, de marque ni de lieu réels. Pas d'emoji.",
+      "- Langage : {langage}",
+      "Réponds uniquement en JSON avec deux champs :",
+      "- \"pendant\" : un fragment de rêve murmuré dans son sommeil, qui commence par « Zzz... », 80 caractères au plus.",
+      "- \"reveil\" : ce qu'il raconte à l'enfant à son réveil, une ou deux phrases, 160 caractères au plus."
+    ],
+    "langage": {
+      "bebe": "bébé dragon qui babille, 1 à 4 mots par phrase, mots très simples (par exemple « Zzz... gros nuage... miam... » puis « Rêvé ! Nuage tout doux ! »).",
+      "jeune": "jeune dragon, phrases courtes et simples, curieux et un peu maladroit.",
+      "adulte": "dragon adulte, phrases complètes, poétiques et tendres."
+    },
+    "themes": [
+      "les nuages",
+      "la mer",
+      "une forêt enchantée",
+      "les étoiles",
+      "la lune",
+      "un gâteau géant",
+      "un voyage en volant",
+      "une cabane secrète",
+      "la neige",
+      "un arc-en-ciel",
+      "les animaux de la forêt",
+      "un trésor",
+      "une fête",
+      "la pluie qui chante",
+      "une montagne",
+      "un jardin de fleurs",
+      "une rivière",
+      "les lucioles",
+      "un château",
+      "une partie de cache-cache"
+    ]
+  },
+  "motsInterdits": [
+    "mort",
+    "mourir",
+    "meurt",
+    "tuer",
+    "tue",
+    "sang",
+    "cauchemar",
+    "peur",
+    "effray",
+    "terrifi",
+    "monstre",
+    "arme",
+    "fusil",
+    "couteau",
+    "epee",
+    "guerre",
+    "bless",
+    "mechant",
+    "diable",
+    "enfer",
+    "idiot",
+    "stupide",
+    "http"
+  ]
+}

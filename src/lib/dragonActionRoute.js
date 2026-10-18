@@ -2,10 +2,12 @@ import { NextResponse } from "next/server";
 import { appliquerActionEtSauvegarder } from "./dragonRepository";
 import { dragonPourClient, messagesPonctuels } from "./dragonEngine";
 import { modeDebugActif, infosDebug } from "./dragonDebug";
+import { revesPourClient } from "./revesRepository";
 
-export function repondreDragon(dragon, extra = {}) {
+export async function repondreDragon(dragon, extra = {}) {
   return NextResponse.json({
     ...dragonPourClient(dragon),
+    ...(await revesPourClient(dragon)),
     ...extra,
     ...(modeDebugActif() && { debug: infosDebug(dragon) }),
   });

@@ -3,6 +3,7 @@ import path from "path";
 import config from "../../config/game.json";
 import { nomEtape } from "./dragonEngine";
 import { recupererDragonSynchronise, sauvegarderDragon } from "./dragonRepository";
+import { decalerReves } from "./revesRepository";
 
 const HEURE_MS = 3600000;
 const CHEMIN_CONFIG = path.join(process.cwd(), "config", "game.json");
@@ -71,6 +72,7 @@ export async function avancerTemps(heures) {
     if (dragon[champ]) reculs[champ] = new Date(new Date(dragon[champ]).getTime() - heures * HEURE_MS).toISOString();
   }
   await sauvegarderDragon({ ...dragon, ...reculs });
+  if (reculs.sleeping_since) await decalerReves(dragon.sleeping_since, reculs.sleeping_since);
   return recupererDragonSynchronise();
 }
 

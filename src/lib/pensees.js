@@ -38,7 +38,9 @@ function memoriser(phrase) {
 }
 
 // Renvoie une phrase au hasard, ou `null` si l'étape n'a pas encore de phrases.
+// Le rêve de la nuit généré par l'IA, s'il existe, remplace ceux de la banque.
 export function penser(dragon, evenement) {
+  if (dragon.dodo?.endormi && dragon.reve && !evenement) return dragon.reve;
   const liste = phrasesPossibles(dragon, evenement);
   if (liste.length === 0) return null;
   const recentes = new Set(lireRecentes());

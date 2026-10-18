@@ -101,11 +101,13 @@ export default function Home() {
   }, [toast]);
 
   // Après une éclosion, le premier mot attend la fin de l'animation (la bulle est masquée pendant).
+  // Le récit du rêve de la nuit (IA), envoyé une seule fois après le réveil, passe avant le reste.
   function afficher(data, evenement) {
     const passage = passageAVoir(data.etape);
     if (passage === "eclosion") setEclosion(true);
     setDragon(data);
-    setPensee(penser(data, passage ? { moment: passage } : evenement));
+    if (passage) setPensee(penser(data, { moment: passage }));
+    else setPensee(data.souvenirReve ?? penser(data, evenement));
   }
 
   // Renvoie le message d'erreur du serveur, ou `null` si tout s'est bien passé.

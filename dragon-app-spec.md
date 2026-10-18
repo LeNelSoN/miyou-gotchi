@@ -43,6 +43,29 @@ create table dragon (
 );
 
 alter table dragon enable row level security;
+
+-- Mémoire de la journée (soins, coucher, réveil, passages d'étape), lue pour contextualiser les rêves
+create table journal (
+  id          bigint generated always as identity primary key,
+  type        text not null,                  -- soin | coucher | reveil | etape
+  detail      text,                           -- nom de l'action ou de l'étape
+  created_at  timestamptz not null default now()
+);
+alter table journal enable row level security;
+
+-- Rêves générés par l'IA du homelab, un valide au plus par nuit (rejets conservés pour ajuster le prompt)
+create table pensees_ia (
+  id             bigint generated always as identity primary key,
+  sommeil_debut  timestamptz not null,        -- sleeping_since de la nuit concernée
+  pendant        text,                        -- fragment affiché pendant le sommeil
+  reveil         text,                        -- récit fait une fois au réveil
+  rejet          text,                        -- raison du rejet par les garde-fous, null = valide
+  brut           text,                        -- réponse brute du modèle
+  modele         text,
+  raconte        boolean not null default false,
+  created_at     timestamptz not null default now()
+);
+alter table pensees_ia enable row level security;
 ```
 
 ## 4. Configuration (constantes ajustables)
@@ -184,12 +207,23 @@ Le dragon suit un rythme veille/sommeil propre à chaque étape (`dodo.etapes`) 
 
 ### Pensées du dragon
 
-Le dragon s'adresse au joueur (un enfant) dans une bulle, en le tutoyant, sur un ton tendre — varié selon l'archétype à l'âge adulte — et sans adjectif genré envers l'enfant. Son langage grandit avec lui : sensations dans l'œuf, babillage du Bébé, phrases courtes du Jeune, phrases complètes de l'Adulte.
+Le dragon s'adresse à la joueuse (une petite fille) dans une bulle, en la tutoyant, sur un ton tendre — varié selon l'archétype à l'âge adulte. Tout accord qui la concerne est au féminin ; le dragon, lui, reste masculin. Son langage grandit avec lui : sensations dans l'œuf, babillage du Bébé, phrases courtes du Jeune, phrases complètes de l'Adulte.
 
 - Les phrases sont pré-écrites dans `config/phrases.json` (objectif : 1000), par étape : `etats` (content + chaque humeur), `soins` (réaction à une action réussie), `reves` (pendant le Dodo), `moments` (premier mot après l'éclosion, premier mot après un passage d'étape `grandir`, réveil) et, pour l'Adulte, une voix par archétype.
 - La catégorie se déduit uniquement des états qualitatifs envoyés au client (`humeurs`, état du feu, fatigue, sommeil), l'état le plus urgent selon `priorite`. Aucune valeur brute n'est nécessaire.
 - Une pensée s'affiche au chargement, après chaque soin réussi et toutes les `intervalleSecondes` (30 s). Les `antiRepetition` dernières phrases vues sur l'appareil sont écartées tant qu'il en reste d'autres.
-- Une IA légère (homelab) pourra plus tard faire converser l'Adulte ; la banque de phrases restera alors le repli.
+
+### Rêves générés par l'IA (homelab)
+
+Une IA légère tournant sur un homelab (Ollama) écrit chaque nuit un rêve contextualisé. Installation et branchement : [`docs/homelab-ia.md`](docs/homelab-ia.md). **Le homelab n'est jamais exposé** : c'est lui qui interroge le jeu, avec le secret `IA_SECRET`.
+
+1. `GET /api/ia/contexte` (toutes les ~30 min) : si le dragon dort et que la nuit n'a pas encore de rêve valide (au plus `tentativesMax` essais), renvoie la requête Ollama prête à l'emploi (`messages`, `format`, `options`) et `sommeilDebut` ; sinon `{ aGenerer: false }`.
+2. Le homelab l'envoie à `POST /api/chat` d'Ollama en ajoutant seulement le nom du modèle.
+3. `POST /api/ia/pensees` `{ sommeilDebut, modele, reponse }` : l'appli valide puis enregistre dans `pensees_ia` (422 si rejeté, 409 si la nuit est finie).
+
+- Le contexte ne contient que le nom du dragon, son étape, son archétype, l'heure du coucher (et s'il s'est endormi seul), ses soins depuis son réveil (table `journal`), un thème tiré au hasard et ses derniers rêves (pour éviter les répétitions). Aucune donnée sur l'enfant.
+- Prompt, thèmes, limites et mots interdits vivent dans `config/ia.json`. Les garde-fous du code vérifient le JSON, les longueurs, l'absence d'emoji et de mots interdits ; l'accord au féminin pour l'enfant repose sur le prompt et la relecture des rêves en base.
+- Pendant le sommeil, la bulle affiche `pendant` à la place des rêves de la banque ; après le réveil, `reveil` est raconté une seule fois (`raconte`). Sans rêve généré (homelab éteint), la banque prend le relais sans que rien ne casse.
 
 ### Étape 1 — Œuf ✅ (validé)
 
@@ -266,6 +300,8 @@ Calculée une seule fois, au moment du passage à Adulte, à partir de `adult_st
 | `POST /api/dragon/educate` | Éduquer — augmente l'apprentissage, baisse la joie, coûte de l'énergie (étape Jeune+) |
 | `POST /api/dragon/sleep` | Coucher le dragon (mode Dodo, étape Bébé+) |
 | `POST /api/dragon/wake` | Réveiller le dragon, refusé avant la durée minimale de sommeil |
+| `GET /api/ia/contexte` | Homelab (secret `IA_SECRET`) : requête Ollama du rêve à générer, s'il y en a un |
+| `POST /api/ia/pensees` | Homelab (secret `IA_SECRET`) : `{ sommeilDebut, modele, reponse }` — rêve à valider et enregistrer |
 | `POST /api/dragon/train` | `{ trickId }` — entraîner un tour *(à définir)* |
 | `POST /api/dragon/name` | `{ name }` — nommer le dragon après éclosion |
 | `POST /api/dragon/reset` | Optionnel, pratique pour les tests |

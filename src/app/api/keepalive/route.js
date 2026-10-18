@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
 import { getSupabaseServerClient } from "@/lib/supabaseServer";
+import { secretValide } from "@/lib/secretRoute";
 
 // Appelée chaque jour par le cron Vercel (vercel.json) : une requête suffit pour que
 // Supabase ne mette pas le projet en pause après une semaine sans activité.
-// Vercel envoie `CRON_SECRET` en en-tête ; sans ce secret, la route refuse tout appel.
 export async function GET(request) {
-  const secret = process.env.CRON_SECRET;
-  if (!secret || request.headers.get("authorization") !== `Bearer ${secret}`) {
+  if (!secretValide(request, "CRON_SECRET")) {
     return NextResponse.json({ erreur: "Non autorisé." }, { status: 401 });
   }
 
