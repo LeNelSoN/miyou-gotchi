@@ -82,7 +82,7 @@ Même une enfant attentive met **six semaines** pour atteindre l'Adulte.
 
 **Piste :** ajouter une part de temps passé en bonne zone, et/ou ne pas noter les besoins nés pendant une longue absence.
 
-### 8. L'énergie ne contraint jamais
+### 8. L'énergie ne contraint jamais — ✅ corrigé (remplacée par la fatigue du Dodo)
 
 - Elle ne descend jamais sous 35. La régénération (environ 180 par jour, sommeil compris) dépasse largement ce que coûtent les jeux et les leçons nécessaires.
 - Elle ne sert qu'à empêcher de marteler les boutons. C'est une jauge de plus à l'écran, sans décision à prendre.
@@ -151,6 +151,26 @@ Quand la tristesse bloque « Nourrir » et qu'il a faim (ou un petit creux), le 
 ## Problème 9 réévalué le 18 octobre
 
 Avec le feu à 30-80 et −3/h, l'œuf éclot au jour 3,0 à 3,1 (simulé selon le jour d'arrivée). Il a encore froid certains matins : le soir, un feu « parfait » entre 60 et 80 ne tient pas 11 à 13 h sans visite. C'est gardé volontairement : c'est là que la joueuse découvre le feu, qu'il faut l'anticiper avant la nuit, et l'éclosion n'est presque pas retardée. L'œuf est maintenant créé avec un feu à 80 (`fire default 80`) pour ne pas commencer par un froid.
+
+## Correction du 19 octobre (problème 8)
+
+L'énergie, jauge cachée qui ne descendait jamais sous 35, est retirée. Elle est remplacée par la fatigue du Dodo :
+- chaque partie et chaque leçon avancent son heure de fatigue de 30 min, sans pouvoir l'endormir d'un coup ;
+- fatigué, il refuse d'apprendre : les leçons se donnent dans la journée ;
+- jouer reste possible, pour qu'un dragon triste et fatigué puisse toujours manger.
+
+La décision devient : jouer et apprendre beaucoup le soir le fait s'endormir plus tôt, parfois avant d'avoir été préparé pour la nuit. Marteler « Jouer » le rend fatigué tout de suite, puis endormi 3 h plus tard.
+
+Même simulation (enfant qui utilise le Dodo, sans adapter ses horaires de leçon) :
+
+| | Avant | Après |
+|---|---|---|
+| Passage à l'Adulte | jour 27,0 | jour 28,5 |
+| Visites où il dort | 4 % | 9 % |
+| Leçons refusées (il était fatigué) | 0 | 9 |
+| Rythme de l'Adulte | couché 21h, debout 6h-7h | couché 20h-21h, debout 6h-7h |
+
+Avec 15 min par action, l'effet est presque nul (5 % des visites) ; avec 1 h par leçon, il dort à 15 % des visites. Une vraie joueuse verra la leçon grisée le soir et la donnera plus tôt, ce que la simulation ne fait pas.
 
 ## Corrigé depuis l'analyse du 3 octobre
 

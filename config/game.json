@@ -136,28 +136,6 @@
         "adulte"
       ],
       "humeurSiMauvais": "envieApprendre"
-    },
-    "energie": {
-      "champDb": "energy",
-      "max": 100,
-      "variationParHeure": 5,
-      "actions": {
-        "jouer": {
-          "effet": -10
-        },
-        "eduquer": {
-          "effet": -15
-        }
-      },
-      "affecteCroissance": false,
-      "etapesActives": [
-        "jeune",
-        "adulte"
-      ],
-      "bloque": {
-        "jouer": "siVide",
-        "eduquer": "siVide"
-      }
     }
   },
   "personnalite": {
@@ -246,7 +224,13 @@
     "endormissementHeures": 3,
     "dureeMinHeures": 4,
     "multiplicateurPerte": 0.5,
-    "multiplicateurGain": 2,
+    "fatigueParAction": {
+      "jouer": 0.5,
+      "eduquer": 0.5
+    },
+    "bloqueSiFatigue": [
+      "eduquer"
+    ],
     "fatigue": {
       "message": "Il tombe de sommeil..."
     },

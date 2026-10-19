@@ -182,22 +182,21 @@ export function reveiller(dragon, maintenant = new Date()) {
 }
 
 // Un dragon endormi ne peut rien faire : toutes ses actions sont bloquées.
-function estActionBloquee(dragon, actives, actionName) {
+// Fatigué, il ne peut plus apprendre (`dodo.bloqueSiFatigue`).
+function estActionBloquee(dragon, actives, actionName, maintenant) {
   if (estEndormi(dragon)) return true;
+  if (config.dodo.bloqueSiFatigue.includes(actionName) && estFatigue(dragon, maintenant)) return true;
   return actives.some((carac) => {
     const condition = carac.bloque?.[actionName];
-    if (!condition) return false;
-    const valeur = dragon[carac.champDb];
-    if (condition === "siMauvais") return !estDansBonneZone(carac, valeur);
-    if (condition === "siVide") return valeur <= 0;
+    if (condition === "siMauvais") return !estDansBonneZone(carac, dragon[carac.champDb]);
     return false;
   });
 }
 
-function actionsDisponibles(dragon, nomEtapeCourante) {
+function actionsDisponibles(dragon, nomEtapeCourante, maintenant) {
   const actives = caracteristiquesActives(nomEtapeCourante);
   const noms = new Set(actives.flatMap((carac) => Object.keys(carac.actions ?? {})));
-  return [...noms].map((nom) => ({ nom, bloquee: estActionBloquee(dragon, actives, nom) }));
+  return [...noms].map((nom) => ({ nom, bloquee: estActionBloquee(dragon, actives, nom, maintenant) }));
 }
 
 export function dragonPourClient(dragon, maintenant = new Date()) {
@@ -216,7 +215,7 @@ export function dragonPourClient(dragon, maintenant = new Date()) {
     humeurs: humeursActives(dragon, etapeCourante),
     palier: palierProgression(dragon, etapeCourante),
     dodo: etatDodo(dragon, maintenant),
-    actions: actionsDisponibles(dragon, etapeCourante),
+    actions: actionsDisponibles(dragon, etapeCourante, maintenant),
     nomLongueurMax: config.nom.longueurMax,
   };
 }
@@ -239,10 +238,8 @@ function appliquerDecroissanceHoraire(dragon, nomEtapeCourante) {
   for (const carac of caracteristiquesActives(nomEtapeCourante)) {
     if (!carac.variationParHeure) continue;
     let variation = carac.variationParHeure;
-    // Le sommeil ralentit les pertes et accélère les gains (régénération de l'énergie).
-    if (estEndormi(dragon)) {
-      variation *= variation < 0 ? config.dodo.multiplicateurPerte : config.dodo.multiplicateurGain;
-    }
+    // Le sommeil ralentit les pertes.
+    if (estEndormi(dragon)) variation *= config.dodo.multiplicateurPerte;
     dragon[carac.champDb] = clamp(dragon[carac.champDb] + variation, carac.max);
   }
 }
@@ -265,8 +262,8 @@ function tenterPassageEtapeSuivante(dragon, nomEtapeCourante) {
   }
 }
 
-// Les traits de personnalité sont ceux listés dans `personnalite.ordrePriorite`
-// (l'énergie n'en fait pas partie). Pendant les étapes `personnalite.suivi.etapes`,
+// Les traits de personnalité sont ceux listés dans `personnalite.ordrePriorite`.
+// Pendant les étapes `personnalite.suivi.etapes`,
 // chaque fois qu'un trait sort de sa bonne zone, un besoin s'ouvre ; il se ferme quand
 // la jauge y revient, avec une note de rapidité. `besoins` garde, par trait :
 // `{ notes, nombre, ouvert }`, `ouvert` comptant les heures éveillé depuis l'ouverture.
@@ -387,11 +384,21 @@ export function avancerDragon(dragon, maintenant = new Date()) {
   return resultat;
 }
 
-export function appliquerAction(dragon, actionName) {
+// Jouer et apprendre le fatiguent : son heure de fatigue avance d'autant, sans
+// dépasser l'instant présent, pour qu'une action ne l'endorme jamais d'un coup.
+function fatiguer(dragon, actionName, maintenant) {
+  const heures = config.dodo.fatigueParAction[actionName];
+  if (!heures || !rythme(dragon) || estFatigue(dragon, maintenant)) return;
+  const plusTot = decaler(dragon.awake_since, -heures);
+  const auPlusTot = decaler(maintenant, -rythme(dragon).eveilHeures);
+  dragon.awake_since = new Date(Math.max(plusTot, auPlusTot)).toISOString();
+}
+
+export function appliquerAction(dragon, actionName, maintenant = new Date()) {
   const etapeCourante = nomEtape(dragon.stage);
   const actives = caracteristiquesActives(etapeCourante);
 
-  const estBloquee = estActionBloquee(dragon, actives, actionName);
+  const estBloquee = estActionBloquee(dragon, actives, actionName, maintenant);
 
   const concernees = actives.filter((carac) => carac.actions?.[actionName]);
 
@@ -411,6 +418,7 @@ export function appliquerAction(dragon, actionName) {
   }
   // Un soin peut combler un besoin (ou en créer un : trop de bois, une leçon qui attriste).
   suivreBesoins(resultat, false);
+  fatiguer(resultat, actionName, maintenant);
 
   return { dragon: resultat, applique: true };
 }

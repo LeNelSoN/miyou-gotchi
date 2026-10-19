@@ -29,7 +29,7 @@ create table dragon (
   clean               numeric not null default 100,  -- hygiène, active à partir de l'étape Bébé
   joy                 numeric not null default 100,  -- joie, active à partir de l'étape Jeune
   learning            numeric not null default 0,    -- apprentissage, actif à partir de l'étape Jeune
-  energy              numeric not null default 100,  -- énergie, active à partir de l'étape Jeune
+  energy              numeric not null default 100,  -- inutilisée : l'énergie est remplacée par la fatigue du Dodo (section 4)
   adult_stats         jsonb,                          -- scores de rapidité {feu, nourriture, hygiene, joie, apprentissage} figés au passage à Adulte
   personality         text,                           -- archétype dérivé de adult_stats (section 5)
   besoins             jsonb not null default '{}',    -- suivi des besoins pendant la croissance, par trait : {notes, nombre, ouvert}
@@ -71,7 +71,7 @@ alter table pensees_ia enable row level security;
 
 ## 4. Configuration (constantes ajustables)
 
-Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, jamais en dur dans le code. Structure modulaire : chaque **caractéristique** (feu, nourriture, hygiène, joie, apprentissage, énergie) est une unité autonome et auto-descriptive — elle porte ses propres seuils, son effet par action, si elle influence la croissance, et à quelles étapes elle est active. Les étapes elles-mêmes ne contiennent plus que leur durée.
+Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, jamais en dur dans le code. Structure modulaire : chaque **caractéristique** (feu, nourriture, hygiène, joie, apprentissage) est une unité autonome et auto-descriptive — elle porte ses propres seuils, son effet par action, si elle influence la croissance, et à quelles étapes elle est active. Les étapes elles-mêmes ne contiennent plus que leur durée.
 
 - Départ simple : un fichier `config/game.json`, importé par les routes/Server Actions.
 - Évolution possible : une table `game_config` en base (clé/valeur), si on veut pouvoir ajuster en live sans redéploiement.
@@ -138,15 +138,6 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
       "affecteCroissance": false,
       "etapesActives": ["jeune", "adulte"],
       "humeurSiMauvais": "envieApprendre"
-    },
-    "energie": {
-      "champDb": "energy",
-      "max": 100,
-      "variationParHeure": 5,
-      "actions": { "jouer": { "effet": -10 }, "eduquer": { "effet": -15 } },
-      "affecteCroissance": false,
-      "etapesActives": ["jeune", "adulte"],
-      "bloque": { "jouer": "siVide", "eduquer": "siVide" }
     }
   },
   "personnalite": {
@@ -171,7 +162,8 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
     "endormissementHeures": 3,
     "dureeMinHeures": 4,
     "multiplicateurPerte": 0.5,
-    "multiplicateurGain": 2,
+    "fatigueParAction": { "jouer": 0.5, "eduquer": 0.5 },
+    "bloqueSiFatigue": ["eduquer"],
     "fatigue": { "message": "Il tombe de sommeil..." },
     "refusReveil": { "dureeSecondes": 3, "message": "Il dort trop profondément..." }
   },
@@ -186,17 +178,16 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
 | `champDb` | nom de la colonne correspondante dans la table `dragon` (section 3) |
 | `max` | valeur plafond de la jauge |
 | `seuilMin` / `seuilMax` | bornes de la "bonne zone" — l'un des deux, les deux (feu), ou aucun (apprentissage) |
-| `variationParHeure` | évolution automatique par heure réelle : négatif = décroissance (feu, nourriture, hygiène), positif = régénération (énergie), 0/absent = pas de variation passive (joie, apprentissage) |
+| `variationParHeure` | évolution automatique par heure réelle : négatif = décroissance (feu, nourriture, hygiène, joie, apprentissage), 0/absent = pas de variation passive |
 | `actions` | map nom d'action → effet par clic (positif ou négatif) |
 | `multiplicateurActionSiMauvais` | réduit l'effet d'une action précise quand la jauge est hors de sa bonne zone (ex: "Jouer" moins efficace quand triste) |
 | `affecteCroissance` | si `true`, doit être dans la bonne zone pour que `stage_progress` avance à vitesse normale |
 | `etapesActives` | à quelles étapes cette caractéristique est active |
-| `bloque` | actions bloquées quand hors zone (`"siMauvais"`) ou à 0 (`"siVide"`) |
+| `bloque` | actions bloquées quand hors zone (`"siMauvais"`) |
 | `indicateur` | ce qui est montré au joueur : `qualitatifPermanent` (feu, toujours visible), `ponctuel` (toast temporaire), `persistant` (reste affiché tant que vrai) |
 | `humeurSiMauvais` | humeur illustrée (sans texte) tant que la jauge est hors de sa bonne zone (ex: `"faim"` → bulle avec le morceau de viande) |
 | `anticipation` | `{ seuil, humeur }` : encore en bonne zone mais sous `seuil`, le besoin approche. Le dragon l'annonce dans ses pensées (humeur « bientôt » : `frais`, `petitCreux`, `gratte`, `ennui`, `curiosite`) et un soin donné à ce moment **prévient** le besoin (voir l'archétype). Pour le feu, c'est aussi l'état « frais » de l'indicateur |
 
-`energie.affecteCroissance` est mis à `false` : son rôle est de bloquer les actions Jouer/Éduquer (via `bloque`), pas de ralentir directement la croissance — l'effet se répercute déjà indirectement (énergie vide → impossible de jouer → joie qui stagne). À confirmer si tu préfères qu'elle compte aussi en direct.
 
 ## 5. Règles du jeu, par étape de développement
 
@@ -212,7 +203,9 @@ Le dragon suit un rythme veille/sommeil propre à chaque étape (`dodo.etapes`) 
 - Si le joueur ne le couche pas, il s'endort seul après `endormissementHeures` (3h) de fatigue — sans avoir été préparé.
 - Il se réveille seul après `sommeilHeures`. Le joueur peut le réveiller plus tôt (bouton "Réveil"), mais pas avant `dodo.dureeMinHeures` (4h) de sommeil — un réveil demandé plus tôt est refusé (`dodo.refusReveil`).
 
-- Pendant le sommeil, les pertes (`variationParHeure` négatives) sont multipliées par `dodo.multiplicateurPerte` (0.5) et les gains (régénération de l'énergie) par `dodo.multiplicateurGain` (2) ; la règle de progression continue de s'appliquer normalement.
+- **Jouer et apprendre le fatiguent** (`dodo.fatigueParAction`, en heures) : chaque partie ou leçon avance son heure de fatigue d'autant, sans dépasser l'instant présent (une action le rend fatigué, jamais endormi d'un coup). Beaucoup jouer le soir le fait donc s'endormir plus tôt, avant d'être préparé.
+- **Fatigué, il ne peut plus apprendre** (`dodo.bloqueSiFatigue`) : les leçons se donnent dans la journée. Jouer reste possible, sinon un dragon triste et fatigué ne pourrait plus manger.
+- Pendant le sommeil, les pertes (`variationParHeure` négatives) sont multipliées par `dodo.multiplicateurPerte` (0.5) ; la règle de progression continue de s'appliquer normalement.
 - Toutes les actions sont bloquées tant qu'il dort : il faut le préparer avant de le coucher.
 - Pendant le sommeil, l'écran du tamagotchi s'assombrit et le dragon n'est plus visible : seuls restent son nom et l'heure de son réveil naturel.
 - Le rythme est rejoué heure par heure avec le reste du moteur : un réveil ou un endormissement survenu en l'absence du joueur a lieu à l'heure exacte, et change les multiplicateurs dès cette heure-là.
@@ -255,10 +248,10 @@ Une IA légère tournant sur un homelab (Ollama) écrit chaque nuit un rêve con
 
 ### Étape 3 — Jeune dragon ✅ (validé)
 
-- Caractéristiques actives : `feu`, `nourriture`, `hygiene` (inchangées) + `joie`, `apprentissage`, `energie`.
+- Caractéristiques actives : `feu`, `nourriture`, `hygiene` (inchangées) + `joie`, `apprentissage`.
 - **Joie** (`joy`) : baisse lentement d'elle-même (il s'ennuie), "Jouer" l'augmente, "Éduquer" la diminue. Hors zone (triste) → "Jouer" devient moins efficace (`multiplicateurActionSiMauvais`) **et** "Nourrir" est complètement bloqué (`bloque.nourrir = "siMauvais"`).
 - **Apprentissage** (`learning`) : baisse lentement d'elle-même (il oublie), "Éduquer" l'augmente. Sous `seuilMin` (40), il a envie d'apprendre (humeur `envieApprendre`, visible dans ses pensées). N'affecte pas la croissance (`affecteCroissance: false`) — progression à part, base pour les tours plus tard.
-- **Énergie** (`energy`) : "Jouer" et "Éduquer" en coûtent, régénération passive avec le temps. À 0 → "Jouer" et "Éduquer" bloqués (`bloque.jouer/eduquer = "siVide"`). N'affecte pas la croissance directement (voir note section 4).
+- **Énergie** : retirée. Une jauge cachée qui ne descendait jamais sous 35 ; c'est la fatigue du Dodo qui en tient lieu (« Jouer et apprendre le fatiguent », section 4).
 - Durée : `etapes.jeune.dureeHeures` = 336h (14 jours), proposé par défaut — à confirmer.
 - Au passage à Adulte : les scores de rapidité des 5 traits sont figés dans `adult_stats` et l'archétype est calculé (voir « Détermination de l'archétype » ci-dessous).
 
@@ -314,8 +307,8 @@ Le suivi est tenu dans la colonne `besoins` par le moteur (tick horaire et chaqu
 | `POST /api/dragon/add-wood` | Ajoute du bois au feu (étape Œuf) |
 | `POST /api/dragon/feed` | Nourrir (étape Bébé+, bloqué si triste à partir du Jeune) |
 | `POST /api/dragon/wash` | Laver (étape Bébé+) |
-| `POST /api/dragon/play` | Jouer — augmente la joie, coûte de l'énergie (étape Jeune+) |
-| `POST /api/dragon/educate` | Éduquer — augmente l'apprentissage, baisse la joie, coûte de l'énergie (étape Jeune+) |
+| `POST /api/dragon/play` | Jouer — augmente la joie, le fatigue (étape Jeune+) |
+| `POST /api/dragon/educate` | Éduquer — augmente l'apprentissage, baisse la joie, le fatigue ; refusé s'il est fatigué (étape Jeune+) |
 | `POST /api/dragon/sleep` | Coucher le dragon (mode Dodo, étape Bébé+) |
 | `POST /api/dragon/wake` | Réveiller le dragon, refusé avant la durée minimale de sommeil |
 | `GET /api/ia/contexte` | Homelab (secret `IA_SECRET`) : requête Ollama du rêve à générer, s'il y en a un |
