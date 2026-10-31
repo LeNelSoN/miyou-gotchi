@@ -21,7 +21,7 @@ export const ILLUSTRATIONS = {
   // de côté) : `echelle` lui rend la taille du Bébé.
   "bebe-mange": { largeur: 128, centre: 66, sol: 18, echelle: 0.75, dureeMs: 6400 },
   // Joué une fois à chaque bûche, sans boucle. Le feu de camp dépasse sous ses pieds.
-  "bebe-rechauffe": { largeur: 96, centre: 48.5, sol: 14, dureeMs: 2500 },
+  "bebe-rechauffe": { largeur: 96, centre: 48.5, sol: 14, dureeMs: 6400 },
   "bebe-triste": { largeur: 94, centre: 34.5, sol: 6 },
   jeune: { largeur: 80, centre: 33, sol: 6, scene: GRANDE_SCENE },
   // Variantes `froid` et `chaud`, comme le Bébé.
