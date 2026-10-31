@@ -1,0 +1,60 @@
+{
+  "silenceSiActiviteHeures": 3,
+  "titre": "Miyou-Gotchi",
+  "phrases": {
+    "oeuf": [
+      "Ton œuf a bougé ! Je crois qu'il pense à toi 🥚",
+      "Toc toc... il se passe quelque chose dans l'œuf 🥚",
+      "Ton œuf aimerait bien un câlin tout chaud 🔥",
+      "Chut... ton œuf fait de beaux rêves. Tu viens le voir ?",
+      "Ton œuf a fait un tout petit « crac » ! 🥚",
+      "Ton œuf se demande comment s'est passée ta journée 💛"
+    ],
+    "sansNom": [
+      "Ton petit dragon a hâte de te voir ! 🐉",
+      "Ton petit dragon attend toujours son prénom... tu as une idée ? ✨",
+      "Un petit dragon tout neuf t'attend 💛"
+    ],
+    "endormi": [
+      "{nom} fait une petite sieste... il rêve de toi 💤",
+      "Chut ! {nom} dort tout doucement. Tu viens lui faire un bisou ? 🌙",
+      "{nom} ronfle comme un petit volcan 💤"
+    ],
+    "besoins": {
+      "faim": [
+        "{nom} a un petit creux... tu lui prépares un goûter ? 🍖",
+        "Le ventre de {nom} fait des petits bruits rigolos 🍖",
+        "{nom} se demande ce qu'il y a au goûter aujourd'hui 🍖"
+      ],
+      "froid": [
+        "{nom} aimerait bien une bûche pour se réchauffer 🪵",
+        "{nom} a gardé une place au chaud pour toi... il manque juste un peu de bois 🔥",
+        "Brrr ! {nom} se blottit en attendant ton retour 🪵"
+      ],
+      "sale": [
+        "{nom} a joué dans la boue... un petit bain ? 🫧",
+        "{nom} rêve de bulles et de savon 🫧"
+      ],
+      "triste": [
+        "{nom} a trouvé une balle et voudrait jouer avec toi 🎾",
+        "{nom} a gardé un jeu rien que pour vous deux 🎾"
+      ],
+      "fatigue": [
+        "{nom} bâille... tu viens lui dire bonne nuit ? 🌙",
+        "{nom} a les yeux qui piquent, il t'attend pour le dodo 🌙"
+      ]
+    },
+    "content": [
+      "{nom} a gardé une place au chaud pour toi 🔥",
+      "{nom} se demande comment s'est passée ta journée 💛",
+      "{nom} a hâte de te raconter sa journée 🐉",
+      "{nom} fait des ronds de fumée en t'attendant ✨",
+      "Coucou ! {nom} pense très fort à toi 💛",
+      "{nom} a une histoire à te raconter 📖",
+      "{nom} a fait une petite flamme en forme de cœur 🔥",
+      "{nom} t'attend avec un grand sourire de dragon 🐉",
+      "{nom} a compté les nuages en t'attendant ☁️",
+      "Psst... {nom} a un secret à te dire 💛"
+    ]
+  }
+}

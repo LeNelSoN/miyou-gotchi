@@ -15,7 +15,7 @@ function memeInstant(a, b) {
 
 function heureLocale(horodatage) {
   return new Date(horodatage)
-    .toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Paris" })
+    .toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", timeZone: "Africa/Casablanca" })
     .replace(":", " h ");
 }
 

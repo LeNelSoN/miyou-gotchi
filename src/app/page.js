@@ -6,6 +6,7 @@ import DebugPanel from "./DebugPanel";
 import Illustration, { ILLUSTRATIONS } from "./Illustration";
 import NameModal from "./NameModal";
 import CarteIdentite from "./CarteIdentite";
+import PetitMot from "./PetitMot";
 import { INTERVALLE_PENSEES_MS, penser } from "@/lib/pensees";
 
 // Étapes dont les illustrations ne sont pas encore livrées.
@@ -281,6 +282,9 @@ export default function Home() {
               </div>
             )}
           </div>
+        </div>
+        <div className="mt-4 flex justify-center text-center">
+          <PetitMot />
         </div>
       </main>
 

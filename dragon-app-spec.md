@@ -67,6 +67,14 @@ create table pensees_ia (
   created_at     timestamptz not null default now()
 );
 alter table pensees_ia enable row level security;
+
+-- Appareils abonnés au petit mot quotidien (notifications push)
+create table abonnements_push (
+  endpoint    text primary key,               -- adresse du service push de l'appareil
+  abonnement  jsonb not null,                 -- abonnement complet du navigateur (endpoint + clés)
+  created_at  timestamptz not null default now()
+);
+alter table abonnements_push enable row level security;
 ```
 
 ## 4. Configuration (constantes ajustables)
@@ -299,6 +307,16 @@ Le suivi est tenu dans la colonne `besoins` par le moteur (tick horaire et chaqu
 | hygiene + apprentissage | Perfectionniste |
 | joie + apprentissage | Curieux |
 
+### Petit mot du jour (notifications)
+
+Une seule notification par jour, après l'école, pour garder le rituel sans rendre accro. Mise en route : [`docs/notifications.md`](docs/notifications.md).
+
+- Le cron Vercel appelle `GET /api/notifications/envoi` à 16 h UTC, soit **17 h au Maroc** (16 h pendant le Ramadan, où le pays repasse en UTC+0). En offre gratuite, Vercel peut le déclencher n'importe quand dans l'heure.
+- **Silence** si elle s'est occupée du dragon dans les `silenceSiActiviteHeures` (3 h) précédentes (table `journal`) : le petit mot rappelle, il n'insiste pas.
+- Le message dépend de l'état du dragon : œuf, pas encore de prénom, endormi, un besoin (faim, froid, fatigue, tristesse, saleté, dans cet ordre), ou content. Il utilise le prénom qu'elle lui a donné. Le ton est toujours une invitation tendre, jamais un reproche ni une alerte.
+- La phrase tourne avec le jour : jamais la même deux jours de suite pour un même état, sans rien mémoriser. Phrases et réglages : `config/notifications.json`.
+- L'abonnement se fait sous la coque (« Recevoir un petit mot chaque jour »), sur chaque appareil voulu. Sur iPhone et iPad, il faut d'abord ajouter l'appli à l'écran d'accueil (iOS 16.4+) ; le bouton l'explique.
+
 ## 6. API (routes ou Server Actions, au choix)
 
 | Route | Effet |
@@ -313,6 +331,8 @@ Le suivi est tenu dans la colonne `besoins` par le moteur (tick horaire et chaqu
 | `POST /api/dragon/wake` | Réveiller le dragon, refusé avant la durée minimale de sommeil |
 | `GET /api/ia/contexte` | Homelab (secret `IA_SECRET`) : requête Ollama du rêve à générer, s'il y en a un |
 | `POST /api/ia/pensees` | Homelab (secret `IA_SECRET`) : `{ sommeilDebut, modele, reponse }` — rêve à valider et enregistrer |
+| `POST /api/notifications` | Abonne l'appareil au petit mot quotidien (corps : abonnement push du navigateur) ; `DELETE` `{ endpoint }` le désabonne |
+| `GET /api/notifications/envoi` | Cron Vercel (secret `CRON_SECRET`) : envoie le petit mot du jour ; `?forcer=1` ignore l'activité récente, pour tester |
 | `POST /api/dragon/train` | `{ trickId }` — entraîner un tour *(à définir)* |
 | `POST /api/dragon/name` | `{ name }` — nommer le dragon après éclosion |
 | `POST /api/dragon/reset` | Optionnel, pratique pour les tests |
@@ -350,6 +370,9 @@ Transitions/animations, modale de nom, confirmation de reset, responsive mobile.
 
 **Phase 6 bis — Second écran : ce que dit le dragon** ✅
 Ajouter sur la coque un deuxième petit écran, de taille fixe, dédié aux paroles du dragon (section 5, « Pensées du dragon ») : les paroles quittent l'écran principal, qui garde le dragon, l'état du feu et les alertes. Taille fixe pour que rien ne saute d'une phrase à l'autre : prévue pour le texte le plus long, soit 81 caractères dans la banque (`config/phrases.json`) et jusqu'à 160 pour le récit d'un rêve généré par l'IA (`config/ia.json`), en même police pixel, lisible sur mobile. Il s'éteint avec l'écran principal pendant le Dodo, tout en continuant d'afficher le rêve.
+
+**Phase 6 ter — Petit mot du jour** ✅
+Appli installable (manifeste, icônes, service worker) et une notification quotidienne après l'école (section 5, « Petit mot du jour »).
 
 **Phase 7 — Fonctionnalités en attente de spec (backlog, section 10)**
 Système de tours, activités Adulte additionnelles (carte d'identité/portrait) — à démarrer une fois ces specs détaillées.

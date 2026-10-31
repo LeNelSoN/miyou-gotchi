@@ -92,7 +92,7 @@ Même une enfant attentive met **six semaines** pour atteindre l'Adulte.
 - Les nuits et les journées d'école refroidissent l'œuf : il éclot au jour 4,6 au lieu de 3.
 - Chaque matin, l'œuf a froid, quoi qu'elle fasse.
 
-### 10. Rien ne rappelle le dragon à la joueuse
+### 10. Rien ne rappelle le dragon à la joueuse — ✅ corrigé (petit mot du jour)
 
 - Un vrai tamagotchi sonne quand il a besoin de quelque chose. Ici, rien ne prévient l'enfant : tout repose sur sa mémoire.
 - **Piste :** des notifications de l'appli installée sur l'écran d'accueil (PWA, possible sur iOS et Android), par exemple « Coco a faim ! » ou « Coco s'est réveillé ».
@@ -171,6 +171,10 @@ Même simulation (enfant qui utilise le Dodo, sans adapter ses horaires de leço
 | Rythme de l'Adulte | couché 21h, debout 6h-7h | couché 20h-21h, debout 6h-7h |
 
 Avec 15 min par action, l'effet est presque nul (5 % des visites) ; avec 1 h par leçon, il dort à 15 % des visites. Une vraie joueuse verra la leçon grisée le soir et la donnera plus tôt, ce que la simulation ne fait pas.
+
+## Correction du 19 octobre (problème 10)
+
+Une seule notification par jour, à 17 h heure du Maroc, sauf si elle s'est occupée du dragon dans les 3 h précédentes. Le message utilise le prénom du dragon et reste une invitation tendre (« Coco a gardé une place au chaud pour toi 🔥 »), adaptée à son état sans jamais culpabiliser. Pas de rappel à chaque besoin : le but est le rituel, pas l'accroche.
 
 ## Corrigé depuis l'analyse du 3 octobre
 

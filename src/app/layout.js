@@ -19,6 +19,8 @@ const pixelifySans = Pixelify_Sans({
 export const metadata = {
   title: "Miyou-Gotchi",
   description: "Un dragon virtuel à faire grandir",
+  icons: { apple: "/icones/apple-touch-icon.png" },
+  appleWebApp: { title: "Miyou-Gotchi", statusBarStyle: "black" },
 };
 
 export default function RootLayout({ children }) {

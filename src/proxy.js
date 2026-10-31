@@ -3,12 +3,16 @@ import { COOKIE_SESSION, OPTIONS_COOKIE_SESSION, accesAutorise } from "@/lib/ses
 
 const CHEMINS_CONNEXION = ["/connexion", "/api/connexion"];
 // Appelés par des machines sans session (cron Vercel, homelab), protégés par leur propre secret.
-const CHEMINS_MACHINES = ["/api/keepalive", "/api/ia/"];
+const CHEMINS_MACHINES = ["/api/keepalive", "/api/ia/", "/api/notifications/envoi"];
+// Lus par le navigateur sans cookie de session pour installer l'appli.
+const CHEMINS_INSTALLATION = ["/manifest.webmanifest", "/sw.js", "/icones/"];
 
 // Tout le site est derrière le mot de passe, API et illustrations comprises (sauf en mode debug).
 export function proxy(request) {
   const { pathname } = request.nextUrl;
-  if (CHEMINS_MACHINES.some((chemin) => pathname.startsWith(chemin))) return NextResponse.next();
+  if ([...CHEMINS_MACHINES, ...CHEMINS_INSTALLATION].some((chemin) => pathname.startsWith(chemin))) {
+    return NextResponse.next();
+  }
   const jeton = request.cookies.get(COOKIE_SESSION)?.value;
   const connecte = accesAutorise(jeton);
 
