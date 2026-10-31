@@ -19,7 +19,7 @@ export const ILLUSTRATIONS = {
   "bebe-fatigue": { largeur: 63, centre: 31.5, sol: 4 },
   // Joué une fois à chaque repas, sans boucle. Dessiné plus finement que le reste (128 pixels
   // de côté) : `echelle` lui rend la taille du Bébé.
-  "bebe-mange": { largeur: 128, centre: 66, sol: 18, echelle: 0.75, dureeMs: 4100 },
+  "bebe-mange": { largeur: 128, centre: 66, sol: 18, echelle: 0.75, dureeMs: 6400 },
   // Joué une fois à chaque bûche, sans boucle. Le feu de camp dépasse sous ses pieds.
   "bebe-rechauffe": { largeur: 96, centre: 48.5, sol: 14, dureeMs: 2500 },
   "bebe-triste": { largeur: 94, centre: 34.5, sol: 6 },
