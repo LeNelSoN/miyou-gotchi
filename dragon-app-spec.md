@@ -4,7 +4,7 @@
 
 Animal virtuel en forme de dragon, cadeau d'anniversaire. L'œuf éclot, on s'occupe du dragon pour le faire grandir en plusieurs stades, et on lui apprend des tours. Le dragon ne "meurt" jamais — au pire il est mal en point, jamais perdu.
 
-Illustrations : fournies par un dessinateur (pas de génération IA). Un seul projet Next.js (front + API).
+Illustrations : fournies par un dessinateur ; animations de soins complétées par génération IA (PixelLab), à partir de ses dessins. Un seul projet Next.js (front + API).
 
 Les règles ci-dessous sont définies **étape de développement par étape de développement**, avec l'auteur du projet — rien n'est présumé à l'avance.
 
@@ -342,7 +342,8 @@ Avec l'App Router, des **Server Actions** directement dans les composants peuven
 ## 7. Illustrations nécessaires (pour le dessinateur)
 
 - Œuf : un état de base + une variante visuelle par indicateur de température (🥶 trop froid / 🔥 parfait / 🥵 trop chaud) et par stade de fissures (jauge de progression de l'étape, section 5)
-- Bébé, Jeune, Adulte : détails à définir avec chaque étape
+- Bébé, Jeune, Adulte : repos, content, faim, fatigue, triste, fâché (bleu si froid, rouge si trop chaud). Livrés mais pas encore utilisés : amour, surprise
+- Soins et tours : Bébé qui mange et qui se réchauffe livrés ; Jeune et Adulte qui mangent, cracher du feu (flamme de plus en plus grosse) — à faire
 - Icônes par tour — à définir à l'étape correspondante
 
 ## 8. Roadmap

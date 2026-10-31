@@ -3,15 +3,12 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import DebugPanel from "./DebugPanel";
-import Illustration, { ILLUSTRATIONS } from "./Illustration";
+import Illustration, { ILLUSTRATIONS, illustrationUrl } from "./Illustration";
 import NameModal from "./NameModal";
 import CarteIdentite from "./CarteIdentite";
 import PetitMot from "./PetitMot";
 import { INTERVALLE_PENSEES_MS, penser } from "@/lib/pensees";
 
-// Étapes dont les illustrations ne sont pas encore livrées.
-const EMOJIS_ETAPE = { jeune: "🦖", adulte: "🐉" };
-const EMOJIS_FEU = { froid: "🥶", frais: "🪵", parfait: "🔥", chaud: "🥵" };
 const MESSAGES_FEU = {
   froid: "Il a froid...",
   frais: "Il commence à faire frais...",
@@ -36,6 +33,9 @@ function messageSommeil(dodo) {
   return `Zzz... (debout vers ${heure})`;
 }
 
+// Animation jouée une fois après un soin réussi, pour les étapes qui l'ont.
+const ANIMATIONS_SOINS = { nourrir: "mange", ajouterBois: "rechauffe" };
+
 const CLE_ETAPE_VUE = "miyou-gotchi:etape";
 
 // Les passages d'étape ont souvent lieu en l'absence du joueur : on retient la dernière
@@ -52,27 +52,42 @@ function passageAVoir(etape) {
   }
 }
 
-// Renvoie les props de <Illustration>, ou `null` si l'étape n'est pas encore illustrée.
-function choisirIllustration(dragon, toast, eclosion) {
+// Charge les images avant de les montrer, pour que le dragon ne disparaisse pas pendant le téléchargement.
+function precharger(adresses) {
+  return Promise.all(
+    adresses.map(
+      (adresse) =>
+        new Promise((resolve) => {
+          const image = new Image();
+          image.onload = image.onerror = resolve;
+          image.src = adresse;
+        }),
+    ),
+  );
+}
+
+// Renvoie les props de <Illustration>.
+function choisirIllustration(dragon, toast, eclosion, animationSoin) {
   // « Frais » reste dans la bonne zone : mêmes illustrations que « parfait ».
   const feu = dragon.indicateurs.feu === "frais" ? "parfait" : dragon.indicateurs.feu;
   if (eclosion) return { nom: "eclosion" };
+  if (animationSoin) return animationSoin;
   if (dragon.etape === "oeuf") return { nom: "oeuf", variante: `${feu}-${dragon.palier}` };
-  if (dragon.etape === "bebe") {
-    if (toast) return { nom: "bebe-content" };
-    // La faim n'a pas de message à l'écran : elle passe avant le feu, qui a le sien.
-    if (dragon.humeurs.includes("faim")) return { nom: "bebe-faim" };
-    if (dragon.dodo.fatigue) return { nom: "bebe-fatigue" };
-    if (feu !== "parfait") return { nom: "bebe-fache", variante: feu };
-    return { nom: "bebe" };
-  }
-  return null;
+  if (toast) return { nom: `${dragon.etape}-content` };
+  // La faim et la tristesse n'ont pas de message à l'écran : elles passent avant le feu, qui a le sien.
+  if (dragon.humeurs.includes("faim")) return { nom: `${dragon.etape}-faim` };
+  if (dragon.dodo.fatigue) return { nom: `${dragon.etape}-fatigue` };
+  if (dragon.humeurs.includes("triste")) return { nom: `${dragon.etape}-triste` };
+  if (feu !== "parfait") return { nom: `${dragon.etape}-fache`, variante: feu };
+  return { nom: dragon.etape };
 }
 
 export default function Home() {
   const router = useRouter();
   const [dragon, setDragon] = useState(null);
   const [eclosion, setEclosion] = useState(false);
+  const [animationSoin, setAnimationSoin] = useState(null);
+  const [rebond, setRebond] = useState(0);
   const [enCours, setEnCours] = useState(false);
   const [toast, setToast] = useState(null);
   const [pensee, setPensee] = useState(null);
@@ -99,6 +114,15 @@ export default function Home() {
     const minuteur = setTimeout(() => setEclosion(false), ILLUSTRATIONS.eclosion.dureeMs);
     return () => clearTimeout(minuteur);
   }, [eclosion]);
+
+  useEffect(() => {
+    if (!animationSoin) return;
+    const minuteur = setTimeout(() => {
+      setAnimationSoin(null);
+      setRebond((numero) => numero + 1);
+    }, ILLUSTRATIONS[animationSoin.nom].dureeMs);
+    return () => clearTimeout(minuteur);
+  }, [animationSoin]);
 
   useEffect(() => {
     if (!toast) return;
@@ -134,6 +158,15 @@ export default function Home() {
     setEnCours(false);
     if (!res.ok) return data.erreur ?? "Une erreur est survenue.";
 
+    const nomSoin = `${data.etape}-${ANIMATIONS_SOINS[evenement?.soin]}`;
+    if (data.applique !== false && ILLUSTRATIONS[nomSoin]) {
+      const lecture = Date.now();
+      // « Content » est préchargé aussi : il suit l'animation si un message s'affiche encore.
+      await precharger([illustrationUrl(nomSoin, undefined, lecture), illustrationUrl(`${data.etape}-content`)]);
+      setAnimationSoin({ nom: nomSoin, lecture });
+      setRebond((numero) => numero + 1);
+    }
+
     afficher(data, data.applique === false ? undefined : evenement);
     // Nouvel objet à chaque fois pour relancer le minuteur si le message se répète.
     setToast(toasts[0] ? { ...toasts[0] } : null);
@@ -152,7 +185,7 @@ export default function Home() {
   const fatigue = dragon?.dodo?.fatigue;
   const boutonDodo = dragon?.dodo && (endormi ? DODO.reveiller : DODO.coucher);
   const nomAttendu = dragon && dragon.etape !== "oeuf" && !dragon.named && !eclosion;
-  const illustration = dragon && choisirIllustration(dragon, toast, eclosion);
+  const illustration = dragon && choisirIllustration(dragon, toast, eclosion, animationSoin);
 
   return (
     <div
@@ -182,8 +215,6 @@ export default function Home() {
               <>
                 <div className="flex items-center justify-between text-lg leading-none">
                   <h1 className="truncate">{dragon.named ? dragon.name : "???"}</h1>
-                  {/* Avec une illustration, l'état du feu se lit sur le dessin et le message. */}
-                  {!illustration && !endormi && <span aria-hidden="true">{EMOJIS_FEU[dragon.indicateurs.feu]}</span>}
                 </div>
 
                 {/* La clé relance l'animation d'apparition à chaque changement d'étape
@@ -192,13 +223,7 @@ export default function Home() {
                   key={eclosion ? "oeuf" : dragon.etape}
                   className="flex min-h-0 flex-1 items-center justify-center motion-safe:animate-apparition"
                 >
-                  {endormi ? null : illustration ? (
-                    <Illustration {...illustration} />
-                  ) : (
-                    <div className="text-[clamp(3rem,18vw,4.5rem)] leading-none drop-shadow-[0_6px_0_rgba(31,42,23,0.25)] motion-safe:animate-flotter">
-                      {EMOJIS_ETAPE[dragon.etape]}
-                    </div>
-                  )}
+                  {!endormi && <Illustration {...illustration} rebond={rebond} />}
                 </div>
 
                 <div className="flex min-h-12 flex-col justify-end text-center leading-tight" aria-live="polite">

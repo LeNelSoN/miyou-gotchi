@@ -28,14 +28,16 @@
 }
 
 @theme {
-  --animate-flotter: flotter 3s ease-in-out infinite;
   --animate-apparition: apparition 0.6s ease-out;
   --animate-fondu: fondu 0.25s ease-out;
+  --animate-rebond: rebond 0.4s ease-out;
   --animate-braise: braise 4s ease-in-out infinite;
 
-  @keyframes flotter {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-0.5rem); }
+  @keyframes rebond {
+    0% { transform: scale(1.08, 0.9); }
+    40% { transform: translateY(-10%) scale(0.96, 1.05); }
+    75% { transform: scale(1.04, 0.96); }
+    100% { transform: none; }
   }
   @keyframes apparition {
     0% { transform: scale(0.4) rotate(-8deg); opacity: 0; }
