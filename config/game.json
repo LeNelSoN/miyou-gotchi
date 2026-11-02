@@ -129,7 +129,7 @@
       "champDb": "learning",
       "max": 100,
       "seuilMin": 40,
-      "variationParHeure": -1,
+      "variationParHeure": -3,
       "anticipation": {
         "seuil": 70,
         "humeur": "curiosite"
@@ -144,6 +144,11 @@
         "jeune",
         "adulte"
       ],
+      "bloque": {
+        "eduquer": {
+          "siAuDessus": 80
+        }
+      },
       "humeurSiMauvais": "envieApprendre"
     }
   },
@@ -211,8 +216,16 @@
       "dureeHeures": 168
     },
     "jeune": {
-      "dureeHeures": 336
+      "lecons": 30
     }
+  },
+  "lecons": {
+    "types": [
+      "sport",
+      "lecture",
+      "musique"
+    ],
+    "pointSiBesoinEnManque": 0.5
   },
   "multiplicateurRalentissement": 0.5,
   "dodo": {

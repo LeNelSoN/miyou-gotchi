@@ -1,5 +1,5 @@
 import { getSupabaseServerClient } from "./supabaseServer";
-import { avancerDragon, appliquerAction, coucher, reveiller, validerNom, nomEtape } from "./dragonEngine";
+import { avancerDragon, appliquerAction, appliquerLecon, coucher, reveiller, validerNom } from "./dragonEngine";
 
 export async function sauvegarderDragon(dragon) {
   const supabase = getSupabaseServerClient();
@@ -8,11 +8,10 @@ export async function sauvegarderDragon(dragon) {
   if (error) throw new Error(error.message);
 }
 
-// Mémoire de la journée du dragon, lue pour contextualiser ses rêves. Un échec
-// d'écriture est seulement signalé : il ne doit jamais bloquer le jeu.
-async function journaliser(type, detail = null) {
-  const { error } = await getSupabaseServerClient().from("journal").insert({ type, detail });
-  if (error) console.error("Journal indisponible :", error.message);
+// Retient le dernier passage de la joueuse (soin, leçon, nom, coucher, réveil) : le petit mot
+// du jour n'est pas envoyé si elle s'est déjà occupée de lui.
+function avecActivite(dragon) {
+  return { ...dragon, derniere_activite: new Date().toISOString() };
 }
 
 export async function recupererDragonSynchronise() {
@@ -25,19 +24,25 @@ export async function recupererDragonSynchronise() {
   if (champsTemps.some((champ) => dragonAJour[champ] !== dragon[champ])) {
     await sauvegarderDragon(dragonAJour);
   }
-  if (dragonAJour.stage !== dragon.stage) await journaliser("etape", nomEtape(dragonAJour.stage));
-
   return dragonAJour;
 }
 
 export async function appliquerActionEtSauvegarder(actionName) {
   const dragon = await recupererDragonSynchronise();
   const resultat = appliquerAction(dragon, actionName);
-  if (resultat.applique) {
-    await sauvegarderDragon(resultat.dragon);
-    await journaliser("soin", actionName);
-  }
-  return resultat;
+  if (!resultat.applique) return resultat;
+  const dragonSoigne = avecActivite(resultat.dragon);
+  await sauvegarderDragon(dragonSoigne);
+  return { dragon: dragonSoigne, applique: true };
+}
+
+export async function appliquerLeconEtSauvegarder(lecon) {
+  const dragon = await recupererDragonSynchronise();
+  const resultat = appliquerLecon(dragon, lecon);
+  if (!resultat.applique) return resultat;
+  const dragonInstruit = avecActivite(resultat.dragon);
+  await sauvegarderDragon(dragonInstruit);
+  return { dragon: dragonInstruit, applique: true };
 }
 
 export async function nommerDragon(nom) {
@@ -45,26 +50,26 @@ export async function nommerDragon(nom) {
   const nomValide = validerNom(dragon, nom);
   if (nomValide == null) return { dragon, applique: false };
 
-  const resultat = { ...dragon, name: nomValide, named: true };
+  const resultat = avecActivite({ ...dragon, name: nomValide, named: true });
   await sauvegarderDragon(resultat);
   return { dragon: resultat, applique: true };
 }
 
-async function basculerDodo(transition, typeJournal) {
+async function basculerDodo(transition) {
   const dragon = await recupererDragonSynchronise();
-  const resultat = transition(dragon);
-  if (!resultat) return { dragon, applique: false };
+  const transitionne = transition(dragon);
+  if (!transitionne) return { dragon, applique: false };
+  const resultat = avecActivite(transitionne);
   await sauvegarderDragon(resultat);
-  await journaliser(typeJournal);
   return { dragon: resultat, applique: true };
 }
 
 export function coucherDragon() {
-  return basculerDodo(coucher, "coucher");
+  return basculerDodo(coucher);
 }
 
 export function reveillerDragon() {
-  return basculerDodo(reveiller, "reveil");
+  return basculerDodo(reveiller);
 }
 
 // Supprime puis recrée la ligne pour repartir des valeurs par défaut du schéma

@@ -41,7 +41,8 @@ export default function DebugPanel({ dragon, enCours, envoyer }) {
     >
       <summary className="cursor-pointer font-bold">
         DEBUG — {dragon.etape}
-        {debug.dureeEtape != null && ` · ${debug.progression}/${debug.dureeEtape} h`}
+        {debug.seuilEtape != null &&
+          ` · ${debug.progression}/${debug.seuilEtape.valeur} ${debug.seuilEtape.unite === "heures" ? "h" : "leçons"}`}
       </summary>
       <div className="mt-2 flex flex-col gap-2">
 
@@ -58,6 +59,8 @@ export default function DebugPanel({ dragon, enCours, envoyer }) {
           </div>
         ))}
 
+        {Object.keys(debug.lecons).length > 0 && <p>leçons : {JSON.stringify(debug.lecons)}</p>}
+
         {debug.personality ? (
           <p>
             archétype : {debug.personality} · {JSON.stringify(debug.adultStats)}
@@ -72,7 +75,7 @@ export default function DebugPanel({ dragon, enCours, envoyer }) {
               +{heures} h
             </button>
           ))}
-          <button className={BOUTON} disabled={enCours || debug.dureeEtape == null} onClick={() => commande({ finirEtape: true })}>
+          <button className={BOUTON} disabled={enCours || debug.seuilEtape == null} onClick={() => commande({ finirEtape: true })}>
             Finir l&apos;étape
           </button>
         </div>

@@ -1,9 +1,8 @@
 import { readFile, writeFile } from "fs/promises";
 import path from "path";
 import config from "../../config/game.json";
-import { nomEtape, scoresBesoins } from "./dragonEngine";
+import { nomEtape, scoresBesoins, seuilEtape } from "./dragonEngine";
 import { recupererDragonSynchronise, sauvegarderDragon } from "./dragonRepository";
-import { decalerReves } from "./revesRepository";
 
 const HEURE_MS = 3600000;
 const CHEMIN_CONFIG = path.join(process.cwd(), "config", "game.json");
@@ -25,7 +24,8 @@ export function infosDebug(dragon) {
   return {
     valeurs,
     progression: dragon.stage_progress,
-    dureeEtape: config.etapes[nomEtape(dragon.stage)]?.dureeHeures ?? null,
+    seuilEtape: seuilEtape(nomEtape(dragon.stage)),
+    lecons: dragon.lecons ?? {},
     adultStats: dragon.adult_stats,
     scoresBesoins: scoresBesoins(dragon),
     personality: dragon.personality,
@@ -73,16 +73,15 @@ export async function avancerTemps(heures) {
     if (dragon[champ]) reculs[champ] = new Date(new Date(dragon[champ]).getTime() - heures * HEURE_MS).toISOString();
   }
   await sauvegarderDragon({ ...dragon, ...reculs });
-  if (reculs.sleeping_since) await decalerReves(dragon.sleeping_since, reculs.sleeping_since);
   return recupererDragonSynchronise();
 }
 
-// Amène la progression au seuil : le passage d'étape se fait à l'heure suivante.
+// Amène la progression au seuil (heures ou leçons) : le passage d'étape se fait à l'heure suivante.
 export async function finirEtape() {
   const dragon = await recupererDragonSynchronise();
-  const duree = config.etapes[nomEtape(dragon.stage)]?.dureeHeures;
-  if (duree == null) return dragon;
-  await sauvegarderDragon({ ...dragon, stage_progress: duree });
+  const seuil = seuilEtape(nomEtape(dragon.stage));
+  if (seuil == null) return dragon;
+  await sauvegarderDragon({ ...dragon, stage_progress: seuil.valeur });
   return avancerTemps(1);
 }
 

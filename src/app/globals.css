@@ -135,16 +135,17 @@ body {
     0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-/* Écran de dialogue : hauteur fixe, quel que soit le texte (cinq lignes sur mobile, où l'écran
-   est plus large, six sur ordinateur). */
+/* Écran de dialogue : hauteur fixe, quel que soit le texte, prévue pour la plus longue phrase
+   (81 caractères) : trois lignes sur mobile, quatre sur ordinateur. */
 .ecran-dialogue {
   font-size: 13px;
   line-height: 1.25;
-  height: calc(5 * 1.25em + 1rem);
+  height: calc(3 * 1.25em + 1rem);
 }
 
 @media (min-width: 40rem) {
   .ecran-dialogue {
-    height: calc(6 * 1.25em + 1rem);
+    height: calc(4 * 1.25em + 1rem);
   }
 }
+

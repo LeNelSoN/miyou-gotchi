@@ -263,10 +263,21 @@ function avancerProgressionEtape(dragon, nomEtapeCourante) {
   dragon.stage_progress += toutesBonnes ? 1 : config.multiplicateurRalentissement;
 }
 
+// Ce qu'il faut accumuler dans `stage_progress` pour passer à l'étape suivante : des heures
+// (`dureeHeures`, l'œuf et le Bébé grandissent avec le temps) ou des leçons (`lecons`, le Jeune
+// grandit en apprenant). `null` à la dernière étape.
+export function seuilEtape(nomEtapeCourante) {
+  const etape = config.etapes[nomEtapeCourante];
+  if (!etape) return null;
+  if (etape.dureeHeures != null) return { valeur: etape.dureeHeures, unite: "heures" };
+  if (etape.lecons != null) return { valeur: etape.lecons, unite: "lecons" };
+  return null;
+}
+
 function tenterPassageEtapeSuivante(dragon, nomEtapeCourante) {
-  const duree = config.etapes[nomEtapeCourante]?.dureeHeures;
-  if (duree == null) return;
-  if (dragon.stage_progress >= duree) {
+  const seuil = seuilEtape(nomEtapeCourante);
+  if (seuil == null) return;
+  if (dragon.stage_progress >= seuil.valeur) {
     dragon.stage += 1;
     dragon.stage_progress = 0;
     if (nomEtape(dragon.stage) === "adulte") figerPersonnalite(dragon);
@@ -376,14 +387,12 @@ export function avancerDragon(dragon, maintenant = new Date()) {
     appliquerDecroissanceHoraire(resultat, etapeCourante);
     suivreBesoins(resultat, true);
 
-    const dureeEtape = config.etapes[etapeCourante]?.dureeHeures;
-    if (dureeEtape != null) {
-      avancerProgressionEtape(resultat, etapeCourante);
-      tenterPassageEtapeSuivante(resultat, etapeCourante);
-      // L'éclosion ouvre le premier cycle de veille.
-      if (!config.dodo.etapes[etapeCourante] && rythme(resultat)) {
-        resultat.awake_since = decaler(dernierPassage, i + 1).toISOString();
-      }
+    // Seules les étapes au temps avancent à chaque heure ; le passage est vérifié pour toutes.
+    if (config.etapes[etapeCourante]?.dureeHeures != null) avancerProgressionEtape(resultat, etapeCourante);
+    tenterPassageEtapeSuivante(resultat, etapeCourante);
+    // L'éclosion ouvre le premier cycle de veille.
+    if (!config.dodo.etapes[etapeCourante] && rythme(resultat)) {
+      resultat.awake_since = decaler(dernierPassage, i + 1).toISOString();
     }
   }
 
@@ -431,5 +440,27 @@ export function appliquerAction(dragon, actionName, maintenant = new Date()) {
   suivreBesoins(resultat, false);
   fatiguer(resultat, actionName, maintenant);
 
+  return { dragon: resultat, applique: true };
+}
+
+// Une leçon (`lecons.types` : sport, lecture, musique) est un « Éduquer » dont le type est retenu
+// dans `lecons` (compte par type, base du talent de l'Adulte). Aux étapes qui grandissent en
+// apprenant, elle fait aussi grandir : 1 point, ou `pointSiBesoinEnManque` si un besoin qui compte
+// pour la croissance (feu, faim, saleté, tristesse) était en manque au moment de la leçon.
+export function appliquerLecon(dragon, lecon, maintenant = new Date()) {
+  if (!config.lecons.types.includes(lecon)) return { dragon, applique: false };
+  const etapeCourante = nomEtape(dragon.stage);
+  const besoinEnManque = caracteristiquesActives(etapeCourante).some(
+    (carac) => carac.affecteCroissance && !estDansBonneZone(carac, dragon[carac.champDb])
+  );
+
+  const { dragon: resultat, applique } = appliquerAction(dragon, "eduquer", maintenant);
+  if (!applique) return { dragon, applique: false };
+
+  resultat.lecons = { ...dragon.lecons, [lecon]: (dragon.lecons?.[lecon] ?? 0) + 1 };
+  if (seuilEtape(etapeCourante)?.unite === "lecons") {
+    resultat.stage_progress += besoinEnManque ? config.lecons.pointSiBesoinEnManque : 1;
+    tenterPassageEtapeSuivante(resultat, etapeCourante);
+  }
   return { dragon: resultat, applique: true };
 }

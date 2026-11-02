@@ -24,7 +24,7 @@ create table dragon (
   named               boolean not null default false,
   stage               int not null default 0,       -- 0=œuf, 1=bébé, 2=jeune, 3=adulte
   fire                numeric not null default 80,   -- jauge de chaleur, active à chaque étape (l'œuf arrive bien au chaud)
-  stage_progress      numeric not null default 0,    -- heures de progression cumulées vers l'étape suivante (remise à 0 à chaque avancement)
+  stage_progress      numeric not null default 0,    -- progression vers l'étape suivante (remise à 0 à chaque avancement) : heures (œuf, Bébé) ou leçons (Jeune)
   hunger              numeric not null default 100,  -- nourriture, active à partir de l'étape Bébé
   clean               numeric not null default 100,  -- hygiène, active à partir de l'étape Bébé
   joy                 numeric not null default 100,  -- joie, active à partir de l'étape Jeune
@@ -33,6 +33,8 @@ create table dragon (
   adult_stats         jsonb,                          -- scores de rapidité {feu, nourriture, hygiene, joie, apprentissage} figés au passage à Adulte
   personality         text,                           -- archétype dérivé de adult_stats (section 5)
   besoins             jsonb not null default '{}',    -- suivi des besoins pendant la croissance, par trait : {notes, nombre, ouvert}
+  lecons              jsonb not null default '{}',    -- leçons données, par type : {sport, lecture, musique} (base du talent de l'Adulte)
+  derniere_activite   timestamptz,                    -- dernier soin, leçon, nom, coucher ou réveil de la joueuse (silence du petit mot du jour)
   tricks_learned      jsonb not null default '[]',
   available_tricks    jsonb not null default '[]',
   training_progress   jsonb not null default '{}',
@@ -44,29 +46,6 @@ create table dragon (
 );
 
 alter table dragon enable row level security;
-
--- Mémoire de la journée (soins, coucher, réveil, passages d'étape), lue pour contextualiser les rêves
-create table journal (
-  id          bigint generated always as identity primary key,
-  type        text not null,                  -- soin | coucher | reveil | etape
-  detail      text,                           -- nom de l'action ou de l'étape
-  created_at  timestamptz not null default now()
-);
-alter table journal enable row level security;
-
--- Rêves générés par l'IA du homelab, un valide au plus par nuit (rejets conservés pour ajuster le prompt)
-create table pensees_ia (
-  id             bigint generated always as identity primary key,
-  sommeil_debut  timestamptz not null,        -- sleeping_since de la nuit concernée
-  pendant        text,                        -- fragment affiché pendant le sommeil
-  reveil         text,                        -- récit fait une fois au réveil
-  rejet          text,                        -- raison du rejet par les garde-fous, null = valide
-  brut           text,                        -- réponse brute du modèle
-  modele         text,
-  raconte        boolean not null default false,
-  created_at     timestamptz not null default now()
-);
-alter table pensees_ia enable row level security;
 
 -- Appareils abonnés au petit mot quotidien (notifications push)
 create table abonnements_push (
@@ -141,11 +120,12 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
       "champDb": "learning",
       "max": 100,
       "seuilMin": 40,
-      "variationParHeure": -1,
+      "variationParHeure": -3,
       "anticipation": { "seuil": 70, "humeur": "curiosite" },
       "actions": { "eduquer": { "effet": 20 } },
       "affecteCroissance": false,
       "etapesActives": ["jeune", "adulte"],
+      "bloque": { "eduquer": { "siAuDessus": 80 } },
       "humeurSiMauvais": "envieApprendre"
     }
   },
@@ -159,8 +139,9 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
   "etapes": {
     "oeuf": { "dureeHeures": 72, "paliers": 6 },
     "bebe": { "dureeHeures": 168 },
-    "jeune": { "dureeHeures": 336 }
+    "jeune": { "lecons": 30 }
   },
+  "lecons": { "types": ["sport", "lecture", "musique"], "pointSiBesoinEnManque": 0.5 },
   "multiplicateurRalentissement": 0.5,
   "dodo": {
     "etapes": {
@@ -202,7 +183,9 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
 
 ### Règle de progression commune (toutes étapes)
 
-À chaque heure réelle écoulée, pour l'étape en cours : si **toutes** les caractéristiques actives à cette étape avec `affecteCroissance: true` sont dans leur bonne zone → `stage_progress += 1h`. Sinon (au moins une hors zone) → `stage_progress += 1h × multiplicateurRalentissement`. Jamais bloqué complètement, juste plus long si négligé (cohérent avec "jamais de mort"). Quand `stage_progress >= etapes.<étape>.dureeHeures` → passage à l'étape suivante, `stage_progress` repart à 0.
+**Œuf et Bébé grandissent avec le temps** (`etapes.<étape>.dureeHeures`) : à chaque heure réelle écoulée, pour l'étape en cours : si **toutes** les caractéristiques actives à cette étape avec `affecteCroissance: true` sont dans leur bonne zone → `stage_progress += 1h`. Sinon (au moins une hors zone) → `stage_progress += 1h × multiplicateurRalentissement`. Jamais bloqué complètement, juste plus long si négligé (cohérent avec "jamais de mort"). Quand `stage_progress >= etapes.<étape>.dureeHeures` → passage à l'étape suivante, `stage_progress` repart à 0.
+
+**Le Jeune grandit en apprenant** (`etapes.jeune.lecons` = 30) : le temps ne le fait plus grandir, chaque leçon donnée vaut 1 point de `stage_progress`, ou `lecons.pointSiBesoinEnManque` (½) si une caractéristique `affecteCroissance` était hors zone au moment de la leçon (le soin oublié est le malus). Il ne perd jamais ses points. À 30 points, il passe Adulte.
 
 ### Mode Dodo (Bébé, Jeune, Adulte)
 
@@ -221,25 +204,13 @@ Le dragon suit un rythme veille/sommeil propre à chaque étape (`dodo.etapes`) 
 
 ### Pensées du dragon
 
-Le dragon s'adresse à la joueuse (une petite fille) sur le second écran de la coque (écran de dialogue, taille fixe de six lignes), en la tutoyant, sur un ton tendre — varié selon l'archétype à l'âge adulte. Tout accord qui la concerne est au féminin ; le dragon, lui, reste masculin. Son langage grandit avec lui : sensations dans l'œuf, babillage du Bébé, phrases courtes du Jeune, phrases complètes de l'Adulte.
+Le dragon s'adresse à la joueuse (une petite fille) sur le second écran de la coque (écran de dialogue, taille fixe : trois lignes sur mobile, quatre sur ordinateur), en la tutoyant, sur un ton tendre — varié selon l'archétype à l'âge adulte. Tout accord qui la concerne est au féminin ; le dragon, lui, reste masculin. Son langage grandit avec lui : sensations dans l'œuf, babillage du Bébé, phrases courtes du Jeune, phrases complètes de l'Adulte.
 
-- Les phrases sont pré-écrites dans `config/phrases.json` (objectif : 1000), par étape : `etats` (content + chaque humeur), `soins` (réaction à une action réussie), `reves` (pendant le Dodo), `moments` (premier mot après l'éclosion, premier mot après un passage d'étape `grandir`, réveil) et, pour l'Adulte, une voix par archétype.
+- Les phrases sont pré-écrites dans `config/phrases.json` (objectif : 1000), par étape : `etats` (content + chaque humeur), `soins` (réaction à une action réussie), `reves` (rêves pré-écrits, dits pendant le Dodo), `moments` (premier mot après l'éclosion, premier mot après un passage d'étape `grandir`, réveil) et, pour l'Adulte, une voix par archétype.
 - La catégorie se déduit uniquement des états qualitatifs envoyés au client (`humeurs`, état du feu, fatigue, sommeil), l'état le plus urgent selon `priorite`. Aucune valeur brute n'est nécessaire.
 - Quand la tristesse bloque « Nourrir » alors qu'il a faim, l'état `tristeFaim` passe avant tout : il explique qu'il est trop triste pour manger et demande à jouer, au lieu de réclamer un repas au bouton grisé.
 - À l'Adulte, sans besoin urgent, une pensée sur trois (`partArchetype`) est tirée de la voix de son archétype (`etapes.adulte.archetypes`, 25 phrases par archétype) : l'archétype est désormais envoyé au client (`archetype`), sans être encore affiché en clair.
 - Une pensée s'affiche au chargement, après chaque soin réussi et toutes les `intervalleSecondes` (30 s). Les `antiRepetition` dernières phrases vues sur l'appareil sont écartées tant qu'il en reste d'autres.
-
-### Rêves générés par l'IA (homelab)
-
-Une IA légère tournant sur un homelab (Ollama) écrit chaque nuit un rêve contextualisé. Installation et branchement : [`docs/homelab-ia.md`](docs/homelab-ia.md). **Le homelab n'est jamais exposé** : c'est lui qui interroge le jeu, avec le secret `IA_SECRET`.
-
-1. `GET /api/ia/contexte` (toutes les ~30 min) : si le dragon dort et que la nuit n'a pas encore de rêve valide (au plus `tentativesMax` essais), renvoie la requête Ollama prête à l'emploi (`messages`, `format`, `options`) et `sommeilDebut` ; sinon `{ aGenerer: false }`.
-2. Le homelab l'envoie à `POST /api/chat` d'Ollama en ajoutant seulement le nom du modèle.
-3. `POST /api/ia/pensees` `{ sommeilDebut, modele, reponse }` : l'appli valide puis enregistre dans `pensees_ia` (422 si rejeté, 409 si la nuit est finie).
-
-- Le contexte ne contient que le nom du dragon, son étape, son archétype, l'heure du coucher (et s'il s'est endormi seul), ses soins depuis son réveil (table `journal`), un thème tiré au hasard et ses derniers rêves (pour éviter les répétitions). Aucune donnée sur l'enfant.
-- Prompt, thèmes, limites et mots interdits vivent dans `config/ia.json`. Les garde-fous du code vérifient le JSON, les longueurs, l'absence d'emoji et de mots interdits ; l'accord au féminin pour l'enfant repose sur le prompt et la relecture des rêves en base.
-- Pendant le sommeil, l'écran de dialogue (éteint lui aussi) affiche `pendant` à la place des rêves de la banque ; après le réveil, `reveil` est raconté une seule fois (`raconte`). Sans rêve généré (homelab éteint), la banque prend le relais sans que rien ne casse.
 
 ### Étape 1 — Œuf ✅ (validé)
 
@@ -261,7 +232,9 @@ Une IA légère tournant sur un homelab (Ollama) écrit chaque nuit un rêve con
 - **Joie** (`joy`) : baisse lentement d'elle-même (il s'ennuie), "Jouer" l'augmente, "Éduquer" la diminue. Hors zone (triste) → "Jouer" devient moins efficace (`multiplicateurActionSiMauvais`) **et** "Nourrir" est complètement bloqué (`bloque.nourrir = "siMauvais"`).
 - **Apprentissage** (`learning`) : baisse lentement d'elle-même (il oublie), "Éduquer" l'augmente. Sous `seuilMin` (40), il a envie d'apprendre (humeur `envieApprendre`, visible dans ses pensées). N'affecte pas la croissance (`affecteCroissance: false`) — progression à part, base pour les tours plus tard.
 - **Énergie** : retirée. Une jauge cachée qui ne descendait jamais sous 35 ; c'est la fatigue du Dodo qui en tient lieu (« Jouer et apprendre le fatiguent », section 4).
-- Durée : `etapes.jeune.dureeHeures` = 336h (14 jours), proposé par défaut — à confirmer.
+- **Leçons** : « Éduquer » propose trois leçons (`lecons.types`) : ⚽ Sport, 📖 Lecture, 🎵 Musique. Même effet immédiat pour les trois (apprentissage +20, joie −15, fatigue) ; chaque leçon est comptée par type dans `lecons`, base du talent de l'Adulte (Sport → cracheur de feu, Lecture → sage, Musique → épanoui et musicien), qui façonnera aussi son attitude pendant la croissance (phase suivante).
+- **Croissance** : 30 leçons (`etapes.jeune.lecons`), ½ leçon si un besoin est en manque (voir « Règle de progression commune »).
+- **Rythme** : « Éduquer » est grisé tant que l'apprentissage est à 80 ou plus (`bloque.eduquer.siAuDessus`). Il baisse de 3 par heure (de moitié en dormant) : environ 2 leçons par jour d'école, 4 à 5 le mercredi et le week-end, soit au moins 10 jours pour une joueuse très assidue.
 - Au passage à Adulte : les scores de rapidité des 5 traits sont figés dans `adult_stats` et l'archétype est calculé (voir « Détermination de l'archétype » ci-dessous).
 
 ### Étape 4 — Dragon adulte ✅ (validé)
@@ -313,7 +286,7 @@ Le suivi est tenu dans la colonne `besoins` par le moteur (tick horaire et chaqu
 Une seule notification par jour, après l'école, pour garder le rituel sans rendre accro. Mise en route : [`docs/notifications.md`](docs/notifications.md).
 
 - Le cron Vercel appelle `GET /api/notifications/envoi` à 16 h UTC, soit **17 h au Maroc** (16 h pendant le Ramadan, où le pays repasse en UTC+0). En offre gratuite, Vercel peut le déclencher n'importe quand dans l'heure.
-- **Silence** si elle s'est occupée du dragon dans les `silenceSiActiviteHeures` (3 h) précédentes (table `journal`) : le petit mot rappelle, il n'insiste pas.
+- **Silence** si elle s'est occupée du dragon dans les `silenceSiActiviteHeures` (3 h) précédentes (`derniere_activite` : soin, leçon, nom, coucher ou réveil) : le petit mot rappelle, il n'insiste pas.
 - Le message dépend de l'état du dragon : œuf, pas encore de prénom, endormi, un besoin (faim, froid, fatigue, tristesse, saleté, dans cet ordre), ou content. Il utilise le prénom qu'elle lui a donné. Le ton est toujours une invitation tendre, jamais un reproche ni une alerte.
 - La phrase tourne avec le jour : jamais la même deux jours de suite pour un même état, sans rien mémoriser. Phrases et réglages : `config/notifications.json`.
 - L'abonnement se fait sous la coque (« Recevoir un petit mot chaque jour »), sur chaque appareil voulu. Sur iPhone et iPad, il faut d'abord ajouter l'appli à l'écran d'accueil (iOS 16.4+) ; le bouton l'explique.
@@ -327,11 +300,9 @@ Une seule notification par jour, après l'école, pour garder le rituel sans ren
 | `POST /api/dragon/feed` | Nourrir (étape Bébé+, bloqué si triste à partir du Jeune) |
 | `POST /api/dragon/wash` | Laver (étape Bébé+) |
 | `POST /api/dragon/play` | Jouer — augmente la joie, le fatigue (étape Jeune+) |
-| `POST /api/dragon/educate` | Éduquer — augmente l'apprentissage, baisse la joie, le fatigue ; refusé s'il est fatigué (étape Jeune+) |
+| `POST /api/dragon/educate` | `{ lecon: "sport" \| "lecture" \| "musique" }` — une leçon : augmente l'apprentissage, baisse la joie, le fatigue, fait grandir le Jeune ; refusée s'il est fatigué ou n'a pas envie d'apprendre (étape Jeune+) |
 | `POST /api/dragon/sleep` | Coucher le dragon (mode Dodo, étape Bébé+) |
 | `POST /api/dragon/wake` | Réveiller le dragon, refusé avant la durée minimale de sommeil |
-| `GET /api/ia/contexte` | Homelab (secret `IA_SECRET`) : requête Ollama du rêve à générer, s'il y en a un |
-| `POST /api/ia/pensees` | Homelab (secret `IA_SECRET`) : `{ sommeilDebut, modele, reponse }` — rêve à valider et enregistrer |
 | `POST /api/notifications` | Abonne l'appareil au petit mot quotidien (corps : abonnement push du navigateur) ; `DELETE` `{ endpoint }` le désabonne |
 | `GET /api/notifications/envoi` | Cron Vercel (secret `CRON_SECRET`) : envoie le petit mot du jour ; `?forcer=1` ignore l'activité récente, pour tester |
 | `POST /api/dragon/train` | `{ trickId }` — entraîner un tour *(à définir)* |
@@ -371,7 +342,7 @@ Remplacer les visuels placeholder par les images du dessinateur, au fur et à me
 Transitions/animations, modale de nom, confirmation de reset, responsive mobile.
 
 **Phase 6 bis — Second écran : ce que dit le dragon** ✅
-Ajouter sur la coque un deuxième petit écran, de taille fixe, dédié aux paroles du dragon (section 5, « Pensées du dragon ») : les paroles quittent l'écran principal, qui garde le dragon, l'état du feu et les alertes. Taille fixe pour que rien ne saute d'une phrase à l'autre : prévue pour le texte le plus long, soit 81 caractères dans la banque (`config/phrases.json`) et jusqu'à 160 pour le récit d'un rêve généré par l'IA (`config/ia.json`), en même police pixel, lisible sur mobile. Il s'éteint avec l'écran principal pendant le Dodo, tout en continuant d'afficher le rêve.
+Ajouter sur la coque un deuxième petit écran, de taille fixe, dédié aux paroles du dragon (section 5, « Pensées du dragon ») : les paroles quittent l'écran principal, qui garde le dragon, l'état du feu et les alertes. Taille fixe pour que rien ne saute d'une phrase à l'autre : prévue pour le texte le plus long, soit 81 caractères dans la banque (`config/phrases.json`), en même police pixel, lisible sur mobile. Il s'éteint avec l'écran principal pendant le Dodo, tout en continuant d'afficher ses rêves. (Les rêves générés par une IA sur un homelab ont été retirés, avec leur journal.)
 
 **Phase 6 ter — Petit mot du jour** ✅
 Appli installable (manifeste, icônes, service worker) et une notification quotidienne après l'école (section 5, « Petit mot du jour »).

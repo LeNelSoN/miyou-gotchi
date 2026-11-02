@@ -1,6 +1,6 @@
 import { timingSafeEqual } from "node:crypto";
 
-// Routes appelées par une machine (cron Vercel, homelab), sans session : elles exigent
+// Routes appelées par une machine (cron Vercel), sans session : elles exigent
 // `Authorization: Bearer <secret>`. Sans secret configuré, tout appel est refusé.
 export function secretValide(request, nomVariable) {
   const secret = process.env[nomVariable];

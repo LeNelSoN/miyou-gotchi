@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { COOKIE_SESSION, OPTIONS_COOKIE_SESSION, accesAutorise } from "@/lib/session";
 
 const CHEMINS_CONNEXION = ["/connexion", "/api/connexion"];
-// Appelés par des machines sans session (cron Vercel, homelab), protégés par leur propre secret.
-const CHEMINS_MACHINES = ["/api/keepalive", "/api/ia/", "/api/notifications/envoi"];
+// Appelés par des machines sans session (cron Vercel), protégés par leur propre secret.
+const CHEMINS_MACHINES = ["/api/keepalive", "/api/notifications/envoi"];
 // Lus par le navigateur sans cookie de session pour installer l'appli.
 const CHEMINS_INSTALLATION = ["/manifest.webmanifest", "/sw.js", "/icones/"];
 

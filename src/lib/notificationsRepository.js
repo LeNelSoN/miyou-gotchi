@@ -21,13 +21,11 @@ export async function supprimerAbonnement(endpoint) {
   if (error) throw new Error(error.message);
 }
 
+// Elle s'est déjà occupée de lui depuis le début de la période de silence (soin, leçon, coucher...).
 async function activiteRecente(maintenant) {
-  const { count, error } = await getSupabaseServerClient()
-    .from("journal")
-    .select("id", { count: "exact", head: true })
-    .gte("created_at", debutSilence(maintenant).toISOString());
+  const { data, error } = await getSupabaseServerClient().from("dragon").select("derniere_activite").limit(1).single();
   if (error) throw new Error(error.message);
-  return count > 0;
+  return data.derniere_activite != null && new Date(data.derniere_activite) >= debutSilence(maintenant);
 }
 
 // Le petit mot quotidien, envoyé à chaque appareil abonné. `forcer` ignore l'activité

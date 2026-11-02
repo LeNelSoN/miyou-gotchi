@@ -21,7 +21,13 @@ const ACTIONS = {
   nourrir: { libelle: "Nourrir", court: "Nourrir", icone: "🍖", route: "feed" },
   laver: { libelle: "Laver", court: "Laver", icone: "🫧", route: "wash" },
   jouer: { libelle: "Jouer", court: "Jouer", icone: "🎾", route: "play" },
-  eduquer: { libelle: "Éduquer", court: "Éduquer", icone: "📖", route: "educate" },
+  eduquer: { libelle: "Éduquer", court: "Éduquer", icone: "🎓", route: "educate" },
+};
+// Choix proposé par « Éduquer » : chaque leçon le fait grandir pareil, mais façonne un talent différent.
+const LECONS = {
+  sport: { libelle: "Sport", icone: "⚽" },
+  lecture: { libelle: "Lecture", icone: "📖" },
+  musique: { libelle: "Musique", icone: "🎵" },
 };
 const CARTE = { libelle: "Carte d'identité", court: "Carte", icone: "🪪" };
 const DODO = {
@@ -104,6 +110,24 @@ function choisirIllustration(dragon, toast, eclosion, animationSoin) {
   return { nom: dragon.etape };
 }
 
+function BoutonCoque({ icone, libelle, court, disabled = false, onClick }) {
+  return (
+    <div className="flex w-12 flex-col items-center gap-1 sm:w-14 sm:gap-1.5">
+      <button
+        onClick={onClick}
+        disabled={disabled}
+        aria-label={libelle}
+        className="bouton-coque flex h-10 w-10 items-center justify-center rounded-full text-xl transition disabled:opacity-50 disabled:grayscale sm:h-12 sm:w-12 sm:text-2xl"
+      >
+        {icone}
+      </button>
+      <span className="font-pixel text-xs text-amber-100" aria-hidden="true">
+        {court}
+      </span>
+    </div>
+  );
+}
+
 export default function Home() {
   const router = useRouter();
   const [dragon, setDragon] = useState(null);
@@ -114,6 +138,7 @@ export default function Home() {
   const [toast, setToast] = useState(null);
   const [pensee, setPensee] = useState(null);
   const [carteOuverte, setCarteOuverte] = useState(false);
+  const [choixLecon, setChoixLecon] = useState(false);
 
   useEffect(() => {
     fetch("/api/dragon").then(async (res) => {
@@ -153,7 +178,6 @@ export default function Home() {
   }, [toast]);
 
   // Après une éclosion, le premier mot attend la fin de l'animation (l'écran de dialogue reste vide pendant).
-  // Le récit du rêve de la nuit (IA), envoyé une seule fois après le réveil, passe avant le reste.
   function afficher(data, evenement) {
     const passage = passageAVoir(data.etape);
     if (passage === "eclosion") setEclosion(true);
@@ -161,7 +185,7 @@ export default function Home() {
     if (passage === "grandir" && data.archetype) setCarteOuverte(true);
     setDragon(data);
     if (passage) setPensee(penser(data, { moment: passage }));
-    else setPensee(data.souvenirReve ?? penser(data, evenement));
+    else setPensee(penser(data, evenement));
   }
 
   // Renvoie le message d'erreur du serveur, ou `null` si tout s'est bien passé.
@@ -197,6 +221,11 @@ export default function Home() {
     // Nouvel objet à chaque fois pour relancer le minuteur si le message se répète.
     setToast(toasts[0] ? { ...toasts[0] } : null);
     return null;
+  }
+
+  function donnerLecon(lecon) {
+    setChoixLecon(false);
+    envoyer(ACTIONS.eduquer.route, { lecon }, { soin: "eduquer" });
   }
 
   function basculerDodo() {
@@ -276,8 +305,8 @@ export default function Home() {
             )}
           </div>
 
-          {/* Second écran, de taille fixe : ce que dit le dragon. Ses lignes suffisent au texte le
-              plus long (récit d'un rêve de l'IA, 160 caractères) sur mobile, pour que rien ne saute. */}
+          {/* Second écran, de taille fixe : ce que dit le dragon. Ses lignes suffisent à la phrase la
+              plus longue (81 caractères) sur mobile, pour que rien ne saute. */}
           <div
             className={`ecran ecran-dialogue flex w-full items-center justify-center overflow-hidden rounded-xl px-3 py-2 text-center font-pixel transition-colors duration-700 ${
               endormi ? "ecran-eteint" : ""
@@ -291,51 +320,48 @@ export default function Home() {
             )}
           </div>
 
-          <div className="flex min-h-16 flex-wrap items-start justify-center gap-x-3 gap-y-1.5 sm:min-h-20 sm:gap-y-2">
-            {dragon?.actions.map(({ nom, bloquee }) => (
-              <div key={nom} className="flex w-12 flex-col items-center gap-1 sm:w-14 sm:gap-1.5">
-                <button
-                  onClick={() => envoyer(ACTIONS[nom].route, undefined, { soin: nom })}
+          {/* Soins et choix de leçon superposés : la zone garde la hauteur de la plus grande des deux
+              (deux rangées de soins contre une de leçons), pour que le boîtier ne bouge pas. */}
+          <div className="grid min-h-16 sm:min-h-20">
+            <div
+              inert={choixLecon}
+              className={`col-start-1 row-start-1 flex flex-wrap items-start justify-center gap-x-3 gap-y-1.5 sm:gap-y-2 ${
+                choixLecon ? "invisible" : ""
+              }`}
+            >
+              {dragon?.actions.map(({ nom, bloquee }) => (
+                <BoutonCoque
+                  key={nom}
+                  {...ACTIONS[nom]}
                   disabled={occupe || bloquee}
-                  aria-label={ACTIONS[nom].libelle}
-                  className="bouton-coque flex h-10 w-10 items-center justify-center rounded-full text-xl sm:h-12 sm:w-12 sm:text-2xl transition disabled:opacity-50 disabled:grayscale"
-                >
-                  {ACTIONS[nom].icone}
-                </button>
-                <span className="font-pixel text-xs text-amber-100" aria-hidden="true">
-                  {ACTIONS[nom].court}
-                </span>
-              </div>
-            ))}
-            {dragon?.archetype && (
-              <div className="flex w-12 flex-col items-center gap-1 sm:w-14 sm:gap-1.5">
-                <button
-                  onClick={() => setCarteOuverte(true)}
-                  aria-label={CARTE.libelle}
-                  className="bouton-coque flex h-10 w-10 items-center justify-center rounded-full text-xl sm:h-12 sm:w-12 sm:text-2xl transition"
-                >
-                  {CARTE.icone}
-                </button>
-                <span className="font-pixel text-xs text-amber-100" aria-hidden="true">
-                  {CARTE.court}
-                </span>
-              </div>
-            )}
-            {boutonDodo && (
-              <div className="flex w-12 flex-col items-center gap-1 sm:w-14 sm:gap-1.5">
-                <button
-                  onClick={basculerDodo}
-                  disabled={occupe || (!endormi && !fatigue)}
-                  aria-label={boutonDodo.libelle}
-                  className="bouton-coque flex h-10 w-10 items-center justify-center rounded-full text-xl sm:h-12 sm:w-12 sm:text-2xl transition disabled:opacity-50 disabled:grayscale"
-                >
-                  {boutonDodo.icone}
-                </button>
-                <span className="font-pixel text-xs text-amber-100" aria-hidden="true">
-                  {boutonDodo.court}
-                </span>
-              </div>
-            )}
+                  onClick={() =>
+                    nom === "eduquer" ? setChoixLecon(true) : envoyer(ACTIONS[nom].route, undefined, { soin: nom })
+                  }
+                />
+              ))}
+              {dragon?.archetype && <BoutonCoque {...CARTE} onClick={() => setCarteOuverte(true)} />}
+              {boutonDodo && (
+                <BoutonCoque {...boutonDodo} disabled={occupe || (!endormi && !fatigue)} onClick={basculerDodo} />
+              )}
+            </div>
+            <div
+              inert={!choixLecon}
+              className={`col-start-1 row-start-1 flex flex-wrap items-start justify-center gap-x-3 gap-y-1.5 sm:gap-y-2 ${
+                choixLecon ? "" : "invisible"
+              }`}
+            >
+              {Object.entries(LECONS).map(([lecon, { libelle, icone }]) => (
+                <BoutonCoque
+                  key={lecon}
+                  icone={icone}
+                  libelle={`Leçon de ${libelle.toLowerCase()}`}
+                  court={libelle}
+                  disabled={occupe}
+                  onClick={() => donnerLecon(lecon)}
+                />
+              ))}
+              <BoutonCoque icone="↩️" libelle="Retour" court="Retour" onClick={() => setChoixLecon(false)} />
+            </div>
           </div>
         </div>
         <div className="mt-4 flex justify-center text-center">
