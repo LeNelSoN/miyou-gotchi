@@ -35,9 +35,9 @@ function messageSommeil(dodo) {
 }
 
 // Animation jouée une fois après un soin réussi, pour les étapes qui l'ont.
-const ANIMATIONS_SOINS = { nourrir: "mange", ajouterBois: "rechauffe" };
-// Moments de complicité : de l'amour après un bain (seul moment de câlin du Bébé), une partie
-// de jeu ou une leçon.
+const ANIMATIONS_SOINS = { nourrir: "mange", ajouterBois: "rechauffe", laver: "lave" };
+// Moments de complicité : de l'amour après un bain (quand l'étape n'a pas d'animation de bain),
+// une partie de jeu ou une leçon.
 const SOINS_AMOUR = ["laver", "jouer", "eduquer"];
 // Besoins vraiment en manque (pas seulement « bientôt ») : les combler le surprend.
 const HUMEURS_EN_MANQUE = Object.values(config.caracteristiques)

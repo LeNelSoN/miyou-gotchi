@@ -22,6 +22,8 @@ export const ILLUSTRATIONS = {
   "bebe-mange": { largeur: 128, centre: 66, sol: 18, echelle: 0.75, dureeMs: 6400 },
   // Joué une fois à chaque bûche, sans boucle. Le feu de camp dépasse sous ses pieds.
   "bebe-rechauffe": { largeur: 96, centre: 48.5, sol: 14, dureeMs: 6400 },
+  // Joué une fois à chaque bain, sans boucle : savonnage répété trois fois, puis tout propre.
+  "bebe-lave": { largeur: 96, centre: 48.5, sol: 11, dureeMs: 6400 },
   "bebe-triste": { largeur: 94, centre: 34.5, sol: 6 },
   // Réactions jouées une fois après un soin, sans boucle : amour après un jeu ou une leçon,
   // surprise quand un besoin en manque vient d'être comblé.
