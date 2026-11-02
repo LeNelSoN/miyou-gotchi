@@ -2,6 +2,7 @@
   "intervalleSecondes": 30,
   "antiRepetition": 40,
   "partArchetype": 0.33,
+  "partTalent": 0.33,
   "priorite": [
     "tristeFaim",
     "faim",
@@ -652,6 +653,91 @@
           "Tu m'apprendras des trucs ?",
           "Merci de m'avoir aidé à grandir !",
           "Coucou ! C'est moi, en plus grand !"
+        ]
+      },
+      "lecons": {
+        "sport": [
+          "Hop hop ! J'ai couru super vite !",
+          "Ouf, je suis tout chaud dedans !",
+          "Encore un tour de piste ?",
+          "Regarde mes muscles ! Bon... mes petits muscles.",
+          "J'ai sauté plus haut que la dernière fois !"
+        ],
+        "lecture": [
+          "Encore une page, s'il te plaît !",
+          "J'ai lu un mot tout seul !",
+          "Les livres, c'est comme des portes magiques.",
+          "Je connais une nouvelle histoire !",
+          "Chut... je réfléchis."
+        ],
+        "musique": [
+          "La la laaa ! J'adore chanter !",
+          "Tu as entendu ma note ? Elle était jolie !",
+          "Boum boum, je tape le rythme !",
+          "Je fredonne même dans ma tête.",
+          "Encore une chanson, dis !"
+        ]
+      },
+      "talents": {
+        "sport": [
+          [
+            "Atchoum ! Oh, un peu de fumée !",
+            "Mon nez fait de la fumée quand je cours !",
+            "Je sens un petit feu dans mon ventre.",
+            "Pfff... regarde, ça fume !"
+          ],
+          [
+            "Des étincelles ! Tu as vu ?",
+            "Je crois que mon feu se réveille !",
+            "Attention, ça pique un peu, les étincelles !",
+            "Bientôt, je crache du vrai feu !"
+          ],
+          [
+            "Regarde ! Une vraie flamme !",
+            "Je suis un dragon de feu, maintenant !",
+            "Je fais attention, je crache pas sur toi !",
+            "Mon feu est tout chaud, comme mon cœur."
+          ]
+        ],
+        "lecture": [
+          [
+            "Pourquoi les étoiles, elles brillent ?",
+            "Dis, comment on fait les livres ?",
+            "J'ai plein de questions dans ma tête !",
+            "Pourquoi, pourquoi, pourquoi ?"
+          ],
+          [
+            "Oh ! J'ai une idée !",
+            "Je crois que j'ai compris un truc !",
+            "Ma tête s'allume comme une lampe !",
+            "Je sais pourquoi la lune change de forme !"
+          ],
+          [
+            "Un bon dragon écoute avant de parler.",
+            "Quand on est fâché, on respire d'abord.",
+            "Je sais plein de choses, mais pas tout.",
+            "Apprendre, c'est le plus beau des trésors."
+          ]
+        ],
+        "musique": [
+          [
+            "Hmm hmm hmm...",
+            "J'ai une petite chanson dans la tête.",
+            "Écoute, je siffle ! Fiiiii !",
+            "Tu connais cette chanson ?"
+          ],
+          [
+            "La la la, je chante pour toi !",
+            "Mes ailes battent en rythme !",
+            "Quand je chante, je suis tout léger.",
+            "Tu danses avec moi ?"
+          ],
+          [
+            "Ma chanson, c'est toi qui me l'as apprise.",
+            "Je me sens tout joyeux de l'intérieur !",
+            "Le monde entier fait de la musique, écoute !",
+            "Je chante, et mon cœur fait boum boum."
+          ]
         ]
       }
     },
@@ -1406,6 +1492,91 @@
           "J'ai trouvé une plume toute bleue ! D'où elle vient ?",
           "Plus je découvre, plus j'ai envie de jouer.",
           "Le monde est un immense terrain de jeu à explorer !"
+        ]
+      },
+      "lecons": {
+        "sport": [
+          "Quel bon entraînement ! Je me sens fort.",
+          "Merci, coach ! Tu es la meilleure.",
+          "Encore un peu d'effort, et je volerai plus loin.",
+          "Mes ailes sont plus puissantes à chaque séance.",
+          "Courir avec toi, c'est mon moment préféré."
+        ],
+        "lecture": [
+          "Quel beau livre ! Merci de me l'avoir lu.",
+          "Chaque page m'apprend quelque chose de nouveau.",
+          "J'aime quand tu me racontes des histoires.",
+          "Je vais réfléchir longtemps à ce chapitre.",
+          "Lire avec toi, c'est voyager sans bouger."
+        ],
+        "musique": [
+          "Quelle belle mélodie ! Je la garde en moi.",
+          "Tu chantes juste, tu sais ?",
+          "Notre musique résonne jusqu'au fond de la grotte.",
+          "Je pourrais chanter toute la journée.",
+          "Encore un air, et je m'envole de joie !"
+        ]
+      },
+      "talents": {
+        "sport": [
+          [
+            "Quand je cours, un peu de fumée sort de mon nez.",
+            "Je sens mon feu grandir, doucement.",
+            "Un jour, je cracherai de grandes flammes.",
+            "Pfff ! Oups, encore un nuage de fumée."
+          ],
+          [
+            "Mes étincelles éclairent la grotte la nuit.",
+            "Mon feu devient plus fort chaque jour.",
+            "Je contrôle mes étincelles, maintenant.",
+            "Regarde ces étincelles : c'est grâce à toi !"
+          ],
+          [
+            "Je suis un vrai cracheur de feu, maintenant !",
+            "Mes flammes sont puissantes, mais je reste doux.",
+            "Avec mon feu, je te réchaufferai toujours.",
+            "Un grand dragon de feu, et c'est toi qui l'as entraîné."
+          ]
+        ],
+        "lecture": [
+          [
+            "Je me pose beaucoup de questions sur le monde.",
+            "Pourquoi la mer est-elle salée ? Tu sais, toi ?",
+            "Chaque réponse m'amène une nouvelle question.",
+            "Le monde est rempli de mystères à découvrir."
+          ],
+          [
+            "J'ai eu une idée lumineuse ce matin !",
+            "Plus je lis, plus je comprends de choses.",
+            "Je crois que j'ai résolu une énigme !",
+            "Mes idées s'allument comme des étoiles."
+          ],
+          [
+            "La sagesse, c'est savoir qu'on apprend toute sa vie.",
+            "Être patient, c'est déjà être un peu sage.",
+            "Un ami qui écoute vaut mieux que mille trésors.",
+            "Quand tu doutes, prends le temps de réfléchir."
+          ]
+        ],
+        "musique": [
+          [
+            "Je fredonne un petit air en volant.",
+            "J'ai une mélodie dans la tête depuis ce matin.",
+            "Écoute le vent : il chante avec moi.",
+            "Hmm hmm... cette chanson me rend heureux."
+          ],
+          [
+            "Je compose une chanson rien que pour toi.",
+            "Quand je chante, les oiseaux me répondent.",
+            "Mes ailes battent la mesure quand je vole.",
+            "La musique me rend léger comme un nuage."
+          ],
+          [
+            "Ma vie est une chanson, et tu en es le refrain.",
+            "Je chante, et tout devient plus joyeux autour.",
+            "Mon cœur déborde de musique et de joie.",
+            "Je suis un dragon épanoui, grâce à toi."
+          ]
         ]
       }
     }

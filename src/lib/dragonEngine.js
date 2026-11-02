@@ -210,6 +210,26 @@ function actionsDisponibles(dragon, nomEtapeCourante, maintenant) {
   return [...noms].map((nom) => ({ nom, bloquee: estActionBloquee(dragon, actives, nom, maintenant) }));
 }
 
+// Talent qui se dessine avec les leçons : par type, le nombre de leçons et le palier atteint
+// (0 à 3, seuils `lecons.paliers`). `null` aux étapes où il n'apprend pas encore.
+function talents(dragon, nomEtapeCourante) {
+  const apprend = caracteristiquesActives(nomEtapeCourante).some((carac) => carac.actions?.eduquer);
+  if (!apprend) return null;
+  return Object.fromEntries(
+    config.lecons.types.map((type) => {
+      const lecons = dragon.lecons?.[type] ?? 0;
+      return [type, { lecons, palier: config.lecons.paliers.filter((seuil) => lecons >= seuil).length }];
+    })
+  );
+}
+
+// Croissance du Jeune, en leçons (point entier ou demi-point). `null` aux étapes qui grandissent avec le temps.
+function croissanceLecons(dragon, nomEtapeCourante) {
+  const seuil = seuilEtape(nomEtapeCourante);
+  if (seuil?.unite !== "lecons") return null;
+  return { faites: dragon.stage_progress, objectif: seuil.valeur };
+}
+
 export function dragonPourClient(dragon, maintenant = new Date()) {
   const etapeCourante = nomEtape(dragon.stage);
   return {
@@ -227,6 +247,8 @@ export function dragonPourClient(dragon, maintenant = new Date()) {
     palier: palierProgression(dragon, etapeCourante),
     dodo: etatDodo(dragon, maintenant),
     actions: actionsDisponibles(dragon, etapeCourante, maintenant),
+    talents: talents(dragon, etapeCourante),
+    croissance: croissanceLecons(dragon, etapeCourante),
     nomLongueurMax: config.nom.longueurMax,
   };
 }

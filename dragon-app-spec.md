@@ -141,7 +141,7 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
     "bebe": { "dureeHeures": 168 },
     "jeune": { "lecons": 30 }
   },
-  "lecons": { "types": ["sport", "lecture", "musique"], "pointSiBesoinEnManque": 0.5 },
+  "lecons": { "types": ["sport", "lecture", "musique"], "pointSiBesoinEnManque": 0.5, "paliers": [3, 8, 15] },
   "multiplicateurRalentissement": 0.5,
   "dodo": {
     "etapes": {
@@ -234,6 +234,16 @@ Le dragon s'adresse à la joueuse (une petite fille) sur le second écran de la 
 - **Énergie** : retirée. Une jauge cachée qui ne descendait jamais sous 35 ; c'est la fatigue du Dodo qui en tient lieu (« Jouer et apprendre le fatiguent », section 4).
 - **Leçons** : « Éduquer » propose trois leçons (`lecons.types`) : ⚽ Sport, 📖 Lecture, 🎵 Musique. Même effet immédiat pour les trois (apprentissage +20, joie −15, fatigue) ; chaque leçon est comptée par type dans `lecons`, base du talent de l'Adulte (Sport → cracheur de feu, Lecture → sage, Musique → épanoui et musicien), qui façonnera aussi son attitude pendant la croissance (phase suivante).
 - **Croissance** : 30 leçons (`etapes.jeune.lecons`), ½ leçon si un besoin est en manque (voir « Règle de progression commune »).
+- **Compteur** : « 🎓 12,5/30 » à droite du nom, sur l'écran du dragon (`croissance` envoyé au client, Jeune seulement).
+- **Talents** : chaque voie a trois paliers, atteints à 3, 8 et 15 leçons du même type (`lecons.paliers`), envoyés au client dans `talents` (Jeune et Adulte). Toutes les 12 s, au repos, une voie est tirée au sort parmi celles qui ont un palier, d'autant plus souvent qu'elle a reçu de leçons, et son effet est joué une fois à côté du dragon (`public/illustrations/talent-<voie>-<palier>.gif`, effets PixelLab posés sur des repères de la tête, identiques dans tous les dessins d'une étape) :
+
+  | Voie | Palier 1 | Palier 2 | Palier 3 |
+  |---|---|---|---|
+  | ⚽ Sport | bouffée de fumée | flammèche et grosse fumée | vraie flamme |
+  | 📖 Lecture | « ? » et ampoule éteinte | ampoule qui s'allume | ampoule et étoiles |
+  | 🎵 Musique | une note (+ il fredonne) | plusieurs notes | notes colorées et cœur |
+
+  Ses pensées suivent (`phrases.json`, `etapes.<étape>.talents`, une liste par palier, cumulées) : une fois sur trois sans besoin urgent (`partTalent`). Après une leçon, il réagit selon la leçon (`etapes.<étape>.lecons`).
 - **Rythme** : « Éduquer » est grisé tant que l'apprentissage est à 80 ou plus (`bloque.eduquer.siAuDessus`). Il baisse de 3 par heure (de moitié en dormant) : environ 2 leçons par jour d'école, 4 à 5 le mercredi et le week-end, soit au moins 10 jours pour une joueuse très assidue.
 - Au passage à Adulte : les scores de rapidité des 5 traits sont figés dans `adult_stats` et l'archétype est calculé (voir « Détermination de l'archétype » ci-dessous).
 

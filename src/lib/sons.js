@@ -20,6 +20,8 @@ const SONS = {
   musique: [[DO6, 120], [MI6, 120], [SOL6, 120], [MI6, 120], [FA6, 120], [RE6, 120], [DO6, 240]],
   // Soin refusé (bouton grisé côté serveur, réveil trop tôt...).
   refus: [[330, 90], [0, 30], [220, 160]],
+  // Le dragon musicien fredonne quand ses notes flottent autour de lui.
+  fredonne: [[MI5, 160], [SOL5, 160], [MI5, 240]],
   // Coucher : berceuse descendante.
   dodo: [[SOL5, 220], [MI5, 220], [DO5, 420]],
   // Réveil : réveil montant et joyeux.

@@ -55,6 +55,46 @@ export const ILLUSTRATIONS = {
   "adulte-surprise": { largeur: 82, centre: 38, sol: 1, scene: GRANDE_SCENE, dureeMs: 3000 },
 };
 
+// Effets de talent (fumée, idées, notes), dessinés sur 32 pixels et posés à côté du dragon, à la
+// même échelle. Joués une fois, sans boucle (la dernière image est vide).
+export const EFFETS_TALENT = {
+  "talent-sport-1": { dureeMs: 1010 },
+  "talent-sport-2": { dureeMs: 1140 },
+  "talent-sport-3": { dureeMs: 2500 },
+  "talent-lecture-1": { dureeMs: 1220 },
+  "talent-lecture-2": { dureeMs: 1220 },
+  "talent-lecture-3": { dureeMs: 1540 },
+  "talent-musique-1": { dureeMs: 1300 },
+  "talent-musique-2": { dureeMs: 1660 },
+  "talent-musique-3": { dureeMs: 1970 },
+};
+
+// Repères de la tête, en pixels de GIF depuis le point d'ancrage du dragon (`centre` en x, `sol` en y,
+// vers le haut) : narine droite et coin haut droit de la tête. Les mêmes dans tous les dessins d'une étape.
+const REPERES = {
+  jeune: { museau: [-2, 61], tete: [11, 92] },
+  adulte: { museau: [-2, 63], tete: [10, 94] },
+};
+
+// Où poser le coin bas gauche de l'effet, depuis un repère : la fumée et la flamme sortent du museau,
+// les idées et les notes flottent à côté de la tête.
+const POSES = {
+  "talent-sport-1": ["museau", 7, -2],
+  "talent-sport-2": ["museau", 7, -2],
+  "talent-sport-3": ["museau", 7, -12],
+  lecture: ["tete", -3, -18],
+  musique: ["tete", -3, -18],
+};
+
+function poseEffet(etape, nom) {
+  const reperes = REPERES[etape];
+  const pose = POSES[nom] ?? POSES[nom.split("-")[1]];
+  if (!reperes || !pose) return null;
+  const [repere, dx, dy] = pose;
+  const [x, y] = reperes[repere];
+  return { x: x + dx, y: y + dy };
+}
+
 // `lecture` : une adresse différente à chaque fois fait repartir un GIF sans boucle du début.
 export function illustrationUrl(nom, variante, lecture) {
   return `/illustrations/${variante ? `${nom}-${variante}` : nom}.gif${lecture ? `?lecture=${lecture}` : ""}`;
@@ -62,10 +102,14 @@ export function illustrationUrl(nom, variante, lecture) {
 
 // `rebond` : numéro qui change à chaque petit bond à jouer (0 = aucun). Le bond masque le passage
 // entre deux dessins de finesse différente.
-export default function Illustration({ nom, variante, lecture, rebond = 0 }) {
+// `effet` : `{ nom, etape, lecture }`, effet de talent posé à côté du dragon (voir `EFFETS_TALENT`).
+export default function Illustration({ nom, variante, lecture, rebond = 0, effet }) {
   const { largeur, centre, sol, scene = SCENE, echelle = 1 } = ILLUSTRATIONS[nom];
 
   const fichier = illustrationUrl(nom, variante, lecture);
+  const pose = effet && poseEffet(effet.etape, effet.nom);
+  // Même taille de pixel que le dragon, arrondie de la même façon.
+  const pixel = `round(down, min(100cqw / ${scene.largeur}, 100cqh / ${scene.hauteur}), var(--pixel-ecran))`;
 
   return (
     <div className="relative flex-1 self-stretch" style={{ containerType: "size" }}>
@@ -79,7 +123,7 @@ export default function Illustration({ nom, variante, lecture, rebond = 0 }) {
         style={{
           // Arrondi à un nombre entier de pixels physiques : tous les pixels du GIF
           // gardent la même taille, donc des contours nets et réguliers.
-          "--pixel": `round(down, min(100cqw / ${scene.largeur}, 100cqh / ${scene.hauteur}), var(--pixel-ecran))`,
+          "--pixel": pixel,
           // Sans arrondi : le dragon garde exactement sa taille, quitte à des pixels un peu moins réguliers.
           "--pixel-dessin": `calc(var(--pixel) * ${echelle})`,
           width: `calc(${largeur} * var(--pixel-dessin))`,
@@ -88,6 +132,22 @@ export default function Illustration({ nom, variante, lecture, rebond = 0 }) {
           imageRendering: "pixelated",
         }}
       />
+      {pose && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          key={effet.lecture}
+          src={illustrationUrl(effet.nom, undefined, effet.lecture)}
+          alt=""
+          className="pointer-events-none absolute max-w-none"
+          style={{
+            "--pixel": pixel,
+            width: "calc(32 * var(--pixel))",
+            left: `calc(50% + ${pose.x} * var(--pixel))`,
+            bottom: `calc(${pose.y} * var(--pixel))`,
+            imageRendering: "pixelated",
+          }}
+        />
+      )}
     </div>
   );
 }

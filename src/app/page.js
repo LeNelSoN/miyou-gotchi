@@ -3,12 +3,16 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import DebugPanel from "./DebugPanel";
-import Illustration, { ILLUSTRATIONS, illustrationUrl } from "./Illustration";
+import Illustration, { EFFETS_TALENT, ILLUSTRATIONS, illustrationUrl } from "./Illustration";
 import NameModal from "./NameModal";
 import CarteIdentite from "./CarteIdentite";
 import PetitMot from "./PetitMot";
 import { INTERVALLE_PENSEES_MS, penser } from "@/lib/pensees";
 import { abonnerSon, basculerSon, jouerSon, sonActive } from "@/lib/sons";
+import { choisirTalent } from "@/lib/talents";
+
+// Toutes les 12 s, le dragon montre un peu de son talent (fumée, idée, notes), s'il en a un.
+const INTERVALLE_TALENT_MS = 12000;
 import config from "../../config/game.json";
 
 const MESSAGES_FEU = {
@@ -147,6 +151,7 @@ export default function Home() {
   const [dragon, setDragon] = useState(null);
   const [eclosion, setEclosion] = useState(false);
   const [animationSoin, setAnimationSoin] = useState(null);
+  const [effetTalent, setEffetTalent] = useState(null);
   const [rebond, setRebond] = useState(0);
   const [enCours, setEnCours] = useState(false);
   const [toast, setToast] = useState(null);
@@ -177,6 +182,24 @@ export default function Home() {
     const minuteur = setTimeout(() => setEclosion(false), ILLUSTRATIONS.eclosion.dureeMs);
     return () => clearTimeout(minuteur);
   }, [eclosion]);
+
+  // Pas d'effet de talent pendant une animation, l'éclosion ou le sommeil.
+  useEffect(() => {
+    if (!dragon?.talents || dragon.dodo?.endormi || eclosion || animationSoin) return;
+    const minuteur = setInterval(() => {
+      const talent = choisirTalent(dragon.talents);
+      if (!talent) return;
+      setEffetTalent({ nom: `talent-${talent.voie}-${talent.palier}`, etape: dragon.etape, lecture: Date.now() });
+      if (talent.voie === "musique") jouerSon("fredonne");
+    }, INTERVALLE_TALENT_MS);
+    return () => clearInterval(minuteur);
+  }, [dragon, eclosion, animationSoin]);
+
+  useEffect(() => {
+    if (!effetTalent) return;
+    const minuteur = setTimeout(() => setEffetTalent(null), EFFETS_TALENT[effetTalent.nom].dureeMs);
+    return () => clearTimeout(minuteur);
+  }, [effetTalent]);
 
   useEffect(() => {
     if (!animationSoin) return;
@@ -244,7 +267,7 @@ export default function Home() {
 
   function donnerLecon(lecon) {
     setChoixLecon(false);
-    envoyer(ACTIONS.eduquer.route, { lecon }, { soin: "eduquer" });
+    envoyer(ACTIONS.eduquer.route, { lecon }, { soin: "eduquer", lecon });
   }
 
   function basculerDodo() {
@@ -305,6 +328,15 @@ export default function Home() {
               <>
                 <div className="flex items-center justify-between text-lg leading-none">
                   <h1 className="truncate">{dragon.named ? dragon.name : "???"}</h1>
+                  {/* Le Jeune grandit en apprenant : leçons faites sur l'objectif (demi-leçons possibles). */}
+                  {dragon.croissance && (
+                    <span
+                      className="shrink-0 text-sm"
+                      aria-label={`${dragon.croissance.faites.toLocaleString("fr-FR")} leçons sur ${dragon.croissance.objectif}`}
+                    >
+                      🎓 {dragon.croissance.faites.toLocaleString("fr-FR")}/{dragon.croissance.objectif}
+                    </span>
+                  )}
                 </div>
 
                 {/* La clé relance l'animation d'apparition à chaque changement d'étape
@@ -313,7 +345,13 @@ export default function Home() {
                   key={eclosion ? "oeuf" : dragon.etape}
                   className="flex min-h-0 flex-1 items-center justify-center motion-safe:animate-apparition"
                 >
-                  {!endormi && <Illustration {...illustration} rebond={rebond} />}
+                  {!endormi && (
+                    <Illustration
+                      {...illustration}
+                      rebond={rebond}
+                      effet={!animationSoin && !eclosion ? effetTalent : null}
+                    />
+                  )}
                 </div>
 
                 {/* Hauteur fixe de trois lignes (saleté, fatigue, feu ou soin) : si la zone grandissait avec

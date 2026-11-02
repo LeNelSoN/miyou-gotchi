@@ -225,7 +225,12 @@
       "lecture",
       "musique"
     ],
-    "pointSiBesoinEnManque": 0.5
+    "pointSiBesoinEnManque": 0.5,
+    "paliers": [
+      3,
+      8,
+      15
+    ]
   },
   "multiplicateurRalentissement": 0.5,
   "dodo": {

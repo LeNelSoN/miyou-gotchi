@@ -1,4 +1,5 @@
 import phrases from "../../config/phrases.json";
+import { choisirTalent } from "./talents";
 
 const CLE_RECENTES = "miyou-gotchi:pensees";
 
@@ -11,6 +12,8 @@ function phrasesPossibles(dragon, evenement) {
   const etape = phrases.etapes[dragon.etape];
   if (!etape) return [];
   if (evenement?.moment && etape.moments?.[evenement.moment]) return etape.moments[evenement.moment];
+  // Après une leçon, il parle de ce qu'il vient d'apprendre (sport, lecture, musique).
+  if (evenement?.lecon && etape.lecons?.[evenement.lecon]) return etape.lecons[evenement.lecon];
   if (evenement?.soin && etape.soins?.[evenement.soin]) return etape.soins[evenement.soin];
   if (dragon.dodo?.endormi) return etape.reves ?? [];
 
@@ -24,6 +27,10 @@ function phrasesPossibles(dragon, evenement) {
   // Sans besoin urgent, l'Adulte parle de temps en temps avec la voix de son archétype.
   const voix = etape.archetypes?.[dragon.archetype];
   if (voix && Math.random() < phrases.partArchetype) return voix;
+  // Et, dès le Jeune, de son talent : les phrases de chaque palier atteint s'ajoutent aux précédentes.
+  const talent = choisirTalent(dragon.talents);
+  const paroles = talent && etape.talents?.[talent.voie]?.slice(0, talent.palier).flat();
+  if (paroles?.length && Math.random() < phrases.partTalent) return paroles;
   return etape.etats.content ?? [];
 }
 
