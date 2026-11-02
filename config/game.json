@@ -13,6 +13,10 @@
       "actions": {
         "ajouterBois": {
           "effet": 20
+        },
+        "laver": {
+          "effet": -10,
+          "secondaire": true
         }
       },
       "affecteCroissance": true,
@@ -83,6 +87,11 @@
         "type": "persistant",
         "declencheur": "mauvais",
         "message": "Il est très sale !"
+      },
+      "bloque": {
+        "laver": {
+          "siAuDessus": 70
+        }
       },
       "humeurSiMauvais": "sale"
     },

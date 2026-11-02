@@ -189,13 +189,24 @@ function estActionBloquee(dragon, actives, actionName, maintenant) {
   return actives.some((carac) => {
     const condition = carac.bloque?.[actionName];
     if (condition === "siMauvais") return !estDansBonneZone(carac, dragon[carac.champDb]);
+    // Pas de soin inutile : bloqué tant que la jauge reste au-dessus du seuil (ex : pas de bain s'il est encore propre).
+    if (condition?.siAuDessus != null) return dragon[carac.champDb] >= condition.siAuDessus;
     return false;
   });
 }
 
+// Actions qui donnent un bouton. Une action `secondaire` n'a qu'un effet de bord sur la
+// caractéristique (ex : le bain refroidit le feu) : elle n'existe que si une autre caractéristique
+// active la porte en principal.
+function actionsPrincipales(carac) {
+  return Object.entries(carac.actions ?? {})
+    .filter(([, action]) => !action.secondaire)
+    .map(([nom]) => nom);
+}
+
 function actionsDisponibles(dragon, nomEtapeCourante, maintenant) {
   const actives = caracteristiquesActives(nomEtapeCourante);
-  const noms = new Set(actives.flatMap((carac) => Object.keys(carac.actions ?? {})));
+  const noms = new Set(actives.flatMap((carac) => actionsPrincipales(carac)));
   return [...noms].map((nom) => ({ nom, bloquee: estActionBloquee(dragon, actives, nom, maintenant) }));
 }
 
@@ -402,7 +413,7 @@ export function appliquerAction(dragon, actionName, maintenant = new Date()) {
 
   const concernees = actives.filter((carac) => carac.actions?.[actionName]);
 
-  if (estBloquee || concernees.length === 0) {
+  if (estBloquee || !concernees.some((carac) => actionsPrincipales(carac).includes(actionName))) {
     return { dragon, applique: false };
   }
 

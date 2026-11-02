@@ -94,7 +94,7 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
       "seuilMax": 80,
       "variationParHeure": -3,
       "anticipation": { "seuil": 60, "humeur": "frais" },
-      "actions": { "ajouterBois": { "effet": 20 } },
+      "actions": { "ajouterBois": { "effet": 20 }, "laver": { "effet": -10, "secondaire": true } },
       "affecteCroissance": true,
       "etapesActives": ["oeuf", "bebe", "jeune", "adulte"],
       "indicateur": { "type": "qualitatifPermanent", "etats": ["froid", "parfait", "chaud"] }
@@ -118,6 +118,7 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
       "variationParHeure": -4,
       "anticipation": { "seuil": 50, "humeur": "gratte" },
       "actions": { "laver": { "effet": 30 } },
+      "bloque": { "laver": { "siAuDessus": 70 } },
       "affecteCroissance": true,
       "etapesActives": ["bebe", "jeune", "adulte"],
       "indicateur": { "type": "persistant", "declencheur": "mauvais", "message": "Il est très sale !" },
@@ -187,11 +188,11 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
 | `max` | valeur plafond de la jauge |
 | `seuilMin` / `seuilMax` | bornes de la "bonne zone" — l'un des deux, les deux (feu), ou aucun (apprentissage) |
 | `variationParHeure` | évolution automatique par heure réelle : négatif = décroissance (feu, nourriture, hygiène, joie, apprentissage), 0/absent = pas de variation passive |
-| `actions` | map nom d'action → effet par clic (positif ou négatif) |
+| `actions` | map nom d'action → effet par clic (positif ou négatif). `secondaire: true` : simple effet de bord, sans créer de bouton (ex : le bain refroidit le feu de 10) |
 | `multiplicateurActionSiMauvais` | réduit l'effet d'une action précise quand la jauge est hors de sa bonne zone (ex: "Jouer" moins efficace quand triste) |
 | `affecteCroissance` | si `true`, doit être dans la bonne zone pour que `stage_progress` avance à vitesse normale |
 | `etapesActives` | à quelles étapes cette caractéristique est active |
-| `bloque` | actions bloquées quand hors zone (`"siMauvais"`) |
+| `bloque` | actions bloquées quand hors zone (`"siMauvais"`), ou tant que la jauge reste au-dessus d'un seuil (`{ "siAuDessus": 70 }` : pas de bain s'il est encore propre) |
 | `indicateur` | ce qui est montré au joueur : `qualitatifPermanent` (feu, toujours visible), `ponctuel` (toast temporaire), `persistant` (reste affiché tant que vrai) |
 | `humeurSiMauvais` | humeur illustrée (sans texte) tant que la jauge est hors de sa bonne zone (ex: `"faim"` → bulle avec le morceau de viande) |
 | `anticipation` | `{ seuil, humeur }` : encore en bonne zone mais sous `seuil`, le besoin approche. Le dragon l'annonce dans ses pensées (humeur « bientôt » : `frais`, `petitCreux`, `gratte`, `ennui`, `curiosite`) et un soin donné à ce moment **prévient** le besoin (voir l'archétype). Pour le feu, c'est aussi l'état « frais » de l'indicateur |
