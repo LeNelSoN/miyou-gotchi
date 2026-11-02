@@ -36,6 +36,10 @@ export const ILLUSTRATIONS = {
   "jeune-faim": { largeur: 86, centre: 34, sol: 3, scene: GRANDE_SCENE },
   "jeune-fatigue": { largeur: 80, centre: 33, sol: 6, scene: GRANDE_SCENE },
   "jeune-triste": { largeur: 80, centre: 33, sol: 6, scene: GRANDE_SCENE },
+  // Joué une fois à chaque repas, comme le Bébé : trois bouchées puis un sourire.
+  "jeune-mange": { largeur: 128, centre: 70, sol: 13, scene: GRANDE_SCENE, dureeMs: 6400 },
+  // Joué une fois à chaque bûche, comme le Bébé. Le feu de camp dépasse sous ses pieds.
+  "jeune-rechauffe": { largeur: 128, centre: 69, sol: 14, scene: GRANDE_SCENE, dureeMs: 6400 },
   // Joué une fois à chaque bain, comme le Bébé. Dessiné assis par l'IA, à la même échelle.
   "jeune-lave": { largeur: 128, centre: 69, sol: 14, scene: GRANDE_SCENE, dureeMs: 6400 },
   "jeune-amour": { largeur: 82, centre: 39, sol: 6, scene: GRANDE_SCENE, dureeMs: 4200 },
