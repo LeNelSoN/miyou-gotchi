@@ -231,7 +231,7 @@ export default function Home() {
 
           {/* Pendant le Dodo, l'écran s'assombrit et le dragon n'est plus visible. */}
           <div
-            className={`ecran flex aspect-[6/5] w-full flex-col overflow-hidden rounded-xl p-3 font-pixel transition-colors duration-700 ${
+            className={`ecran flex aspect-[6/5] w-full flex-col overflow-hidden rounded-xl p-2 font-pixel sm:p-3 transition-colors duration-700 ${
               endormi ? "ecran-eteint" : ""
             }`}
           >
@@ -254,7 +254,9 @@ export default function Home() {
                   {!endormi && <Illustration {...illustration} rebond={rebond} />}
                 </div>
 
-                <div className="flex min-h-12 flex-col justify-end text-center leading-tight" aria-live="polite">
+                {/* Hauteur fixe de trois lignes (saleté, fatigue, feu ou soin) : si la zone grandissait avec
+                    les messages, le dragon rétrécirait d'un coup au-dessus. */}
+                <div className="flex h-[3.75em] shrink-0 flex-col justify-end text-center text-[13px] leading-tight sm:text-base" aria-live="polite">
                   {!endormi && dragon.alertes.map((message) => (
                     <p key={message} className="text-red-800 motion-safe:animate-fondu">
                       ⚠ {message}
