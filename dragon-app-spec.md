@@ -281,6 +281,15 @@ Le suivi est tenu dans la colonne `besoins` par le moteur (tick horaire et chaqu
 | hygiene + apprentissage | Perfectionniste |
 | joie + apprentissage | Curieux |
 
+### Sons
+
+Petits sons façon tamagotchi, générés par le navigateur (Web Audio, onde carrée, volume bas) : aucun fichier à charger. Code : `src/lib/sons.js`.
+
+- Un **bip** à chaque appui sur un bouton de la coque (c'est aussi le geste qui autorise le son sur iPhone).
+- Quand le serveur accepte l'action : un arpège pour un soin, une petite mélodie pour une leçon de sport ou de lecture, une **ritournelle pour la leçon de musique**, une berceuse au coucher, un air montant au réveil. Une **fanfare** à l'éclosion et à chaque passage d'étape (la 30e leçon comprise).
+- Un son grave quand l'action est refusée.
+- **🔊 / 🔇** à droite du titre de la coque coupe ou remet le son ; le réglage est retenu sur l'appareil (`localStorage`). Sur iPhone, le bouton silencieux du téléphone coupe aussi ces sons.
+
 ### Petit mot du jour (notifications)
 
 Une seule notification par jour, après l'école, pour garder le rituel sans rendre accro. Mise en route : [`docs/notifications.md`](docs/notifications.md).

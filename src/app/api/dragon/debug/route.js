@@ -8,9 +8,10 @@ import {
   ajusterCaracteristique,
   calibrationPossible,
   calibrerConfig,
+  reveillerMaintenant,
 } from "@/lib/dragonDebug";
 
-// Corps : `{ avancerHeures: 6 }`, `{ finirEtape: true }`, `{ ajuster: { nom: "feu", delta: -20 } }`
+// Corps : `{ avancerHeures: 6 }`, `{ finirEtape: true }`, `{ reveiller: true }`, `{ ajuster: { nom: "feu", delta: -20 } }`
 // ou `{ calibrer: { chemin: ["caracteristiques", "feu", "seuilMin"], valeur: 45 } }`.
 export async function POST(request) {
   if (!modeDebugActif()) {
@@ -27,6 +28,7 @@ export async function POST(request) {
     return repondreDragon(await recupererDragonSynchronise());
   }
   if (corps.finirEtape) return repondreDragon(await finirEtape());
+  if (corps.reveiller) return repondreDragon(await reveillerMaintenant());
   if (corps.ajuster) {
     return repondreDragon(await ajusterCaracteristique(corps.ajuster.nom, Number(corps.ajuster.delta)));
   }

@@ -78,6 +78,11 @@ export default function DebugPanel({ dragon, enCours, envoyer }) {
           <button className={BOUTON} disabled={enCours || debug.seuilEtape == null} onClick={() => commande({ finirEtape: true })}>
             Finir l&apos;étape
           </button>
+          {dragon.dodo?.endormi && (
+            <button className={BOUTON} disabled={enCours} onClick={() => commande({ reveiller: true })}>
+              ☀️ Réveiller
+            </button>
+          )}
         </div>
 
         {debug.config && (

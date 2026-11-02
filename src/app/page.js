@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import DebugPanel from "./DebugPanel";
 import Illustration, { ILLUSTRATIONS, illustrationUrl } from "./Illustration";
@@ -8,6 +8,7 @@ import NameModal from "./NameModal";
 import CarteIdentite from "./CarteIdentite";
 import PetitMot from "./PetitMot";
 import { INTERVALLE_PENSEES_MS, penser } from "@/lib/pensees";
+import { abonnerSon, basculerSon, jouerSon, sonActive } from "@/lib/sons";
 import config from "../../config/game.json";
 
 const MESSAGES_FEU = {
@@ -29,6 +30,15 @@ const LECONS = {
   lecture: { libelle: "Lecture", icone: "📖" },
   musique: { libelle: "Musique", icone: "🎵" },
 };
+// Son joué quand le serveur accepte une action, selon la route (soin par défaut).
+function sonAction(route, corps) {
+  if (route === "sleep") return "dodo";
+  if (route === "wake") return "reveil";
+  if (route === "educate") return corps?.lecon === "musique" ? "musique" : "lecon";
+  if (route === "debug" || route === "reset") return null;
+  return "soin";
+}
+
 const CARTE = { libelle: "Carte d'identité", court: "Carte", icone: "🪪" };
 const DODO = {
   coucher: { libelle: "Coucher", court: "Dodo", icone: "🌙", route: "sleep" },
@@ -110,11 +120,15 @@ function choisirIllustration(dragon, toast, eclosion, animationSoin) {
   return { nom: dragon.etape };
 }
 
+// Chaque appui fait un petit bip : retour immédiat, et premier geste qui autorise le son sur iPhone.
 function BoutonCoque({ icone, libelle, court, disabled = false, onClick }) {
   return (
     <div className="flex w-12 flex-col items-center gap-1 sm:w-14 sm:gap-1.5">
       <button
-        onClick={onClick}
+        onClick={() => {
+          jouerSon("bip");
+          onClick();
+        }}
         disabled={disabled}
         aria-label={libelle}
         className="bouton-coque flex h-10 w-10 items-center justify-center rounded-full text-xl transition disabled:opacity-50 disabled:grayscale sm:h-12 sm:w-12 sm:text-2xl"
@@ -139,6 +153,8 @@ export default function Home() {
   const [pensee, setPensee] = useState(null);
   const [carteOuverte, setCarteOuverte] = useState(false);
   const [choixLecon, setChoixLecon] = useState(false);
+  // Côté serveur, le son est supposé actif ; le réglage de l'appareil est lu à l'hydratation.
+  const son = useSyncExternalStore(abonnerSon, sonActive, () => true);
 
   useEffect(() => {
     fetch("/api/dragon").then(async (res) => {
@@ -186,6 +202,7 @@ export default function Home() {
     setDragon(data);
     if (passage) setPensee(penser(data, { moment: passage }));
     else setPensee(penser(data, evenement));
+    return passage;
   }
 
   // Renvoie le message d'erreur du serveur, ou `null` si tout s'est bien passé.
@@ -217,7 +234,9 @@ export default function Home() {
     // Relâché seulement maintenant : les boutons restent bloqués pendant le préchargement de l'animation.
     setEnCours(false);
 
-    afficher(data, data.applique === false ? undefined : evenement);
+    const passage = afficher(data, data.applique === false ? undefined : evenement);
+    // Un passage d'étape (la 30e leçon le fait devenir adulte) mérite sa fanfare.
+    jouerSon(passage ? "fanfare" : data.applique === false ? "refus" : sonAction(route, corps));
     // Nouvel objet à chaque fois pour relancer le minuteur si le message se répète.
     setToast(toasts[0] ? { ...toasts[0] } : null);
     return null;
@@ -254,9 +273,23 @@ export default function Home() {
 
       <main className="relative w-full max-w-sm px-3 py-3 sm:max-w-md sm:px-5 sm:py-10">
         <div className="coque flex flex-col items-center gap-5 px-[9%] pb-[9%] pt-[8%] sm:gap-5 sm:px-[18%] sm:pb-[20%] sm:pt-[20%]">
-          <p className="font-pixel text-xs tracking-[0.3em] sm:text-sm text-amber-200 drop-shadow-[0_2px_0_rgba(0,0,0,0.6)]">
-            MIYOU-GOTCHI
-          </p>
+          {/* Le bouton du son est posé à droite du titre, sans décaler le boîtier. */}
+          <div className="relative flex w-full justify-center">
+            <p className="font-pixel text-xs tracking-[0.3em] sm:text-sm text-amber-200 drop-shadow-[0_2px_0_rgba(0,0,0,0.6)]">
+              MIYOU-GOTCHI
+            </p>
+            <button
+              onClick={() => {
+                basculerSon();
+                jouerSon("bip");
+              }}
+              aria-label={son ? "Couper le son" : "Remettre le son"}
+              aria-pressed={!son}
+              className="absolute -right-2 top-1/2 -translate-y-1/2 p-2 text-sm leading-none opacity-80 transition hover:opacity-100"
+            >
+              {son ? "🔊" : "🔇"}
+            </button>
+          </div>
 
           {/* Pendant le Dodo, l'écran s'assombrit et le dragon n'est plus visible. */}
           <div

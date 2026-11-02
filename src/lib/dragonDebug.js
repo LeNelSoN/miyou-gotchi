@@ -94,3 +94,12 @@ export async function ajusterCaracteristique(nom, delta) {
   await sauvegarderDragon(resultat);
   return resultat;
 }
+
+// Réveille le dragon tout de suite, sans attendre `dodo.dureeMinHeures` (refusé au vrai réveil).
+export async function reveillerMaintenant() {
+  const dragon = await recupererDragonSynchronise();
+  if (!dragon.sleeping_since) return dragon;
+  const resultat = { ...dragon, sleeping_since: null, awake_since: new Date().toISOString() };
+  await sauvegarderDragon(resultat);
+  return resultat;
+}
