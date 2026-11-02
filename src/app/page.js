@@ -217,15 +217,15 @@ export default function Home() {
     >
       <div className="lueur-braise pointer-events-none absolute inset-x-0 bottom-0 h-1/2 motion-safe:animate-braise" />
 
-      <main className="relative w-full max-w-sm px-5 py-10 sm:max-w-md">
-        <div className="coque flex flex-col items-center gap-5 px-[18%] pb-[20%] pt-[20%]">
-          <p className="font-pixel text-sm tracking-[0.3em] text-amber-200 drop-shadow-[0_2px_0_rgba(0,0,0,0.6)]">
+      <main className="relative w-full max-w-sm px-3 py-3 sm:max-w-md sm:px-5 sm:py-10">
+        <div className="coque flex flex-col items-center gap-5 px-[9%] pb-[9%] pt-[8%] sm:gap-5 sm:px-[18%] sm:pb-[20%] sm:pt-[20%]">
+          <p className="font-pixel text-xs tracking-[0.3em] sm:text-sm text-amber-200 drop-shadow-[0_2px_0_rgba(0,0,0,0.6)]">
             MIYOU-GOTCHI
           </p>
 
           {/* Pendant le Dodo, l'écran s'assombrit et le dragon n'est plus visible. */}
           <div
-            className={`ecran flex aspect-square w-full flex-col overflow-hidden rounded-xl p-3 font-pixel transition-colors duration-700 ${
+            className={`ecran flex aspect-[6/5] w-full flex-col overflow-hidden rounded-xl p-3 font-pixel transition-colors duration-700 ${
               endormi ? "ecran-eteint" : ""
             }`}
           >
@@ -268,7 +268,7 @@ export default function Home() {
             )}
           </div>
 
-          {/* Second écran, de taille fixe : ce que dit le dragon. Six lignes suffisent au texte le
+          {/* Second écran, de taille fixe : ce que dit le dragon. Ses lignes suffisent au texte le
               plus long (récit d'un rêve de l'IA, 160 caractères) sur mobile, pour que rien ne saute. */}
           <div
             className={`ecran ecran-dialogue flex w-full items-center justify-center overflow-hidden rounded-xl px-3 py-2 text-center font-pixel transition-colors duration-700 ${
@@ -283,14 +283,14 @@ export default function Home() {
             )}
           </div>
 
-          <div className="flex min-h-20 flex-wrap items-start justify-center gap-x-3 gap-y-2">
+          <div className="flex min-h-16 flex-wrap items-start justify-center gap-x-3 gap-y-1.5 sm:min-h-20 sm:gap-y-2">
             {dragon?.actions.map(({ nom, bloquee }) => (
-              <div key={nom} className="flex w-14 flex-col items-center gap-1.5">
+              <div key={nom} className="flex w-12 flex-col items-center gap-1 sm:w-14 sm:gap-1.5">
                 <button
                   onClick={() => envoyer(ACTIONS[nom].route, undefined, { soin: nom })}
                   disabled={enCours || bloquee}
                   aria-label={ACTIONS[nom].libelle}
-                  className="bouton-coque flex h-12 w-12 items-center justify-center rounded-full text-2xl transition disabled:opacity-50 disabled:grayscale"
+                  className="bouton-coque flex h-10 w-10 items-center justify-center rounded-full text-xl sm:h-12 sm:w-12 sm:text-2xl transition disabled:opacity-50 disabled:grayscale"
                 >
                   {ACTIONS[nom].icone}
                 </button>
@@ -300,11 +300,11 @@ export default function Home() {
               </div>
             ))}
             {dragon?.archetype && (
-              <div className="flex w-14 flex-col items-center gap-1.5">
+              <div className="flex w-12 flex-col items-center gap-1 sm:w-14 sm:gap-1.5">
                 <button
                   onClick={() => setCarteOuverte(true)}
                   aria-label={CARTE.libelle}
-                  className="bouton-coque flex h-12 w-12 items-center justify-center rounded-full text-2xl transition"
+                  className="bouton-coque flex h-10 w-10 items-center justify-center rounded-full text-xl sm:h-12 sm:w-12 sm:text-2xl transition"
                 >
                   {CARTE.icone}
                 </button>
@@ -314,12 +314,12 @@ export default function Home() {
               </div>
             )}
             {boutonDodo && (
-              <div className="flex w-14 flex-col items-center gap-1.5">
+              <div className="flex w-12 flex-col items-center gap-1 sm:w-14 sm:gap-1.5">
                 <button
                   onClick={basculerDodo}
                   disabled={enCours || (!endormi && !fatigue)}
                   aria-label={boutonDodo.libelle}
-                  className="bouton-coque flex h-12 w-12 items-center justify-center rounded-full text-2xl transition disabled:opacity-50 disabled:grayscale"
+                  className="bouton-coque flex h-10 w-10 items-center justify-center rounded-full text-xl sm:h-12 sm:w-12 sm:text-2xl transition disabled:opacity-50 disabled:grayscale"
                 >
                   {boutonDodo.icone}
                 </button>
