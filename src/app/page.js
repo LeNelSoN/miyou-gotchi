@@ -177,8 +177,10 @@ export default function Home() {
       return null;
     }
     const { toasts = [], ...data } = await res.json();
-    setEnCours(false);
-    if (!res.ok) return data.erreur ?? "Une erreur est survenue.";
+    if (!res.ok) {
+      setEnCours(false);
+      return data.erreur ?? "Une erreur est survenue.";
+    }
 
     const nomSoin = evenement?.soin && data.applique !== false && reactionAuSoin(dragon, data, evenement.soin);
     if (nomSoin) {
@@ -188,6 +190,8 @@ export default function Home() {
       setAnimationSoin({ nom: nomSoin, lecture });
       setRebond((numero) => numero + 1);
     }
+    // Relâché seulement maintenant : les boutons restent bloqués pendant le préchargement de l'animation.
+    setEnCours(false);
 
     afficher(data, data.applique === false ? undefined : evenement);
     // Nouvel objet à chaque fois pour relancer le minuteur si le message se répète.
@@ -203,6 +207,8 @@ export default function Home() {
     else envoyer(DODO.coucher.route);
   }
 
+  // Pas de soin pendant une animation : elle irait trop vite ou serait coupée par la suivante.
+  const occupe = enCours || eclosion || Boolean(animationSoin);
   const endormi = dragon?.dodo?.endormi;
   const fatigue = dragon?.dodo?.fatigue;
   const boutonDodo = dragon?.dodo && (endormi ? DODO.reveiller : DODO.coucher);
@@ -288,7 +294,7 @@ export default function Home() {
               <div key={nom} className="flex w-12 flex-col items-center gap-1 sm:w-14 sm:gap-1.5">
                 <button
                   onClick={() => envoyer(ACTIONS[nom].route, undefined, { soin: nom })}
-                  disabled={enCours || bloquee}
+                  disabled={occupe || bloquee}
                   aria-label={ACTIONS[nom].libelle}
                   className="bouton-coque flex h-10 w-10 items-center justify-center rounded-full text-xl sm:h-12 sm:w-12 sm:text-2xl transition disabled:opacity-50 disabled:grayscale"
                 >
@@ -317,7 +323,7 @@ export default function Home() {
               <div className="flex w-12 flex-col items-center gap-1 sm:w-14 sm:gap-1.5">
                 <button
                   onClick={basculerDodo}
-                  disabled={enCours || (!endormi && !fatigue)}
+                  disabled={occupe || (!endormi && !fatigue)}
                   aria-label={boutonDodo.libelle}
                   className="bouton-coque flex h-10 w-10 items-center justify-center rounded-full text-xl sm:h-12 sm:w-12 sm:text-2xl transition disabled:opacity-50 disabled:grayscale"
                 >
