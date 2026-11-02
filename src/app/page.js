@@ -8,6 +8,7 @@ import NameModal from "./NameModal";
 import CarteIdentite from "./CarteIdentite";
 import PetitMot from "./PetitMot";
 import { INTERVALLE_PENSEES_MS, penser } from "@/lib/pensees";
+import config from "../../config/game.json";
 
 const MESSAGES_FEU = {
   froid: "Il a froid...",
@@ -35,6 +36,27 @@ function messageSommeil(dodo) {
 
 // Animation jouée une fois après un soin réussi, pour les étapes qui l'ont.
 const ANIMATIONS_SOINS = { nourrir: "mange", ajouterBois: "rechauffe" };
+// Moments de complicité : de l'amour après un bain (seul moment de câlin du Bébé), une partie
+// de jeu ou une leçon.
+const SOINS_AMOUR = ["laver", "jouer", "eduquer"];
+// Besoins vraiment en manque (pas seulement « bientôt ») : les combler le surprend.
+const HUMEURS_EN_MANQUE = Object.values(config.caracteristiques)
+  .map((carac) => carac.humeurSiMauvais)
+  .filter(Boolean);
+
+// Réaction jouée une fois après un soin réussi : son animation propre si l'étape l'a, sinon
+// la surprise si un besoin en manque (ou le froid) vient d'être comblé, sinon l'amour après
+// un jeu ou une leçon. Renvoie le nom de l'illustration, ou `null`.
+function reactionAuSoin(avant, apres, soin) {
+  const propre = `${apres.etape}-${ANIMATIONS_SOINS[soin]}`;
+  if (ILLUSTRATIONS[propre]) return propre;
+  if (avant.etape !== apres.etape) return null;
+  const comble =
+    HUMEURS_EN_MANQUE.some((humeur) => avant.humeurs.includes(humeur) && !apres.humeurs.includes(humeur)) ||
+    (avant.indicateurs.feu !== apres.indicateurs.feu && ["froid", "chaud"].includes(avant.indicateurs.feu));
+  const nom = comble ? `${apres.etape}-surprise` : SOINS_AMOUR.includes(soin) && `${apres.etape}-amour`;
+  return ILLUSTRATIONS[nom] ? nom : null;
+}
 
 const CLE_ETAPE_VUE = "miyou-gotchi:etape";
 
@@ -158,8 +180,8 @@ export default function Home() {
     setEnCours(false);
     if (!res.ok) return data.erreur ?? "Une erreur est survenue.";
 
-    const nomSoin = `${data.etape}-${ANIMATIONS_SOINS[evenement?.soin]}`;
-    if (data.applique !== false && ILLUSTRATIONS[nomSoin]) {
+    const nomSoin = evenement?.soin && data.applique !== false && reactionAuSoin(dragon, data, evenement.soin);
+    if (nomSoin) {
       const lecture = Date.now();
       // « Content » est préchargé aussi : il suit l'animation si un message s'affiche encore.
       await precharger([illustrationUrl(nomSoin, undefined, lecture), illustrationUrl(`${data.etape}-content`)]);

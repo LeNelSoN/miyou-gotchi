@@ -342,7 +342,7 @@ Avec l'App Router, des **Server Actions** directement dans les composants peuven
 ## 7. Illustrations nécessaires (pour le dessinateur)
 
 - Œuf : un état de base + une variante visuelle par indicateur de température (🥶 trop froid / 🔥 parfait / 🥵 trop chaud) et par stade de fissures (jauge de progression de l'étape, section 5)
-- Bébé, Jeune, Adulte : repos, content, faim, fatigue, triste, fâché (bleu si froid, rouge si trop chaud). Livrés mais pas encore utilisés : amour, surprise
+- Bébé, Jeune, Adulte : repos, content, faim, fatigue, triste, fâché (bleu si froid, rouge si trop chaud), amour (après un bain, un jeu ou une leçon), surprise (quand un soin comble un besoin en manque ou le froid)
 - Soins et tours : Bébé qui mange et qui se réchauffe livrés ; Jeune et Adulte qui mangent, cracher du feu (flamme de plus en plus grosse) — à faire
 - Icônes par tour — à définir à l'étape correspondante
 
