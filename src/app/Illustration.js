@@ -57,6 +57,13 @@ export const ILLUSTRATIONS = {
   "adulte-faim": { largeur: 94, centre: 40, sol: 2, scene: GRANDE_SCENE },
   "adulte-fatigue": { largeur: 82, centre: 38, sol: 1, scene: GRANDE_SCENE },
   "adulte-triste": { largeur: 91, centre: 36, sol: 3, scene: GRANDE_SCENE },
+  // Soins joués une fois, comme le Jeune. Planches PixelLab de 96 pixels : `echelle` lui rend
+  // la taille de l'Adulte.
+  "adulte-mange": { largeur: 96, centre: 51, sol: 11, echelle: 1.4, scene: GRANDE_SCENE, dureeMs: 6400 },
+  // Le feu de camp dépasse sous ses pieds.
+  "adulte-rechauffe": { largeur: 96, centre: 50, sol: 12, echelle: 1.4, scene: GRANDE_SCENE, dureeMs: 6400 },
+  // Assis dans la mousse.
+  "adulte-lave": { largeur: 96, centre: 51.5, sol: 12, echelle: 1.4, scene: GRANDE_SCENE, dureeMs: 6400 },
   "adulte-amour": { largeur: 91, centre: 36, sol: 3, scene: GRANDE_SCENE, dureeMs: 5400 },
   "adulte-surprise": { largeur: 82, centre: 38, sol: 1, scene: GRANDE_SCENE, dureeMs: 3000 },
 };
