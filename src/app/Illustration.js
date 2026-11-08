@@ -85,9 +85,10 @@ const REPERES = {
 // Où poser le coin bas gauche de l'effet, depuis un repère : la fumée et la flamme sortent du museau,
 // les idées et les notes flottent à côté de la tête.
 const POSES = {
-  "talent-sport-1": ["museau", 7, -2],
-  "talent-sport-2": ["museau", 7, -2],
-  "talent-sport-3": ["museau", 7, -12],
+  // Au ras du museau ; la grosse fumée un peu plus loin, pour ne pas cacher l'œil.
+  "talent-sport-1": ["museau", -1, -6],
+  "talent-sport-2": ["museau", 2, -6],
+  "talent-sport-3": ["museau", -1, -16],
   lecture: ["tete", -3, -18],
   musique: ["tete", -3, -18],
 };
