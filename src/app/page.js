@@ -54,7 +54,8 @@ function messageSommeil(dodo) {
   return `Zzz... (debout vers ${heure})`;
 }
 
-// Animation jouée une fois après un soin réussi, pour les étapes qui l'ont.
+// Animation jouée une fois après un soin réussi, pour les étapes qui l'ont. Une leçon a la sienne
+// selon son type (`<étape>-sport`, `<étape>-lecture`, `<étape>-musique`).
 const ANIMATIONS_SOINS = { nourrir: "mange", ajouterBois: "rechauffe", laver: "lave" };
 // Moments de complicité : de l'amour après un bain (quand l'étape n'a pas d'animation de bain),
 // une partie de jeu ou une leçon.
@@ -67,8 +68,8 @@ const HUMEURS_EN_MANQUE = Object.values(config.caracteristiques)
 // Réaction jouée une fois après un soin réussi : son animation propre si l'étape l'a, sinon
 // la surprise si un besoin en manque (ou le froid) vient d'être comblé, sinon l'amour après
 // un jeu ou une leçon. Renvoie le nom de l'illustration, ou `null`.
-function reactionAuSoin(avant, apres, soin) {
-  const propre = `${apres.etape}-${ANIMATIONS_SOINS[soin]}`;
+function reactionAuSoin(avant, apres, { soin, lecon }) {
+  const propre = `${apres.etape}-${soin === "eduquer" ? lecon : ANIMATIONS_SOINS[soin]}`;
   if (ILLUSTRATIONS[propre]) return propre;
   if (avant.etape !== apres.etape) return null;
   const comble =
@@ -246,7 +247,7 @@ export default function Home() {
       return data.erreur ?? "Une erreur est survenue.";
     }
 
-    const nomSoin = evenement?.soin && data.applique !== false && reactionAuSoin(dragon, data, evenement.soin);
+    const nomSoin = evenement?.soin && data.applique !== false && reactionAuSoin(dragon, data, evenement);
     if (nomSoin) {
       const lecture = Date.now();
       // « Content » est préchargé aussi : il suit l'animation si un message s'affiche encore.

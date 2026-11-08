@@ -243,7 +243,7 @@ Le dragon s'adresse à la joueuse (une petite fille) sur le second écran de la 
   | 📖 Lecture | « ? » et ampoule éteinte | ampoule qui s'allume | ampoule et étoiles |
   | 🎵 Musique | une note (+ il fredonne) | plusieurs notes | notes colorées et cœur |
 
-  Ses pensées suivent (`phrases.json`, `etapes.<étape>.talents`, une liste par palier, cumulées) : une fois sur trois sans besoin urgent (`partTalent`). Après une leçon, il réagit selon la leçon (`etapes.<étape>.lecons`).
+  Ses pensées suivent (`phrases.json`, `etapes.<étape>.talents`, une liste par palier, cumulées) : une fois sur trois sans besoin urgent (`partTalent`). Après une leçon, il joue l'animation de la leçon (`<étape>-sport`, `<étape>-lecture`, `<étape>-musique` : ballon, livre, flûte ; l'amour à défaut) et réagit selon la leçon (`etapes.<étape>.lecons`).
 - **Rythme** : « Éduquer » est grisé tant que l'apprentissage est à 80 ou plus (`bloque.eduquer.siAuDessus`). Il baisse de 3 par heure (de moitié en dormant) : environ 2 leçons par jour d'école, 4 à 5 le mercredi et le week-end, soit au moins 10 jours pour une joueuse très assidue.
 - Au passage à Adulte : les scores de rapidité des 5 traits sont figés dans `adult_stats` et l'archétype est calculé (voir « Détermination de l'archétype » ci-dessous).
 
@@ -334,7 +334,7 @@ Avec l'App Router, des **Server Actions** directement dans les composants peuven
 
 - Œuf : un état de base + une variante visuelle par indicateur de température (🥶 trop froid / 🔥 parfait / 🥵 trop chaud) et par stade de fissures (jauge de progression de l'étape, section 5)
 - Bébé, Jeune, Adulte : repos, content, faim, fatigue, triste, fâché (bleu si froid, rouge si trop chaud), amour (après un bain, un jeu ou une leçon), surprise (quand un soin comble un besoin en manque ou le froid)
-- Soins et tours : Bébé qui mange, se réchauffe et se lave, Jeune qui mange, se réchauffe et se lave livrés ; Adulte qui mange, se réchauffe et se lave, cracher du feu (flamme de plus en plus grosse) — à faire
+- Soins et tours : Bébé qui mange, se réchauffe et se lave, Jeune qui mange, se réchauffe et se lave, et Jeune qui fait du sport, lit et joue de la musique (leçons) livrés ; Adulte qui mange, se réchauffe et se lave, cracher du feu (flamme de plus en plus grosse) — à faire
 - Icônes par tour — à définir à l'étape correspondante
 
 ## 8. Roadmap

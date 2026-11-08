@@ -42,6 +42,12 @@ export const ILLUSTRATIONS = {
   "jeune-rechauffe": { largeur: 128, centre: 69, sol: 14, scene: GRANDE_SCENE, dureeMs: 6400 },
   // Joué une fois à chaque bain, comme le Bébé. Dessiné assis par l'IA, à la même échelle.
   "jeune-lave": { largeur: 128, centre: 69, sol: 14, scene: GRANDE_SCENE, dureeMs: 6400 },
+  // Leçons, jouées une fois comme les soins. Planches PixelLab plus petites (96 pixels) :
+  // `echelle` lui rend la taille du Jeune.
+  "jeune-sport": { largeur: 96, centre: 51.5, sol: 10, echelle: 1.4, scene: GRANDE_SCENE, dureeMs: 6400 },
+  // Assis, de trois quarts : centré sur la tête, comme les autres dessins.
+  "jeune-lecture": { largeur: 96, centre: 52, sol: 12, echelle: 1.4, scene: GRANDE_SCENE, dureeMs: 6400 },
+  "jeune-musique": { largeur: 96, centre: 51.5, sol: 10, echelle: 1.4, scene: GRANDE_SCENE, dureeMs: 6400 },
   "jeune-amour": { largeur: 82, centre: 39, sol: 6, scene: GRANDE_SCENE, dureeMs: 4200 },
   "jeune-surprise": { largeur: 82, centre: 39, sol: 6, scene: GRANDE_SCENE, dureeMs: 3000 },
   adulte: { largeur: 72, centre: 37, sol: 1, scene: GRANDE_SCENE },
