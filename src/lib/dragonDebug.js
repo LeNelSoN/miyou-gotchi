@@ -29,6 +29,7 @@ export function infosDebug(dragon) {
     adultStats: dragon.adult_stats,
     scoresBesoins: scoresBesoins(dragon),
     personality: dragon.personality,
+    quete: dragon.quete ?? null,
     config: calibrationPossible() ? config : null,
   };
 }
@@ -100,6 +101,34 @@ export async function reveillerMaintenant() {
   const dragon = await recupererDragonSynchronise();
   if (!dragon.sleeping_since) return dragon;
   const resultat = { ...dragon, sleeping_since: null, awake_since: new Date().toISOString() };
+  await sauvegarderDragon(resultat);
+  return resultat;
+}
+
+// Quête : `recommencer` efface la progression (carnet compris), `nouveauJour` remet à zéro le compteur
+// d'étapes du jour.
+export async function modifierQuete(commande) {
+  const dragon = await recupererDragonSynchronise();
+  const quete = commande === "recommencer" ? {} : { ...dragon.quete, etapesDuJour: 0 };
+  const resultat = { ...dragon, quete };
+  await sauvegarderDragon(resultat);
+  return resultat;
+}
+
+// Pour tester la quête sans refaire toute l'enfance : choisir l'archétype, ajouter des leçons.
+export async function forcerArchetype(nom) {
+  const dragon = await recupererDragonSynchronise();
+  if (!Object.values(config.personnalite.archetypes).includes(nom)) return dragon;
+  const resultat = { ...dragon, personality: nom };
+  await sauvegarderDragon(resultat);
+  return resultat;
+}
+
+export async function ajouterLecons(voie, delta) {
+  const dragon = await recupererDragonSynchronise();
+  if (!config.lecons.types.includes(voie)) return dragon;
+  const lecons = { ...dragon.lecons, [voie]: Math.max(0, (dragon.lecons?.[voie] ?? 0) + delta) };
+  const resultat = { ...dragon, lecons };
   await sauvegarderDragon(resultat);
   return resultat;
 }

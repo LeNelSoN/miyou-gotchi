@@ -1017,6 +1017,14 @@
           "Hmm, intéressant... dis-m'en plus !",
           "Je me sens un peu plus sage.",
           "Ouf, ça fait réfléchir, tout ça !"
+        ],
+        "quete": [
+          "Quelle aventure ! J'ai hâte de voir la suite.",
+          "Tu as fait le bon choix, j'en suis sûr !",
+          "Mes pattes sont fatiguées, mais mon cœur est tout content.",
+          "Avec toi, le chemin me paraît moins long.",
+          "Je raconterai tout ça aux Anciens !",
+          "On continue ? Il y a tant de choses à découvrir !"
         ]
       },
       "reves": [

@@ -6,6 +6,7 @@ import DebugPanel from "./DebugPanel";
 import Illustration, { EFFETS_TALENT, ILLUSTRATIONS, illustrationUrl } from "./Illustration";
 import NameModal from "./NameModal";
 import CarteIdentite from "./CarteIdentite";
+import Aventure from "./Aventure";
 import PetitMot from "./PetitMot";
 import { INTERVALLE_PENSEES_MS, penser } from "@/lib/pensees";
 import { abonnerSon, basculerSon, jouerSon, sonActive } from "@/lib/sons";
@@ -39,11 +40,13 @@ function sonAction(route, corps) {
   if (route === "sleep") return "dodo";
   if (route === "wake") return "reveil";
   if (route === "educate") return corps?.lecon === "musique" ? "musique" : "lecon";
+  if (route === "quest") return "lecon";
   if (route === "debug" || route === "reset") return null;
   return "soin";
 }
 
 const CARTE = { libelle: "Carte d'identité", court: "Carte", icone: "🪪" };
+const AVENTURE = { libelle: "Aventure", court: "Aventure", icone: "🧭", route: "quest" };
 const DODO = {
   coucher: { libelle: "Coucher", court: "Dodo", icone: "🌙", route: "sleep" },
   reveiller: { libelle: "Réveiller", court: "Réveil", icone: "☀️", route: "wake" },
@@ -110,11 +113,13 @@ function precharger(adresses) {
 }
 
 // Renvoie les props de <Illustration>.
-function choisirIllustration(dragon, toast, eclosion, animationSoin) {
+function choisirIllustration(dragon, toast, eclosion, animationSoin, enAventure) {
   // « Frais » reste dans la bonne zone : mêmes illustrations que « parfait ».
   const feu = dragon.indicateurs.feu === "frais" ? "parfait" : dragon.indicateurs.feu;
   if (eclosion) return { nom: "eclosion" };
   if (animationSoin) return animationSoin;
+  // Page d'aventure ouverte et rien ne le retient : il marche avec son baluchon.
+  if (enAventure && dragon.quete?.disponible) return { nom: `${dragon.etape}-quete` };
   if (dragon.etape === "oeuf") return { nom: "oeuf", variante: `${feu}-${dragon.palier}` };
   if (toast) return { nom: `${dragon.etape}-content` };
   // La faim et la tristesse n'ont pas de message à l'écran : elles passent avant le feu, qui a le sien.
@@ -159,6 +164,9 @@ export default function Home() {
   const [pensee, setPensee] = useState(null);
   const [carteOuverte, setCarteOuverte] = useState(false);
   const [choixLecon, setChoixLecon] = useState(false);
+  const [aventureOuverte, setAventureOuverte] = useState(false);
+  // Ce qu'il vient de faire dans sa quête, affiché jusqu'à « Continuer ».
+  const [resultatQuete, setResultatQuete] = useState(null);
   // Côté serveur, le son est supposé actif ; le réglage de l'appareil est lu à l'hydratation.
   const son = useSyncExternalStore(abonnerSon, sonActive, () => true);
 
@@ -241,7 +249,7 @@ export default function Home() {
       router.replace("/connexion");
       return null;
     }
-    const { toasts = [], ...data } = await res.json();
+    const { toasts = [], resultatQuete: resultat, ...data } = await res.json();
     if (!res.ok) {
       setEnCours(false);
       return data.erreur ?? "Une erreur est survenue.";
@@ -257,6 +265,7 @@ export default function Home() {
     }
     // Relâché seulement maintenant : les boutons restent bloqués pendant le préchargement de l'animation.
     setEnCours(false);
+    if (resultat) setResultatQuete(resultat);
 
     const passage = afficher(data, data.applique === false ? undefined : evenement);
     // Un passage d'étape (la 30e leçon le fait devenir adulte) mérite sa fanfare.
@@ -269,6 +278,10 @@ export default function Home() {
   function donnerLecon(lecon) {
     setChoixLecon(false);
     envoyer(ACTIONS.eduquer.route, { lecon }, { soin: "eduquer", lecon });
+  }
+
+  function choisirDansQuete(index) {
+    envoyer(AVENTURE.route, { choix: index }, { soin: "quete" });
   }
 
   function basculerDodo() {
@@ -285,7 +298,7 @@ export default function Home() {
   const fatigue = dragon?.dodo?.fatigue;
   const boutonDodo = dragon?.dodo && (endormi ? DODO.reveiller : DODO.coucher);
   const nomAttendu = dragon && dragon.etape !== "oeuf" && !dragon.named && !eclosion;
-  const illustration = dragon && choisirIllustration(dragon, toast, eclosion, animationSoin);
+  const illustration = dragon && choisirIllustration(dragon, toast, eclosion, animationSoin, aventureOuverte);
 
   return (
     <div
@@ -411,6 +424,7 @@ export default function Home() {
                   }
                 />
               ))}
+              {dragon?.quete && <BoutonCoque {...AVENTURE} disabled={occupe} onClick={() => setAventureOuverte(true)} />}
               {dragon?.archetype && <BoutonCoque {...CARTE} onClick={() => setCarteOuverte(true)} />}
               {boutonDodo && (
                 <BoutonCoque {...boutonDodo} disabled={occupe || (!endormi && !fatigue)} onClick={basculerDodo} />
@@ -454,7 +468,20 @@ export default function Home() {
           nom={dragon.named ? dragon.name : "Ton dragon"}
           archetype={dragon.archetype}
           description={dragon.descriptionArchetype}
+          carnet={dragon.quete?.carnet}
           fermer={() => setCarteOuverte(false)}
+        />
+      )}
+
+      {aventureOuverte && dragon?.quete && (
+        <Aventure
+          nom={dragon.named ? dragon.name : "ton dragon"}
+          quete={dragon.quete}
+          resultat={resultatQuete}
+          enCours={enCours}
+          choisir={choisirDansQuete}
+          continuer={() => setResultatQuete(null)}
+          fermer={() => setAventureOuverte(false)}
         />
       )}
 

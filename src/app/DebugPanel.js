@@ -1,8 +1,11 @@
 "use client";
 
+import config from "../../config/game.json";
+
 const ETAPES = ["oeuf", "bebe", "jeune", "adulte"];
 const SAUTS_HEURES = [1, 6, 24];
 const PAS_AJUSTEMENT = 20;
+const ARCHETYPES = Object.values(config.personnalite.archetypes);
 
 // Liste les chemins de toutes les constantes numériques de la config.
 function constantesNumeriques(noeud, chemin = []) {
@@ -60,6 +63,42 @@ export default function DebugPanel({ dragon, enCours, envoyer }) {
         ))}
 
         {Object.keys(debug.lecons).length > 0 && <p>leçons : {JSON.stringify(debug.lecons)}</p>}
+
+        {dragon.etape === "adulte" && (
+          <fieldset className="flex flex-col gap-2 rounded border border-zinc-700 px-2 pb-2">
+            <legend className="px-1">Quête</legend>
+            <p className="break-all">
+              {debug.quete?.scene ?? "(début)"} · jour {debug.quete?.etapesDuJour ?? 0} · drapeaux{" "}
+              {JSON.stringify(debug.quete?.drapeaux ?? [])} · voies {JSON.stringify(debug.quete?.voies ?? {})}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <button className={BOUTON} disabled={enCours} onClick={() => commande({ quete: "nouveauJour" })}>
+                Nouveau jour
+              </button>
+              <button className={BOUTON} disabled={enCours} onClick={() => commande({ quete: "recommencer" })}>
+                Recommencer
+              </button>
+              {["sport", "lecture", "musique"].map((voie) => (
+                <button key={voie} className={BOUTON} disabled={enCours} onClick={() => commande({ lecons: { voie, delta: 5 } })}>
+                  +5 {voie}
+                </button>
+              ))}
+            </div>
+            <select
+              className="rounded border border-zinc-600 bg-zinc-800 px-1"
+              value={debug.personality ?? ""}
+              disabled={enCours}
+              onChange={(e) => commande({ archetype: e.target.value })}
+            >
+              <option value="" disabled>
+                archétype…
+              </option>
+              {ARCHETYPES.map((nom) => (
+                <option key={nom}>{nom}</option>
+              ))}
+            </select>
+          </fieldset>
+        )}
 
         {debug.personality ? (
           <p>

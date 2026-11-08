@@ -1,5 +1,6 @@
 import { getSupabaseServerClient } from "./supabaseServer";
 import { avancerDragon, appliquerAction, appliquerLecon, coucher, reveiller, validerNom } from "./dragonEngine";
+import { jouerChoix } from "./quete";
 
 export async function sauvegarderDragon(dragon) {
   const supabase = getSupabaseServerClient();
@@ -43,6 +44,16 @@ export async function appliquerLeconEtSauvegarder(lecon) {
   const dragonInstruit = avecActivite(resultat.dragon);
   await sauvegarderDragon(dragonInstruit);
   return { dragon: dragonInstruit, applique: true };
+}
+
+// Une étape de quête : le choix `index` de la scène en cours (Adulte).
+export async function jouerChoixEtSauvegarder(index) {
+  const dragon = await recupererDragonSynchronise();
+  const { dragon: avance, applique, resultat } = jouerChoix(dragon, index);
+  if (!applique) return { dragon, applique: false, resultat: null };
+  const dragonAventurier = avecActivite(avance);
+  await sauvegarderDragon(dragonAventurier);
+  return { dragon: dragonAventurier, applique: true, resultat };
 }
 
 export async function nommerDragon(nom) {

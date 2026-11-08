@@ -35,7 +35,8 @@ create table dragon (
   besoins             jsonb not null default '{}',    -- suivi des besoins pendant la croissance, par trait : {notes, nombre, ouvert}
   lecons              jsonb not null default '{}',    -- leçons données, par type : {sport, lecture, musique} (base du talent de l'Adulte)
   derniere_activite   timestamptz,                    -- dernier soin, leçon, nom, coucher ou réveil de la joueuse (silence du petit mot du jour)
-  tricks_learned      jsonb not null default '[]',
+  quete               jsonb not null default '{}',    -- quête de l'Adulte : {id, etape, drapeaux, carnet, terminees, jour, etapesDuJour} (section 5)
+  tricks_learned      jsonb not null default '[]',    -- inutilisées : les tours sont remplacés par la quête
   available_tricks    jsonb not null default '[]',
   training_progress   jsonb not null default '{}',
   sleeping_since      timestamptz,                    -- heure du coucher (mode Dodo), null = éveillé
@@ -251,7 +252,7 @@ Le dragon s'adresse à la joueuse (une petite fille) sur le second écran de la 
 
 - `adult_stats` contient les scores de rapidité figés au passage à l'âge adulte.
 - Au passage à Adulte, une **carte d'identité** s'ouvre : nom du dragon, archétype et sa description (`personnalite.descriptions`). Un bouton "Carte" permet de la rouvrir.
-- `feu`, `nourriture`, `hygiene` restent actives (`etapesActives` les inclut) mais sans enjeu de croissance puisqu'il n'y a plus de `stage_progress` à faire avancer à ce stade — entretien léger/cosmétique. **Aucune autre activité à cette étape pour l'instant** (tours et carte d'identité/portrait : voir backlog section 10).
+- `feu`, `nourriture`, `hygiene` restent actives (`etapesActives` les inclut) mais sans enjeu de croissance puisqu'il n'y a plus de `stage_progress` à faire avancer à ce stade — entretien léger/cosmétique. Son activité est la **quête** (« Étape 4 bis » ci-dessous, à valider).
 
 #### Détermination de l'archétype (`personality`)
 
@@ -291,6 +292,74 @@ Le suivi est tenu dans la colonne `besoins` par le moteur (tick horaire et chaqu
 | hygiene + apprentissage | Perfectionniste |
 | joie + apprentissage | Curieux |
 
+### Étape 4 bis — La quête de l'Adulte (spec à valider)
+
+À l'âge adulte, on ne l'élève plus : on l'accompagne. Il part sur une longue quête, à la façon d'un livre dont on est le héros. Ce qu'il est devenu enfant (talents et archétype) décide des actions qu'il peut tenter. Les « tours » du backlog disparaissent : ce sont ces actions.
+
+**Déroulé**
+
+- Bouton **🧭 Aventure** (Adulte seulement). Il ouvre la page de l'étape en cours, comme la carte d'identité : un emoji de lieu (🌲 🏔️ 🌊 🏰…), une courte scène, puis la question « Que doit faire Coco ? » et 2 ou 3 choix.
+- Après un choix : une ou deux phrases de résultat, puis « Continuer ». Le dragon réagit sur le second écran (`phrases.json`, `etapes.adulte.soins.quete`).
+- Les choix portent une icône : ⚽ 📖 🎵 pour un talent, 🐉 pour son caractère, ✨ pour un souvenir du voyage (drapeau).
+- Pendant ce temps, l'écran principal joue une seule animation générique : l'Adulte qui marche avec son baluchon (`adulte-quete`). Aucune illustration par scène.
+
+**Ce que l'enfance lui apporte**
+
+- **Talents** : un choix peut demander une voie et un palier (⚽ grimper, courir, souffler du feu ; 📖 lire une carte, résoudre une énigme ; 🎵 apaiser, faire chanter une porte). Plus le palier est haut, plus l'action est belle.
+- **Archétype** : un choix peut demander un trait (`feu`, `nourriture`, `hygiene`, `joie`, `apprentissage`). Un archétype a le trait de son nom, un hybride a les deux : Vorace (feu + nourriture) a les choix « feu » et les choix « nourriture ». On écrit ainsi 5 variantes au lieu de 15.
+- Un choix de **talent** pas encore assez travaillé reste visible mais grisé, avec la raison : « Il n'a pas fait assez de musique… ». Elle comprend que son enfance compte.
+- Un choix de **trait** ou de **drapeau** n'apparaît que si le dragon l'a : son caractère et son histoire ne sont pas des manques, ce sont des surprises.
+- Chaque étape garde **au moins un choix sans condition** : on n'est jamais bloqué. Et autant que possible **deux** : une étape où il n'y a qu'un bouton à presser n'est pas un choix.
+- Les **énigmes** ont plusieurs réponses ; une mauvaise donne un indice et disparaît (`sansDrapeau`), si bien qu'on trouve toujours au bout de quelques essais.
+- Le **trésor du baluchon** (ballon, livre, flûte ou gâteau) revient plusieurs fois en chemin, et jusque chez les Anciens.
+
+**Règles d'écriture**
+
+- **Jamais d'échec ni de peur.** Un choix moins adapté mène à un détour (un autre chemin, une autre rencontre), jamais à « tu as perdu ». Les obstacles sont des énigmes, des passages, quelqu'un à aider ou à consoler.
+- **Des embranchements qui se rejoignent** : chaque chapitre se divise puis se referme. Le jeu retient certains choix (**drapeaux** : un ami rencontré, un objet trouvé) et les fait revenir plus tard, ce qui ouvre parfois un choix de plus.
+- Narration au présent, à la troisième personne, avec le prénom du dragon. Deux à quatre phrases par scène (environ 280 caractères au plus). Vocabulaire simple mais riche : elle est maligne. Les rares phrases qui s'adressent à elle sont au féminin.
+
+**Carnet de voyage**
+
+Il garde les amis, les objets et les lieux découverts, et les titres des quêtes terminées. On l'ouvre depuis la carte d'identité. C'est le « portrait du parcours » du backlog.
+
+**Rythme**
+
+- Une étape de quête fatigue le dragon et lui creuse l'appétit (`quete.cout`) : feu −3, nourriture −5, hygiène −4, joie +5, et une demi-heure de fatigue du Dodo (`dodo.fatigueParAction.quete`).
+- Il ne repart pas s'il dort, s'il est fatigué ou si un besoin est en manque : « Coco a besoin de toi avant de repartir. » Les soins retrouvent un enjeu.
+- Au plus **6 étapes par jour** (`quete.etapesParJour`), comptées sur le jour de la joueuse (`quete.fuseauHoraire`) : de quoi avancer franchement en une visite, sans tout dévorer d'un coup.
+- Messages de la page d'aventure : `quete.messages`.
+- Ordre de grandeur mesuré (simulation de 10 000 parties, `pnpm simuler-quete`) : environ **72 étapes**, soit **12 à 13 jours de jeu** à 6 étapes par jour ; trois semaines environ si elle joue un jour sur deux.
+
+**Fin et suites**
+
+- Une fin par grand chemin : le dragon reçoit un **titre** selon la voie qu'il a le plus utilisée (« Gardien des Flammes », « Sage des Étoiles », « Chanteur des Vents »…), avec un court épilogue. Le titre s'inscrit sur la carte d'identité.
+  - À régler en 7d (d'après la simulation) : compter seulement les choix de la quête donne une égalité dans environ 9 % des parties, et un titre qui ne ressemble à son enfance que 6 fois sur 10. Le titre combinera donc les voies de la quête et les leçons du Jeune, ces dernières départageant les égalités.
+- Les quêtes sont des fichiers à part, `config/quetes/<id>.json`, jouées dans l'ordre de `quete.ordre`. Ajouter une quête (un « add-on ») revient à ajouter un fichier. Quand il n'y en a plus, il se repose en attendant la prochaine aventure.
+
+**Première quête : le voyage initiatique** (`voyage-initiatique`, synopsis à valider)
+
+Chaque jeune dragon doit un jour monter jusqu'au **Nid des Anciens**, au sommet du monde, pour y trouver sa vraie place. C'est le tour de Coco.
+
+| # | Chapitre | L'enjeu |
+|---|---|---|
+| 1 | Le départ | Préparer son baluchon (l'objet emporté resservira), dire au revoir. |
+| 2 | La forêt qui chuchote | Trouver son chemin ; un petit renard perdu devient son ami. |
+| 3 | La rivière aux galets | Traverser : sauter (⚽), lire les marques du passeur (📖) ou appeler la tortue en chantant (🎵). |
+| 4 | Le village des lucioles | Les lucioles ont perdu leur lumière : son feu peut les aider. |
+| 5 | Les collines du vent | Apprendre à planer, un cerf-volant à rattraper. |
+| 6 | La bibliothèque sous la colline | Un vieux hibou et ses énigmes. |
+| 7 | Le marché des nuages | Échanger, partager, se faire beau : les archétypes brillent. |
+| 8 | La montagne enneigée | Le froid : rallumer un abri, aider un ours blanc grognon. |
+| 9 | Le pont des étoiles | Une traversée de nuit, guidée par les constellations et la musique. |
+| 10 | Le Nid des Anciens | Il raconte son voyage (le carnet), et les Anciens lui donnent son titre. |
+
+Données : colonne `quete` (section 3). Route : `POST /api/dragon/quest` (section 6). Config : `quete` dans `config/game.json` (rythme) et `config/quetes/` (histoires). Code : `src/lib/quete.js`, page `src/app/Aventure.js`.
+
+**Format d'une quête** (`config/quetes/<id>.json`) : `debut` (première scène), `chapitres` (titres), `scenes`. Une scène a `chapitre`, `lieu` (emoji), `texte` (`{nom}` devient le prénom), `carnet` (inscrit à l'arrivée) et `choix`. Un choix a `texte`, `resultat`, `suite` (scène suivante), et au besoin `condition` (`{ talent, palier }`, `{ trait }`, `{ drapeau }`, ou `{ sansDrapeau }` qui retire le choix une fois le drapeau posé), `drapeaux` et `carnet`. Une `suite` pas encore écrite affiche « La suite de l'aventure arrive bientôt… » : on peut publier un chapitre à la fois.
+
+**Vérifier une quête** : `pnpm simuler-quete [parties]` joue des milliers de parties (dragons de tous archétypes, 30 leçons réparties au hasard, trois façons de choisir) et signale les parties bloquées, les étapes à un seul choix, les souvenirs qui ne reviennent jamais, les choix jamais affichés et la répartition des titres. Code : `scripts/quete/`.
+
 ### Sons
 
 Petits sons façon tamagotchi, générés par le navigateur (Web Audio, onde carrée, volume bas) : aucun fichier à charger. Code : `src/lib/sons.js`.
@@ -324,7 +393,7 @@ Une seule notification par jour, après l'école, pour garder le rituel sans ren
 | `POST /api/dragon/wake` | Réveiller le dragon, refusé avant la durée minimale de sommeil |
 | `POST /api/notifications` | Abonne l'appareil au petit mot quotidien (corps : abonnement push du navigateur) ; `DELETE` `{ endpoint }` le désabonne |
 | `GET /api/notifications/envoi` | Cron Vercel (secret `CRON_SECRET`) : envoie le petit mot du jour ; `?forcer=1` ignore l'activité récente, pour tester |
-| `POST /api/dragon/train` | `{ trickId }` — entraîner un tour *(à définir)* |
+| `POST /api/dragon/quest` | `{ choix }` — joue un choix de l'étape de quête en cours (Adulte) ; refusé s'il dort, est fatigué, a un besoin en manque ou a atteint `quete.etapesParJour` |
 | `POST /api/dragon/name` | `{ name }` — nommer le dragon après éclosion |
 | `POST /api/dragon/reset` | Optionnel, pratique pour les tests |
 
@@ -335,7 +404,7 @@ Avec l'App Router, des **Server Actions** directement dans les composants peuven
 - Œuf : un état de base + une variante visuelle par indicateur de température (🥶 trop froid / 🔥 parfait / 🥵 trop chaud) et par stade de fissures (jauge de progression de l'étape, section 5)
 - Bébé, Jeune, Adulte : repos, content, faim, fatigue, triste, fâché (bleu si froid, rouge si trop chaud), amour (après un bain, un jeu ou une leçon), surprise (quand un soin comble un besoin en manque ou le froid)
 - Soins et tours : Bébé, Jeune et Adulte qui mangent, se réchauffent et se lavent, et Jeune qui fait du sport, lit et joue de la musique (leçons), livrés ; cracher du feu (flamme de plus en plus grosse) — à faire
-- Icônes par tour — à définir à l'étape correspondante
+- Quête : l'Adulte qui marche avec son baluchon (`adulte-quete`), animation générique en boucle, jouée tant que la page d'aventure est ouverte et qu'il peut repartir — livrée
 
 ## 8. Roadmap
 
@@ -366,8 +435,11 @@ Ajouter sur la coque un deuxième petit écran, de taille fixe, dédié aux paro
 **Phase 6 ter — Petit mot du jour** ✅
 Appli installable (manifeste, icônes, service worker) et une notification quotidienne après l'école (section 5, « Petit mot du jour »).
 
-**Phase 7 — Fonctionnalités en attente de spec (backlog, section 10)**
-Système de tours, activités Adulte additionnelles (carte d'identité/portrait) — à démarrer une fois ces specs détaillées.
+**Phase 7 — La quête de l'Adulte** (section 5, « Étape 4 bis »)
+- 7a : moteur de quête (étapes, choix, conditions de talent et de trait, drapeaux, rythme), route `quest`, page d'aventure, carnet de voyage, avec le chapitre 1 écrit pour tester.
+- 7b : l'animation `adulte-quete` — livrée.
+- 7c : écriture des chapitres 2 à 10 (82 scènes), éprouvés par 10 000 parties simulées — à relire.
+- 7d : fin, titres et épilogues.
 
 **Phase 8 — Déploiement final**
 Variables d'environnement en prod, test complet sur mobile avant de l'offrir.
@@ -379,5 +451,5 @@ Variables d'environnement en prod, test complet sur mobile avant de l'offrir.
 
 ## 10. À spécifier plus tard (backlog)
 
-- **Système de tours** : quels tours, comment on les débloque/enseigne, lien avec `learning` (l'apprentissage accumulé au Jeune devrait influencer ça) **et avec l'archétype** (`personality`, défini en section 5) — les tours accessibles à l'Adulte pourraient en dépendre. Route `POST /api/dragon/train` déjà réservée en section 6, en attente du détail.
-- **Portrait Adulte** : la carte d'identité (archétype + description) existe ; reste à envisager un résumé illustré du parcours du dragon (`adult_stats`).
+- **Nouvelles quêtes** (add-ons) après le voyage initiatique.
+- Les tours et le portrait du parcours sont repris par la quête et son carnet de voyage (section 5, « Étape 4 bis »).

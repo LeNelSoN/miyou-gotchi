@@ -1,0 +1,3021 @@
+{
+  "id": "voyage-initiatique",
+  "titre": "Le voyage initiatique",
+  "debut": "c1-reveil",
+  "chapitres": {
+    "1": "Le départ",
+    "2": "La forêt qui chuchote",
+    "3": "La rivière aux galets",
+    "4": "Le village des lucioles",
+    "5": "Les collines du vent",
+    "6": "La bibliothèque sous la colline",
+    "7": "Le marché des nuages",
+    "8": "La montagne enneigée",
+    "9": "Le pont des étoiles",
+    "10": "Le Nid des Anciens"
+  },
+  "scenes": {
+    "c1-reveil": {
+      "chapitre": 1,
+      "lieu": "🏡",
+      "texte": "Ce matin, {nom} se réveille avec un drôle de picotement dans les ailes. Tous les dragons le savent : un jour, il faut partir vers le Nid des Anciens, tout en haut du monde. Aujourd'hui, c'est son tour !",
+      "carnet": {
+        "lieux": [
+          "🏡 La maison"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Sauter du lit, prêt à partir !",
+          "resultat": "Il bondit si fort que le lit en tremble. L'aventure commence !",
+          "suite": "c1-baluchon"
+        },
+        {
+          "texte": "Te faire un dernier gros câlin",
+          "resultat": "Il se blottit contre toi. « Je penserai à toi à chaque pas », souffle-t-il.",
+          "drapeaux": [
+            "calin-du-depart"
+          ],
+          "suite": "c1-baluchon"
+        }
+      ]
+    },
+    "c1-baluchon": {
+      "chapitre": 1,
+      "lieu": "🎒",
+      "texte": "Avant de partir, il faut préparer son baluchon. Il n'y reste de la place que pour un seul trésor. Que doit emporter {nom} ?",
+      "choix": [
+        {
+          "texte": "Son ballon rouge",
+          "condition": {
+            "talent": "sport"
+          },
+          "resultat": "Il le cale tout au fond du sac. On ne sait jamais quand on aura envie de jouer !",
+          "drapeaux": [
+            "ballon"
+          ],
+          "carnet": {
+            "objets": [
+              "⚽ Le ballon rouge"
+            ]
+          },
+          "suite": "c1-pistache"
+        },
+        {
+          "texte": "Son livre d'histoires",
+          "condition": {
+            "talent": "lecture"
+          },
+          "resultat": "Il le range avec soin. Les histoires, c'est fait pour voyager.",
+          "drapeaux": [
+            "livre"
+          ],
+          "carnet": {
+            "objets": [
+              "📖 Le livre d'histoires"
+            ]
+          },
+          "suite": "c1-pistache"
+        },
+        {
+          "texte": "Sa petite flûte en bois",
+          "condition": {
+            "talent": "musique"
+          },
+          "resultat": "Il la glisse dans sa poche. Il fredonne déjà.",
+          "drapeaux": [
+            "flute"
+          ],
+          "carnet": {
+            "objets": [
+              "🎵 La flûte en bois"
+            ]
+          },
+          "suite": "c1-pistache"
+        },
+        {
+          "texte": "Une grosse part de gâteau",
+          "resultat": "Il l'emballe dans une feuille de chou. Ça sent drôlement bon dans ce sac !",
+          "drapeaux": [
+            "gateau"
+          ],
+          "carnet": {
+            "objets": [
+              "🍰 Une part de gâteau"
+            ]
+          },
+          "suite": "c1-pistache"
+        }
+      ]
+    },
+    "c1-pistache": {
+      "chapitre": 1,
+      "lieu": "🐢",
+      "texte": "Au bout du jardin, Mamie Pistache, la vieille tortue, l'attend. « Pour trouver le Nid des Anciens, suis toujours le soleil du matin », dit-elle. Comment {nom} lui dit-il au revoir ?",
+      "carnet": {
+        "amis": [
+          "🐢 Mamie Pistache, la tortue du jardin"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Lui souffler un petit nuage tout chaud",
+          "condition": {
+            "trait": "feu"
+          },
+          "resultat": "Mamie Pistache ferme les yeux. « Ah, que c'est bon pour mes vieilles pattes ! »",
+          "suite": "c1-croisee"
+        },
+        {
+          "texte": "Partager un biscuit avec elle",
+          "condition": {
+            "trait": "nourriture"
+          },
+          "resultat": "Ils croquent ensemble, sans se presser. Mamie Pistache dit que c'est le meilleur des au revoir.",
+          "suite": "c1-croisee"
+        },
+        {
+          "texte": "Lui offrir la plus belle fleur du jardin",
+          "condition": {
+            "trait": "hygiene"
+          },
+          "resultat": "Elle la pose sur sa carapace. « Me voilà toute jolie pour te dire au revoir ! »",
+          "suite": "c1-croisee"
+        },
+        {
+          "texte": "Lui faire sa plus belle grimace",
+          "condition": {
+            "trait": "joie"
+          },
+          "resultat": "Mamie Pistache rit tellement qu'elle manque de se retourner sur sa carapace !",
+          "suite": "c1-croisee"
+        },
+        {
+          "texte": "Lui demander de lui expliquer le chemin",
+          "condition": {
+            "trait": "apprentissage"
+          },
+          "resultat": "Elle dessine un plan dans la terre, et il le recopie avec application.",
+          "drapeaux": [
+            "plan-de-pistache"
+          ],
+          "carnet": {
+            "objets": [
+              "🗺️ Le plan de Mamie Pistache"
+            ]
+          },
+          "suite": "c1-croisee"
+        },
+        {
+          "texte": "La serrer fort contre lui",
+          "resultat": "« Reviens-nous grand et sage », murmure-t-elle.",
+          "suite": "c1-croisee"
+        }
+      ]
+    },
+    "c1-croisee": {
+      "chapitre": 1,
+      "lieu": "🛤️",
+      "texte": "Le chemin descend vers la prairie, puis se sépare en deux. Un sentier longe le ruisseau, l'autre grimpe sur la colline aux coquelicots. Par où passer ?",
+      "choix": [
+        {
+          "texte": "Longer le ruisseau",
+          "resultat": "Il suit le clapotis de l'eau, la tête pleine de rêves.",
+          "suite": "c1-ruisseau"
+        },
+        {
+          "texte": "Grimper sur la colline aux coquelicots",
+          "resultat": "Il monte entre les fleurs rouges, qui lui chatouillent le ventre.",
+          "suite": "c1-colline"
+        }
+      ]
+    },
+    "c1-ruisseau": {
+      "chapitre": 1,
+      "lieu": "💧",
+      "texte": "Au bord du ruisseau, une petite grenouille sautille dans tous les sens : le courant emporte son chapeau de feuille ! « Mon chapeau ! Mon beau chapeau ! »",
+      "carnet": {
+        "lieux": [
+          "💧 Le ruisseau"
+        ],
+        "amis": [
+          "🐸 Gaspard, la grenouille au chapeau"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Courir le long de l'eau pour le rattraper",
+          "condition": {
+            "talent": "sport"
+          },
+          "resultat": "Trois bonds, un plongeon de museau… attrapé ! Gaspard remet son chapeau, tout fier.",
+          "drapeaux": [
+            "gaspard"
+          ],
+          "suite": "c1-lisiere"
+        },
+        {
+          "texte": "Chanter pour que les poissons le ramènent",
+          "condition": {
+            "talent": "musique",
+            "palier": 2
+          },
+          "resultat": "Les poissons dansent au rythme de sa chanson et poussent le chapeau jusqu'à la rive.",
+          "drapeaux": [
+            "gaspard"
+          ],
+          "suite": "c1-lisiere"
+        },
+        {
+          "texte": "Lui fabriquer un nouveau chapeau",
+          "resultat": "Avec une feuille de nénuphar, il lui fait un chapeau encore plus beau. Gaspard n'en revient pas !",
+          "drapeaux": [
+            "gaspard"
+          ],
+          "suite": "c1-lisiere"
+        }
+      ]
+    },
+    "c1-colline": {
+      "chapitre": 1,
+      "lieu": "🌺",
+      "texte": "En haut de la colline, un papillon tout triste n'arrive plus à voler : la rosée a trempé ses ailes. « Je vais rater le bal des fleurs… »",
+      "carnet": {
+        "lieux": [
+          "🌺 La colline aux coquelicots"
+        ],
+        "amis": [
+          "🦋 Plume, le papillon de la colline"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Souffler un petit air tout chaud",
+          "condition": {
+            "talent": "sport"
+          },
+          "resultat": "Un souffle doux et tiède, pas trop fort… Les ailes de Plume sèchent en un clin d'œil !",
+          "drapeaux": [
+            "plume"
+          ],
+          "suite": "c1-lisiere"
+        },
+        {
+          "texte": "Lui lire une histoire en attendant le soleil",
+          "condition": {
+            "talent": "lecture"
+          },
+          "resultat": "L'histoire est si belle que Plume oublie sa tristesse. Quand elle finit, ses ailes sont sèches.",
+          "drapeaux": [
+            "plume"
+          ],
+          "suite": "c1-lisiere"
+        },
+        {
+          "texte": "L'abriter sous son aile",
+          "resultat": "Bien au chaud contre lui, Plume sèche doucement, puis s'envole en riant.",
+          "drapeaux": [
+            "plume"
+          ],
+          "suite": "c1-lisiere"
+        }
+      ]
+    },
+    "c1-lisiere": {
+      "chapitre": 1,
+      "lieu": "🌳",
+      "texte": "Le soir tombe doucement. {nom} arrive au bord de la grande forêt. Il est temps de trouver un endroit pour dormir.",
+      "carnet": {
+        "lieux": [
+          "🌳 Le bord de la grande forêt"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Partager sa part de gâteau avec ses nouveaux amis",
+          "condition": {
+            "drapeau": "gateau"
+          },
+          "resultat": "Tout le monde se régale. On n'a jamais vu un dîner aussi joyeux au bord de la forêt !",
+          "drapeaux": [
+            "diner-partage"
+          ],
+          "suite": "c1-luciole"
+        },
+        {
+          "texte": "Allumer un petit feu et regarder les étoiles",
+          "condition": {
+            "trait": "feu"
+          },
+          "resultat": "Les flammes crépitent. Il s'endort, le ventre chaud et les yeux pleins d'étoiles.",
+          "suite": "c1-luciole"
+        },
+        {
+          "texte": "Se faire un nid de mousse bien douillet",
+          "condition": {
+            "trait": "hygiene"
+          },
+          "resultat": "Un nid tout doux, bien rangé, qui sent bon la forêt. Parfait !",
+          "suite": "c1-luciole"
+        },
+        {
+          "texte": "Compter les étoiles jusqu'à s'endormir",
+          "condition": {
+            "trait": "apprentissage"
+          },
+          "resultat": "Il en compte cent quarante-deux… et s'endort à la cent quarante-troisième.",
+          "suite": "c1-luciole"
+        },
+        {
+          "texte": "Se rouler en boule au creux d'un vieil arbre",
+          "resultat": "Le vieil arbre craque doucement, comme une berceuse.",
+          "suite": "c1-luciole"
+        }
+      ]
+    },
+    "c1-luciole": {
+      "chapitre": 1,
+      "lieu": "🌙",
+      "texte": "Au milieu de la nuit, une toute petite lumière vient danser près de son museau. C'est une luciole perdue, qui cherche son village depuis des jours.",
+      "carnet": {
+        "amis": [
+          "✨ Lumi, la luciole perdue"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Lui jouer une berceuse pour la rassurer",
+          "condition": {
+            "talent": "musique"
+          },
+          "resultat": "Lumi clignote de plus en plus doucement, puis s'endort sur sa corne.",
+          "drapeaux": [
+            "lumi"
+          ],
+          "suite": "c1-matin"
+        },
+        {
+          "texte": "Lui raconter une histoire de lucioles",
+          "condition": {
+            "talent": "lecture",
+            "palier": 2
+          },
+          "resultat": "Dans l'histoire, les lucioles se retrouvent toujours. Lumi sourit et s'endort, rassurée.",
+          "drapeaux": [
+            "lumi"
+          ],
+          "suite": "c1-matin"
+        },
+        {
+          "texte": "Lui promettre de l'aider à retrouver les siens",
+          "resultat": "« C'est vrai ? » Lumi brille si fort de joie qu'elle éclaire tout l'arbre.",
+          "drapeaux": [
+            "lumi"
+          ],
+          "suite": "c1-matin"
+        }
+      ]
+    },
+    "c1-matin": {
+      "chapitre": 1,
+      "lieu": "☀️",
+      "texte": "Au réveil, Lumi s'est installée sur sa corne. Devant eux, la forêt est immense, pleine de chuchotements. Par où commencer ?",
+      "choix": [
+        {
+          "texte": "Lire le plan de Mamie Pistache",
+          "condition": {
+            "drapeau": "plan-de-pistache"
+          },
+          "resultat": "Sur le plan, une petite croix montre un sentier caché. Le voilà !",
+          "drapeaux": [
+            "sentier-cache"
+          ],
+          "suite": "c1-au-revoir"
+        },
+        {
+          "texte": "Grimper en haut d'un arbre pour voir le chemin",
+          "condition": {
+            "talent": "sport",
+            "palier": 2
+          },
+          "resultat": "Tout là-haut, il aperçoit au loin les montagnes. Il sait maintenant où aller.",
+          "suite": "c1-au-revoir"
+        },
+        {
+          "texte": "Suivre le soleil du matin, comme l'a dit Mamie Pistache",
+          "resultat": "Il tourne le museau vers la lumière dorée. C'est par là.",
+          "suite": "c1-au-revoir"
+        },
+        {
+          "texte": "Demander son avis à Lumi",
+          "resultat": "Lumi file à droite, revient, repart… Par là ! Il lui fait confiance.",
+          "suite": "c1-au-revoir"
+        },
+        {
+          "texte": "Demander son avis à Lumi",
+          "resultat": "Lumi file à droite, revient, repart… Par là ! Il lui fait confiance.",
+          "suite": "c1-au-revoir"
+        },
+        {
+          "texte": "Demander son avis à Lumi",
+          "resultat": "Lumi file à droite, revient, repart… Par là ! Il lui fait confiance.",
+          "suite": "c1-au-revoir"
+        },
+        {
+          "texte": "Demander son avis à Lumi",
+          "resultat": "Lumi file à droite, revient, repart… Par là ! Il lui fait confiance.",
+          "suite": "c1-au-revoir"
+        }
+      ]
+    },
+    "c1-au-revoir": {
+      "chapitre": 1,
+      "lieu": "🏡",
+      "texte": "{nom} se retourne une dernière fois. Tout au loin, on voit encore le toit de la maison. Il sourit : tout ce que tu lui as appris voyage avec lui.",
+      "choix": [
+        {
+          "texte": "Entrer dans la forêt qui chuchote",
+          "resultat": "Un pas, puis un autre… Les arbres se referment doucement derrière lui. Fin du chapitre 1 !",
+          "suite": "c2-debut"
+        },
+        {
+          "texte": "Envoyer un dernier bisou vers la maison",
+          "resultat": "Il souffle un petit nuage en forme de cœur vers le toit. Puis il entre dans la forêt. Fin du chapitre 1 !",
+          "suite": "c2-debut"
+        },
+        {
+          "texte": "Envoyer un dernier bisou vers la maison",
+          "resultat": "Il souffle un petit nuage en forme de cœur vers le toit. Puis il entre dans la forêt. Fin du chapitre 1 !",
+          "suite": "c2-debut"
+        },
+        {
+          "texte": "Envoyer un dernier bisou vers la maison",
+          "resultat": "Il souffle un petit nuage en forme de cœur vers le toit. Puis il entre dans la forêt. Fin du chapitre 1 !",
+          "suite": "c2-debut"
+        },
+        {
+          "texte": "Envoyer un dernier bisou vers la maison",
+          "resultat": "Il souffle un petit nuage en forme de cœur vers le toit. Puis il entre dans la forêt. Fin du chapitre 1 !",
+          "suite": "c2-debut"
+        }
+      ]
+    },
+    "c2-debut": {
+      "chapitre": 2,
+      "lieu": "🌲",
+      "texte": "Sous les grands arbres, les feuilles chuchotent sans arrêt. On dirait qu'elles se racontent des secrets. Lumi se fait toute petite sur sa corne. Que fait {nom} ?",
+      "carnet": {
+        "lieux": [
+          "🌲 La forêt qui chuchote"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Prendre le sentier caché du plan",
+          "condition": {
+            "drapeau": "sentier-cache"
+          },
+          "resultat": "Le sentier serpente entre les fougères, tout droit vers le cœur de la forêt. Quel raccourci !",
+          "suite": "c2-renard"
+        },
+        {
+          "texte": "Écouter ce que disent les feuilles",
+          "condition": {
+            "talent": "lecture"
+          },
+          "resultat": "En tendant bien l'oreille, il comprend : « Par ici… par ici… » Les arbres lui montrent le chemin !",
+          "suite": "c2-sentiers"
+        },
+        {
+          "texte": "Chuchoter une blague aux arbres",
+          "condition": {
+            "trait": "joie"
+          },
+          "resultat": "Les feuilles frissonnent de rire. Une branche s'écarte poliment pour le laisser passer.",
+          "suite": "c2-sentiers"
+        },
+        {
+          "texte": "Avancer doucement en saluant chaque arbre",
+          "resultat": "« Bonjour, monsieur le Chêne. Bonjour, madame la Fougère. » La forêt a l'air ravie.",
+          "suite": "c2-sentiers"
+        }
+      ]
+    },
+    "c2-sentiers": {
+      "chapitre": 2,
+      "lieu": "🍄",
+      "texte": "Plus loin, trois sentiers partent d'un gros champignon rouge à pois blancs. Sur son chapeau, quelqu'un a gravé : « Le bon chemin sent la noisette. »",
+      "choix": [
+        {
+          "texte": "Chercher des indices dans les traces au sol",
+          "condition": {
+            "talent": "lecture",
+            "palier": 2
+          },
+          "resultat": "Des petites empreintes de pattes, des coquilles de noisettes… C'est le sentier du milieu !",
+          "suite": "c2-renard"
+        },
+        {
+          "texte": "Renifler les trois sentiers",
+          "condition": {
+            "trait": "nourriture"
+          },
+          "resultat": "Son nez de gourmand ne se trompe jamais : ça sent la noisette grillée, à gauche !",
+          "suite": "c2-renard"
+        },
+        {
+          "texte": "Prendre le sentier le plus ensoleillé",
+          "resultat": "Ce n'est pas le bon… mais il tombe sur un buisson de mûres. Quel joli détour !",
+          "suite": "c2-murier"
+        }
+      ]
+    },
+    "c2-murier": {
+      "chapitre": 2,
+      "lieu": "🫐",
+      "texte": "Le buisson est si chargé de mûres que ses branches touchent le sol. Une petite voix fluette s'élève de dessous : « Il y a quelqu'un ? Je suis coincé ! »",
+      "choix": [
+        {
+          "texte": "Soulever les branches d'un seul coup",
+          "condition": {
+            "talent": "sport"
+          },
+          "resultat": "Hop ! Les branches se relèvent… et un petit renard roux en sort en se secouant.",
+          "suite": "c2-renard"
+        },
+        {
+          "texte": "Démêler les ronces une à une, délicatement",
+          "condition": {
+            "trait": "hygiene"
+          },
+          "resultat": "Pas une épine ne le touche. Un petit renard roux sort, tout ébouriffé.",
+          "suite": "c2-renard"
+        },
+        {
+          "texte": "Lui dire de ne pas bouger : il arrive !",
+          "resultat": "Il rampe sous les branches, tout doucement, et ressort avec un petit renard roux dans les bras.",
+          "suite": "c2-renard"
+        }
+      ]
+    },
+    "c2-renard": {
+      "chapitre": 2,
+      "lieu": "🦊",
+      "texte": "C'est un renardeau aux yeux tout mouillés. « Je m'appelle Noisette. J'ai suivi un papillon, et maintenant je ne retrouve plus mon terrier… »",
+      "carnet": {
+        "amis": [
+          "🦊 Noisette, le renardeau"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Lui offrir un morceau de gâteau pour le consoler",
+          "condition": {
+            "drapeau": "gateau"
+          },
+          "resultat": "Noisette le dévore. « C'est le meilleur gâteau du monde ! » Il ne pleure plus du tout.",
+          "suite": "c2-indices",
+          "drapeaux": [
+            "noisette"
+          ]
+        },
+        {
+          "texte": "Faire le clown pour le faire rire",
+          "condition": {
+            "trait": "joie"
+          },
+          "resultat": "Il marche sur les mains, trébuche, fait une roulade. Noisette éclate de rire.",
+          "suite": "c2-indices",
+          "drapeaux": [
+            "noisette"
+          ]
+        },
+        {
+          "texte": "Jouer un petit air joyeux",
+          "condition": {
+            "talent": "musique"
+          },
+          "resultat": "Noisette se met à danser en remuant la queue. Il en oublie qu'il était perdu !",
+          "suite": "c2-indices",
+          "drapeaux": [
+            "noisette"
+          ]
+        },
+        {
+          "texte": "Lui promettre de l'aider à rentrer chez lui",
+          "resultat": "« Promis ? » Noisette glisse sa petite patte dans la sienne.",
+          "suite": "c2-indices",
+          "drapeaux": [
+            "noisette"
+          ]
+        }
+      ]
+    },
+    "c2-indices": {
+      "chapitre": 2,
+      "lieu": "🍂",
+      "texte": "« Mon terrier est sous un arbre qui a une porte ronde, se souvient Noisette. Et ça sent le miel ! » Autour d'eux, il y a des centaines d'arbres. Comment le retrouver ?",
+      "choix": [
+        {
+          "texte": "Monter tout en haut d'un arbre pour regarder",
+          "condition": {
+            "talent": "sport",
+            "palier": 2
+          },
+          "resultat": "De là-haut, il voit un vieux chêne avec des abeilles qui tournent autour. Trouvé !",
+          "suite": "c2-chene"
+        },
+        {
+          "texte": "Suivre les traces de Noisette à l'envers",
+          "condition": {
+            "talent": "lecture"
+          },
+          "resultat": "Les petites traces de pattes mènent tout droit à un vieux chêne qui bourdonne.",
+          "suite": "c2-chene"
+        },
+        {
+          "texte": "Demander à Lumi d'éclairer le creux des arbres",
+          "condition": {
+            "drapeau": "lumi"
+          },
+          "resultat": "Lumi file d'arbre en arbre. Soudain, elle clignote très fort : une porte ronde !",
+          "suite": "c2-chene"
+        },
+        {
+          "texte": "Suivre le bourdonnement des abeilles",
+          "resultat": "Bzzz… bzzz… Le bruit les mène jusqu'à un vieux chêne qui sent bon le miel.",
+          "suite": "c2-chene"
+        }
+      ]
+    },
+    "c2-chene": {
+      "chapitre": 2,
+      "lieu": "🌳",
+      "texte": "Sous le vieux chêne, une porte ronde s'ouvre. Maman Renarde se précipite et serre Noisette contre elle. « Merci, grand dragon ! Reste dîner avec nous ! »",
+      "carnet": {
+        "lieux": [
+          "🌳 Le terrier sous le vieux chêne"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Accepter avec gourmandise",
+          "condition": {
+            "trait": "nourriture"
+          },
+          "resultat": "Soupe aux champignons, tarte aux mûres… Il se ressert trois fois, et Maman Renarde est ravie.",
+          "suite": "c2-cadeau"
+        },
+        {
+          "texte": "Lui demander l'histoire de la forêt",
+          "condition": {
+            "trait": "apprentissage"
+          },
+          "resultat": "Elle explique que les arbres chuchotent pour se dire où il pleut. Il ne l'oubliera jamais.",
+          "suite": "c2-cadeau"
+        },
+        {
+          "texte": "Allumer la cheminée du terrier",
+          "condition": {
+            "trait": "feu"
+          },
+          "resultat": "Le terrier devient tout chaud et tout doré. Les renardeaux s'endorment devant le feu.",
+          "suite": "c2-cadeau"
+        },
+        {
+          "texte": "Accepter avec plaisir",
+          "resultat": "Ils mangent tous ensemble, serrés autour de la petite table. Quelle bonne soirée !",
+          "suite": "c2-cadeau"
+        }
+      ]
+    },
+    "c2-cadeau": {
+      "chapitre": 2,
+      "lieu": "🌰",
+      "texte": "Le lendemain matin, Noisette lui tend une petite chose ronde et brillante. « C'est ma noisette porte-bonheur. Comme ça, tu penseras à moi. »",
+      "carnet": {
+        "objets": [
+          "🌰 La noisette porte-bonheur"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Lui composer une chanson d'au revoir",
+          "condition": {
+            "talent": "musique",
+            "palier": 2
+          },
+          "resultat": "« Noisette, petit renard roux… » Toute la famille la chante en chœur jusqu'au bout du sentier.",
+          "suite": "c2-sortie",
+          "drapeaux": [
+            "noisette-porte-bonheur"
+          ]
+        },
+        {
+          "texte": "La ranger précieusement dans son baluchon",
+          "resultat": "Elle tient juste à côté de ses autres trésors. Noisette agite la patte longtemps, longtemps.",
+          "suite": "c2-sortie",
+          "drapeaux": [
+            "noisette-porte-bonheur"
+          ]
+        },
+        {
+          "texte": "Lui offrir une de ses écailles en échange",
+          "resultat": "Noisette la serre contre lui. « Je la garderai toute ma vie ! »",
+          "suite": "c2-sortie"
+        }
+      ]
+    },
+    "c2-sortie": {
+      "chapitre": 2,
+      "lieu": "🌅",
+      "texte": "Au bout de la forêt, les arbres s'écartent enfin. On entend un grand bruit d'eau qui roule et qui pétille : la rivière aux galets n'est plus très loin !",
+      "choix": [
+        {
+          "texte": "Courir vers le bruit de l'eau",
+          "resultat": "Il dévale la pente, les ailes au vent. Fin du chapitre 2 !",
+          "suite": "c3-debut"
+        },
+        {
+          "texte": "Se retourner pour remercier la forêt",
+          "resultat": "Les feuilles lui chuchotent un dernier « bon voyage ». Fin du chapitre 2 !",
+          "suite": "c3-debut"
+        }
+      ]
+    },
+    "c3-debut": {
+      "chapitre": 3,
+      "lieu": "🏞️",
+      "texte": "La rivière est large et toute pétillante. De gros galets ronds dépassent de l'eau, comme des dos de tortues endormies. Sur l'autre rive, le chemin continue.",
+      "carnet": {
+        "lieux": [
+          "🏞️ La rivière aux galets"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Appeler Gaspard, la grenouille au chapeau",
+          "condition": {
+            "drapeau": "gaspard"
+          },
+          "resultat": "« Coâ ! Te revoilà ! » Gaspard surgit d'un nénuphar. « Je connais tous les galets de cette rivière ! »",
+          "suite": "c3-gaspard"
+        },
+        {
+          "texte": "Chercher un passage le long de la rive",
+          "resultat": "Il marche au bord de l'eau, les pattes dans les galets mouillés.",
+          "suite": "c3-passages"
+        },
+        {
+          "texte": "Faire des ricochets pour réfléchir",
+          "resultat": "Plic, plic, plic, plouf ! En regardant les galets rebondir, il repère plusieurs façons de traverser.",
+          "suite": "c3-passages"
+        }
+      ]
+    },
+    "c3-gaspard": {
+      "chapitre": 3,
+      "lieu": "🐸",
+      "texte": "Gaspard saute de galet en galet en montrant le chemin. « Celui-ci, puis le rond, puis le plat ! Attention, le vert est glissant ! »",
+      "choix": [
+        {
+          "texte": "Faire la course avec lui",
+          "condition": {
+            "trait": "joie"
+          },
+          "resultat": "Gaspard gagne d'un saut, mais {nom} arrive en faisant un plouf gigantesque. Ils rient aux éclats !",
+          "suite": "c3-pique-nique"
+        },
+        {
+          "texte": "Suivre Gaspard, bond après bond",
+          "resultat": "Hop, hop, hop ! Ils arrivent sur l'autre rive, les pieds à peine mouillés.",
+          "suite": "c3-pique-nique"
+        },
+        {
+          "texte": "Apprendre à sauter comme une grenouille",
+          "resultat": "Accroupi, les pattes écartées… Croâ ! Ils traversent en sautant côte à côte.",
+          "suite": "c3-pique-nique"
+        }
+      ]
+    },
+    "c3-passages": {
+      "chapitre": 3,
+      "lieu": "🪨",
+      "texte": "Il y a trois façons de traverser : une rangée de galets bien espacés, un vieux poteau couvert de signes gravés, et une grosse tortue qui dort au milieu de l'eau.",
+      "choix": [
+        {
+          "texte": "Sauter de galet en galet",
+          "condition": {
+            "talent": "sport"
+          },
+          "resultat": "Un bond, deux bonds, trois bonds… Il atterrit sur l'autre rive, fier comme un champion !",
+          "suite": "c3-pique-nique"
+        },
+        {
+          "texte": "Déchiffrer les signes du poteau",
+          "condition": {
+            "talent": "lecture"
+          },
+          "resultat": "Ce sont les signes du passeur ! Ils montrent un gué peu profond, juste un peu plus loin.",
+          "suite": "c3-gue"
+        },
+        {
+          "texte": "Chanter doucement pour réveiller la tortue",
+          "condition": {
+            "talent": "musique"
+          },
+          "resultat": "La tortue ouvre un œil, puis l'autre. « Quelle jolie voix ! Monte donc sur mon dos. »",
+          "suite": "c3-tortue"
+        },
+        {
+          "texte": "Suivre la rive jusqu'au moulin",
+          "resultat": "Un peu plus bas, un moulin fait tourner sa grande roue. Quelqu'un pourra peut-être l'aider ?",
+          "suite": "c3-moulin"
+        }
+      ]
+    },
+    "c3-gue": {
+      "chapitre": 3,
+      "lieu": "🌊",
+      "texte": "Au gué, l'eau ne lui arrive qu'aux genoux. Des petits poissons argentés viennent lui chatouiller les pattes.",
+      "choix": [
+        {
+          "texte": "En profiter pour se faire tout beau",
+          "condition": {
+            "trait": "hygiene"
+          },
+          "resultat": "Un petit bain dans l'eau claire, et le voilà qui brille au soleil.",
+          "suite": "c3-pique-nique"
+        },
+        {
+          "texte": "Traverser tranquillement",
+          "resultat": "Ça chatouille ! Il arrive de l'autre côté en gloussant.",
+          "suite": "c3-pique-nique"
+        },
+        {
+          "texte": "Dire bonjour aux petits poissons",
+          "resultat": "Les poissons lui répondent par des bulles. Il arrive de l'autre côté le sourire aux lèvres.",
+          "suite": "c3-pique-nique"
+        }
+      ]
+    },
+    "c3-tortue": {
+      "chapitre": 3,
+      "lieu": "🐢",
+      "texte": "Sur le dos de la tortue, le voyage est lent, très lent. « Tu sais, dit-elle, je suis la cousine de Mamie Pistache. Elle m'a beaucoup parlé de toi ! »",
+      "carnet": {
+        "amis": [
+          "🐢 Tante Galette, la tortue de la rivière"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Lui chanter une chanson pour la traversée",
+          "condition": {
+            "talent": "musique",
+            "palier": 2
+          },
+          "resultat": "Il chante, elle bat la mesure avec ses pattes. Les poissons sortent la tête pour écouter.",
+          "suite": "c3-pique-nique"
+        },
+        {
+          "texte": "Lui donner des nouvelles de Mamie Pistache",
+          "resultat": "Tante Galette sourit tout le long de la traversée. « Fais-lui un bisou de ma part ! »",
+          "suite": "c3-pique-nique"
+        },
+        {
+          "texte": "Admirer le paysage sans se presser",
+          "resultat": "Les libellules, les nénuphars, le soleil qui danse sur l'eau… Ce voyage lent est un vrai cadeau.",
+          "suite": "c3-pique-nique"
+        }
+      ]
+    },
+    "c3-moulin": {
+      "chapitre": 3,
+      "lieu": "🛖",
+      "texte": "Au moulin, une vieille loutre se gratte la tête. « Un gros galet bloque ma roue, et je ne peux plus moudre ma farine ! »",
+      "carnet": {
+        "lieux": [
+          "🛖 Le moulin de la rivière"
+        ],
+        "amis": [
+          "🦦 Madame Loutre, la meunière"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Pousser le galet d'un grand coup d'épaule",
+          "condition": {
+            "talent": "sport",
+            "palier": 2
+          },
+          "resultat": "Il pousse, il pousse… Plouf ! La roue se remet à tourner.",
+          "suite": "c3-barque",
+          "drapeaux": [
+            "loutre"
+          ]
+        },
+        {
+          "texte": "Fabriquer un levier avec une branche",
+          "condition": {
+            "trait": "apprentissage"
+          },
+          "resultat": "Une branche, une pierre, une petite poussée… et le gros galet roule tout seul. Madame Loutre applaudit !",
+          "suite": "c3-barque",
+          "drapeaux": [
+            "loutre"
+          ]
+        },
+        {
+          "texte": "Plonger pour le déloger avec ses pattes",
+          "resultat": "Il plonge, tire, tire encore… et le galet roule enfin. Il ressort tout dégoulinant !",
+          "suite": "c3-barque",
+          "drapeaux": [
+            "loutre"
+          ]
+        }
+      ]
+    },
+    "c3-barque": {
+      "chapitre": 3,
+      "lieu": "🛶",
+      "texte": "« Merci mille fois ! dit Madame Loutre. Monte dans ma barque, je te fais traverser. » Elle lui donne aussi un petit sac de farine pour la route.",
+      "carnet": {
+        "objets": [
+          "🌾 Un sac de farine du moulin"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Monter dans la barque",
+          "resultat": "La barque glisse sur l'eau. Madame Loutre rame en chantonnant.",
+          "suite": "c3-pique-nique"
+        },
+        {
+          "texte": "Proposer de ramer à sa place",
+          "resultat": "Il rame en cadence, et Madame Loutre profite du voyage, les pattes en éventail.",
+          "suite": "c3-pique-nique"
+        }
+      ]
+    },
+    "c3-pique-nique": {
+      "chapitre": 3,
+      "lieu": "🧺",
+      "texte": "Sur l'autre rive, {nom} s'ébroue. Avant de repartir, il faut sécher et reprendre des forces. Une grosse pierre plate chauffe au soleil.",
+      "choix": [
+        {
+          "texte": "Jouer au ballon sur la rive pour se sécher",
+          "condition": {
+            "drapeau": "ballon"
+          },
+          "resultat": "Il court, shoote, rattrape… Le temps de marquer trois buts contre un arbre, il est tout sec !",
+          "suite": "c3-canards"
+        },
+        {
+          "texte": "Faire des crêpes avec la farine du moulin",
+          "condition": {
+            "drapeau": "loutre"
+          },
+          "resultat": "Il les fait cuire sur la pierre chaude. Elles sont dorées et sentent bon. Miam !",
+          "suite": "c3-canards"
+        },
+        {
+          "texte": "Se sécher d'un souffle tout chaud",
+          "condition": {
+            "trait": "feu"
+          },
+          "resultat": "Fffff… En un instant, ses écailles sont sèches et bien chaudes.",
+          "suite": "c3-canards"
+        },
+        {
+          "texte": "Cueillir des pommes sauvages",
+          "condition": {
+            "trait": "nourriture"
+          },
+          "resultat": "Il en trouve des rouges, des jaunes, et une toute petite verte très acide. Grimace garantie !",
+          "suite": "c3-canards"
+        },
+        {
+          "texte": "Faire une petite sieste au soleil",
+          "resultat": "Il s'étire sur la pierre tiède et ronronne comme un gros chat.",
+          "suite": "c3-canards"
+        }
+      ]
+    },
+    "c3-soir": {
+      "chapitre": 3,
+      "lieu": "🌆",
+      "texte": "Le soir tombe. Au loin, des centaines de petites lumières clignotent dans les arbres… mais elles sont toutes pâles. Lumi se redresse d'un coup sur sa corne.",
+      "choix": [
+        {
+          "texte": "Demander à Lumi ce qui se passe",
+          "resultat": "« C'est mon village ! C'est mon village ! Mais pourquoi brille-t-il si peu ? » Fin du chapitre 3 !",
+          "suite": "c4-debut"
+        },
+        {
+          "texte": "Marcher vers les petites lumières",
+          "resultat": "Plus il avance, plus Lumi tremble d'impatience. Fin du chapitre 3 !",
+          "suite": "c4-debut"
+        }
+      ]
+    },
+    "c4-debut": {
+      "chapitre": 4,
+      "lieu": "🏮",
+      "texte": "Le village des lucioles est fait de petites maisons dans les branches, reliées par des ponts de fil. Mais tout est presque éteint, et les lucioles ont l'air bien tristes.",
+      "carnet": {
+        "lieux": [
+          "🏮 Le village des lucioles"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Ramener Lumi chez elle",
+          "resultat": "« Lumi ! » Une grosse luciole fonce vers eux : c'est sa maman ! Elles brillent si fort de joie que tout le village se réveille.",
+          "suite": "c4-maman"
+        },
+        {
+          "texte": "Demander d'abord aux lucioles ce qui se passe",
+          "resultat": "Une vieille luciole s'approche en clignotant à peine.",
+          "suite": "c4-ancienne"
+        }
+      ]
+    },
+    "c4-maman": {
+      "chapitre": 4,
+      "lieu": "💛",
+      "texte": "La maman de Lumi le remercie mille fois. Puis elle soupire : « Depuis l'hiver, notre grande lanterne s'est refroidie. Et sans elle, nos lumières s'éteignent une à une. »",
+      "choix": [
+        {
+          "texte": "Proposer son aide",
+          "resultat": "« Un dragon ! Ton feu pourrait peut-être la rallumer ! » Tout le village s'approche, plein d'espoir.",
+          "suite": "c4-lanterne"
+        },
+        {
+          "texte": "Demander à voir la grande lanterne",
+          "resultat": "La maman de Lumi le guide à travers le village endormi, jusqu'au plus vieil arbre.",
+          "suite": "c4-lanterne"
+        }
+      ]
+    },
+    "c4-ancienne": {
+      "chapitre": 4,
+      "lieu": "✨",
+      "texte": "« Je suis Grand-Mère Lueur, dit-elle. Notre grande lanterne s'est refroidie, et sans elle, nos lumières s'éteignent une à une. » Juste derrière, Lumi retrouve sa maman en pleurant de joie.",
+      "carnet": {
+        "amis": [
+          "✨ Grand-Mère Lueur, la sage des lucioles"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Proposer son aide",
+          "resultat": "Grand-Mère Lueur clignote de bonheur. « Un dragon ! Ton feu pourrait peut-être la rallumer ! »",
+          "suite": "c4-lanterne"
+        },
+        {
+          "texte": "Lui demander ce qu'il faudrait faire",
+          "resultat": "« Il faudrait un feu, un vrai… Et toi, tu es un dragon ! » Ses yeux se remplissent d'espoir.",
+          "suite": "c4-lanterne"
+        }
+      ]
+    },
+    "c4-lanterne": {
+      "chapitre": 4,
+      "lieu": "🌳",
+      "texte": "La grande lanterne est tout en haut du plus vieil arbre. C'est une boule de verre ancienne, et au fond, il ne reste qu'une toute petite braise. Comment monter jusqu'à elle ?",
+      "choix": [
+        {
+          "texte": "Déchiffrer les vieux signes gravés sur le tronc",
+          "condition": {
+            "talent": "lecture"
+          },
+          "resultat": "« Par ici, petit pas, grand arbre »… Les signes montrent un escalier caché dans l'écorce !",
+          "suite": "c4-braise"
+        },
+        {
+          "texte": "Grimper le long du tronc",
+          "condition": {
+            "talent": "sport"
+          },
+          "resultat": "Griffes plantées dans l'écorce, il monte, branche après branche, jusqu'à la lanterne.",
+          "suite": "c4-braise"
+        },
+        {
+          "texte": "Passer par les ponts de fil, en réfléchissant à chaque pas",
+          "condition": {
+            "trait": "apprentissage"
+          },
+          "resultat": "Un pont, puis un autre, puis un autre… Il arrive en haut sans jamais se tromper.",
+          "suite": "c4-braise"
+        },
+        {
+          "texte": "Demander aux lucioles de lui montrer l'escalier secret",
+          "resultat": "Un petit escalier taillé dans l'écorce tourne autour du tronc. Les lucioles l'éclairent comme elles peuvent.",
+          "suite": "c4-braise"
+        }
+      ]
+    },
+    "c4-braise": {
+      "chapitre": 4,
+      "lieu": "🔥",
+      "texte": "Voilà la braise, toute petite, presque grise. Il faut la réveiller avec beaucoup de délicatesse : un souffle trop fort pourrait fendre le vieux verre.",
+      "choix": [
+        {
+          "texte": "Jouer de sa petite flûte pour la braise",
+          "condition": {
+            "drapeau": "flute"
+          },
+          "resultat": "À chaque note de la flûte, la braise rougit un peu plus… puis s'embrase en dansant !",
+          "suite": "c4-fete"
+        },
+        {
+          "texte": "Souffler une flamme douce et régulière",
+          "condition": {
+            "talent": "sport",
+            "palier": 2
+          },
+          "resultat": "Sa flamme est parfaite : ni trop forte, ni trop faible. La braise rougit, puis s'embrase !",
+          "suite": "c4-fete"
+        },
+        {
+          "texte": "Lui confier un peu de son propre feu",
+          "condition": {
+            "trait": "feu"
+          },
+          "resultat": "Il pose son museau contre le verre. Une étincelle passe de lui à la braise… et la lanterne s'illumine.",
+          "suite": "c4-fete"
+        },
+        {
+          "texte": "Jouer l'air que chantent les lucioles",
+          "condition": {
+            "talent": "musique"
+          },
+          "resultat": "Les lucioles reprennent l'air en chœur. À chaque note, la braise brille un peu plus.",
+          "suite": "c4-fete"
+        },
+        {
+          "texte": "Souffler tout doucement, comme sur une bougie",
+          "resultat": "Fffff… tout doux, tout doux. La braise se réveille, rougit, puis s'enflamme joyeusement !",
+          "suite": "c4-fete"
+        }
+      ]
+    },
+    "c4-fete": {
+      "chapitre": 4,
+      "lieu": "🎉",
+      "texte": "La lanterne brille d'une belle lumière dorée, et une à une, les lucioles se rallument. Tout le village scintille ! « Ce soir, c'est la fête, et tu es notre invité d'honneur ! »",
+      "choix": [
+        {
+          "texte": "Raconter au village le conte des lucioles",
+          "condition": {
+            "talent": "lecture",
+            "palier": 2
+          },
+          "resultat": "Tout le village l'écoute, suspendu à ses lèvres. À la fin, les lucioles brillent de bonheur.",
+          "suite": "c4-adieux"
+        },
+        {
+          "texte": "Jouer de la musique pour faire danser tout le village",
+          "condition": {
+            "talent": "musique",
+            "palier": 2
+          },
+          "resultat": "Sa musique monte jusqu'aux étoiles. Les lucioles dansent jusqu'au matin.",
+          "suite": "c4-adieux"
+        },
+        {
+          "texte": "Ouvrir le bal en dansant",
+          "condition": {
+            "trait": "joie"
+          },
+          "resultat": "Il danse si drôlement que toutes les lucioles l'imitent. Le ciel est plein de lumières qui rient.",
+          "suite": "c4-adieux"
+        },
+        {
+          "texte": "Se faire beau pour la fête",
+          "condition": {
+            "trait": "hygiene"
+          },
+          "resultat": "Il lustre ses écailles et ses cornes. Les lucioles disent qu'il brille presque autant qu'elles !",
+          "suite": "c4-adieux"
+        },
+        {
+          "texte": "Goûter à tous les plats du banquet",
+          "condition": {
+            "trait": "nourriture"
+          },
+          "resultat": "Gelée de rosée, tarte au pollen, bonbons de miel… Tout est minuscule, alors il goûte tout !",
+          "suite": "c4-adieux"
+        },
+        {
+          "texte": "Regarder le spectacle, les yeux brillants",
+          "resultat": "Des milliers de petites lumières dessinent des cœurs et des étoiles rien que pour lui.",
+          "suite": "c4-adieux"
+        }
+      ]
+    },
+    "c4-adieux": {
+      "chapitre": 4,
+      "lieu": "🌄",
+      "texte": "Au matin, il faut repartir. Les lucioles lui offrent une petite lanterne qui ne s'éteint jamais. Lumi, elle, hésite sur le bord de sa fenêtre.",
+      "carnet": {
+        "objets": [
+          "🏮 La lanterne des lucioles"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Proposer à Lumi de venir avec lui",
+          "resultat": "Lumi regarde sa maman, qui hoche la tête en souriant. « Je viens ! » Elle reprend sa place sur sa corne.",
+          "drapeaux": [
+            "lumi-compagne",
+            "lanterne"
+          ],
+          "suite": "c4-route"
+        },
+        {
+          "texte": "Promettre à Lumi de revenir la voir",
+          "resultat": "« Promis ? — Promis ! » Lumi clignote trois fois : chez les lucioles, ça veut dire « je t'aime ».",
+          "drapeaux": [
+            "promesse-lumi",
+            "lanterne"
+          ],
+          "suite": "c4-route"
+        }
+      ]
+    },
+    "c4-route": {
+      "chapitre": 4,
+      "lieu": "🛤️",
+      "texte": "Le chemin quitte le village et monte doucement. Le vent se lève, et l'herbe des collines ondule comme la mer.",
+      "choix": [
+        {
+          "texte": "Suivre le vent",
+          "resultat": "Il ouvre un peu les ailes, et le vent le pousse dans le dos. Fin du chapitre 4 !",
+          "suite": "c5-debut"
+        },
+        {
+          "texte": "Faire un dernier signe aux lucioles",
+          "resultat": "Tout le village clignote en même temps pour lui dire au revoir. Fin du chapitre 4 !",
+          "suite": "c5-debut"
+        }
+      ]
+    },
+    "c5-debut": {
+      "chapitre": 5,
+      "lieu": "🌬️",
+      "texte": "Sur les collines du vent, tout vole : les feuilles, les graines de pissenlit, les chapeaux des voyageurs étourdis. Le vent gonfle ses ailes comme des voiles.",
+      "carnet": {
+        "lieux": [
+          "🌬️ Les collines du vent"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Saluer Plume, qui danse dans le vent",
+          "condition": {
+            "drapeau": "plume"
+          },
+          "resultat": "« Je savais que tu passerais par ici ! » Plume virevolte autour de sa tête. « Viens, je vais t'apprendre à planer ! »",
+          "suite": "c5-lecon"
+        },
+        {
+          "texte": "Ouvrir grand ses ailes, pour voir",
+          "resultat": "Whoosh ! Le vent le soulève d'un coup… et le repose sur les fesses. Il va falloir apprendre !",
+          "suite": "c5-hirondelle"
+        },
+        {
+          "texte": "Marcher dans l'herbe en regardant tout ce qui vole",
+          "resultat": "Un chapeau passe, puis une écharpe, puis une hirondelle qui rit aux éclats…",
+          "suite": "c5-hirondelle"
+        }
+      ]
+    },
+    "c5-hirondelle": {
+      "chapitre": 5,
+      "lieu": "🐦",
+      "texte": "Une hirondelle se pose sur une pierre en riant. « Des ailes, c'est bien, encore faut-il savoir s'en servir ! Je m'appelle Zéphyr. Tu veux une leçon de vol ? »",
+      "carnet": {
+        "amis": [
+          "🐦 Zéphyr, l'hirondelle"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Lui demander comment marche le vent",
+          "condition": {
+            "trait": "apprentissage"
+          },
+          "resultat": "Zéphyr explique : l'air chaud monte, l'air froid descend. Il range tout ça bien soigneusement dans sa tête.",
+          "drapeaux": [
+            "comprend-le-vent"
+          ],
+          "suite": "c5-lecon"
+        },
+        {
+          "texte": "Oui, avec plaisir !",
+          "resultat": "« Alors suis-moi en haut de la colline ! »",
+          "suite": "c5-lecon"
+        },
+        {
+          "texte": "Lui demander pourquoi elle rit",
+          "resultat": "« Parce que voler, c'est joyeux ! Tu vas voir ! »",
+          "suite": "c5-lecon"
+        }
+      ]
+    },
+    "c5-lecon": {
+      "chapitre": 5,
+      "lieu": "🕊️",
+      "texte": "« Pour planer, il faut courir face au vent, ouvrir les ailes… et faire confiance à l'air. » {nom} se place en haut de la pente. Son cœur bat fort, mais de joie.",
+      "choix": [
+        {
+          "texte": "Se rappeler ce qu'il a lu sur le vol des oiseaux",
+          "condition": {
+            "talent": "lecture",
+            "palier": 2
+          },
+          "resultat": "Ailes bien droites, queue en gouvernail, regard au loin… Ça marche comme dans le livre !",
+          "drapeaux": [
+            "sait-planer"
+          ],
+          "suite": "c5-cerf-volant"
+        },
+        {
+          "texte": "Prendre son élan et sauter",
+          "condition": {
+            "talent": "sport",
+            "palier": 2
+          },
+          "resultat": "Il court, saute… et plane ! Pour la première fois, ses pattes ne touchent plus le sol !",
+          "suite": "c5-cerf-volant",
+          "drapeaux": [
+            "sait-planer"
+          ]
+        },
+        {
+          "texte": "Attendre la bonne bouffée d'air chaud",
+          "condition": {
+            "drapeau": "comprend-le-vent"
+          },
+          "resultat": "Il sent l'air tiède monter de la colline, ouvre les ailes… et s'élève doucement, sans effort.",
+          "suite": "c5-cerf-volant",
+          "drapeaux": [
+            "sait-planer"
+          ]
+        },
+        {
+          "texte": "Chauffer l'air sous ses ailes avec son souffle",
+          "condition": {
+            "trait": "feu"
+          },
+          "resultat": "Son souffle chaud le soulève comme une montgolfière. Quelle bonne idée !",
+          "suite": "c5-cerf-volant",
+          "drapeaux": [
+            "sait-planer"
+          ]
+        },
+        {
+          "texte": "Essayer, encore et encore",
+          "resultat": "Un essai, deux essais, sept essais… Au huitième, il plane enfin ! Il crie de joie tout là-haut.",
+          "suite": "c5-cerf-volant",
+          "drapeaux": [
+            "sait-planer"
+          ]
+        }
+      ]
+    },
+    "c5-cerf-volant": {
+      "chapitre": 5,
+      "lieu": "🪁",
+      "texte": "Soudain, des cris en bas de la colline : le cerf-volant d'une petite chèvre s'est envolé ! Il file vers les nuages, son long ruban arc-en-ciel derrière lui.",
+      "choix": [
+        {
+          "texte": "Foncer en plein ciel pour le rattraper",
+          "condition": {
+            "talent": "sport",
+            "palier": 3
+          },
+          "resultat": "Il pique, vire, accélère… et attrape le ruban du bout des griffes ! Quel vol magnifique !",
+          "suite": "c5-chevre"
+        },
+        {
+          "texte": "Siffler pour appeler les oiseaux à l'aide",
+          "condition": {
+            "talent": "musique"
+          },
+          "resultat": "Une nuée d'hirondelles répond à son sifflement et ramène le cerf-volant tout doucement.",
+          "suite": "c5-chevre"
+        },
+        {
+          "texte": "Demander à Plume de le guider",
+          "condition": {
+            "drapeau": "plume"
+          },
+          "resultat": "Plume vole devant lui en lui montrant les courants d'air. Ensemble, ils rattrapent le cerf-volant !",
+          "suite": "c5-chevre"
+        },
+        {
+          "texte": "Le suivre en planant tranquillement",
+          "resultat": "Le cerf-volant finit par se poser dans un arbre. Il le décroche délicatement.",
+          "suite": "c5-chevre"
+        }
+      ]
+    },
+    "c5-chevre": {
+      "chapitre": 5,
+      "lieu": "🐐",
+      "texte": "La petite chèvre serre son cerf-volant contre elle. « Merci ! C'est mon papi qui l'a fabriqué. » Mais la toile est un peu déchirée…",
+      "carnet": {
+        "amis": [
+          "🐐 Biquette, la petite chèvre"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Lui apprendre à le réparer, comme dans un livre qu'il a lu",
+          "condition": {
+            "talent": "lecture",
+            "palier": 2
+          },
+          "resultat": "« Ah, c'est comme ça qu'on fait ! » Biquette répare elle-même son cerf-volant, toute fière.",
+          "suite": "c5-moulin"
+        },
+        {
+          "texte": "Recoudre la toile avec soin",
+          "condition": {
+            "trait": "hygiene"
+          },
+          "resultat": "Point par point, il la répare. On ne voit même plus la déchirure !",
+          "suite": "c5-moulin"
+        },
+        {
+          "texte": "Transformer le trou en un sourire dessiné",
+          "condition": {
+            "trait": "joie"
+          },
+          "resultat": "Le cerf-volant a maintenant un grand sourire. Biquette le trouve encore plus beau qu'avant !",
+          "suite": "c5-moulin"
+        },
+        {
+          "texte": "Faire voler le cerf-volant avec elle",
+          "resultat": "Même un peu déchiré, il vole très bien. Ils jouent jusqu'au coucher du soleil.",
+          "suite": "c5-moulin"
+        }
+      ]
+    },
+    "c5-soir": {
+      "chapitre": 5,
+      "lieu": "🌈",
+      "texte": "Le soir, Biquette lui offre un bout de son ruban arc-en-ciel. Tout en bas, au pied de la dernière colline, on voit une petite porte ronde creusée dans l'herbe.",
+      "carnet": {
+        "objets": [
+          "🌈 Le ruban arc-en-ciel"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Descendre en planant jusqu'à la porte",
+          "resultat": "Il se pose juste devant, ailes repliées. Fin du chapitre 5 !",
+          "suite": "c6-debut"
+        },
+        {
+          "texte": "Dormir une dernière nuit sous les étoiles des collines",
+          "resultat": "Le vent lui chante une berceuse. Au matin, il descend jusqu'à la porte. Fin du chapitre 5 !",
+          "suite": "c6-debut"
+        }
+      ]
+    },
+    "c6-debut": {
+      "chapitre": 6,
+      "lieu": "🚪",
+      "texte": "Derrière la porte ronde, un long couloir descend sous la colline. Ça sent le vieux papier et la cire de bougie. Partout, des livres, du sol jusqu'au plafond !",
+      "carnet": {
+        "lieux": [
+          "📚 La bibliothèque sous la colline"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Sortir son livre d'histoires",
+          "condition": {
+            "drapeau": "livre"
+          },
+          "resultat": "Une voix grave résonne : « Tiens, tiens, un lecteur ! » Un hibou à lunettes descend de son étagère.",
+          "suite": "c6-hibou"
+        },
+        {
+          "texte": "Dire bonjour bien poliment",
+          "resultat": "« Bonjour, bonjour… » répond une voix grave. Un vieux hibou à lunettes apparaît en haut d'une échelle.",
+          "suite": "c6-hibou"
+        },
+        {
+          "texte": "Lire le titre des livres en avançant",
+          "resultat": "« La grande histoire des nuages », « Recettes pour dragons gourmands »… Soudain, un vieux hibou à lunettes apparaît : « Tu aimes les livres ? »",
+          "suite": "c6-hibou"
+        }
+      ]
+    },
+    "c6-hibou": {
+      "chapitre": 6,
+      "lieu": "🦉",
+      "texte": "« Je suis Maître Hulotte, gardien des livres. Pour continuer ta route, il faut passer par la porte du fond. Mais elle ne s'ouvre qu'à qui résout mes trois énigmes ! »",
+      "carnet": {
+        "amis": [
+          "🦉 Maître Hulotte, le hibou des livres"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Accepter, les yeux brillants",
+          "condition": {
+            "trait": "apprentissage"
+          },
+          "resultat": "« Des énigmes ? J'adore les énigmes ! » Maître Hulotte sourit sous ses plumes.",
+          "suite": "c6-enigme1"
+        },
+        {
+          "texte": "Accepter le défi",
+          "resultat": "Maître Hulotte remonte ses lunettes. « Parfait. Première énigme… »",
+          "suite": "c6-enigme1"
+        },
+        {
+          "texte": "Demander s'il a le droit de se tromper",
+          "resultat": "« Bien sûr ! C'est en se trompant qu'on apprend. » Maître Hulotte lui fait un clin d'œil.",
+          "suite": "c6-enigme1"
+        }
+      ]
+    },
+    "c6-enigme1": {
+      "chapitre": 6,
+      "lieu": "❓",
+      "texte": "« J'ai des feuilles, mais je ne suis pas un arbre. J'ai un dos, mais pas de jambes. On m'ouvre, mais je ne suis pas une porte. Qui suis-je ? »",
+      "choix": [
+        {
+          "texte": "Une salade",
+          "condition": {
+            "sansDrapeau": "c6-enigme1-1"
+          },
+          "resultat": "« Hou hou ! Une salade a des feuilles, c'est vrai… mais pas de dos ! Regarde autour de toi : la réponse est partout ici. »",
+          "drapeaux": [
+            "c6-enigme1-1"
+          ],
+          "suite": "c6-enigme1"
+        },
+        {
+          "texte": "Un livre",
+          "resultat": "« Bravo ! » Une première lumière s'allume sur la grande porte.",
+          "suite": "c6-enigme2"
+        },
+        {
+          "texte": "Une armoire",
+          "condition": {
+            "sansDrapeau": "c6-enigme1-2"
+          },
+          "resultat": "« Hou hou ! Une armoire s'ouvre et a un dos… mais pas de feuilles ! Cherche encore. »",
+          "drapeaux": [
+            "c6-enigme1-2"
+          ],
+          "suite": "c6-enigme1"
+        }
+      ]
+    },
+    "c6-enigme2": {
+      "chapitre": 6,
+      "lieu": "❓",
+      "texte": "« Deuxième énigme. Je cours sans avoir de jambes. J'ai un lit, mais je ne dors jamais. Qui suis-je ? »",
+      "choix": [
+        {
+          "texte": "Un chat paresseux",
+          "condition": {
+            "sansDrapeau": "c6-enigme2-1"
+          },
+          "resultat": "« Hou hou ! Un chat a des pattes, et il dort beaucoup trop ! Pense plutôt à ton voyage… »",
+          "drapeaux": [
+            "c6-enigme2-1"
+          ],
+          "suite": "c6-enigme2"
+        },
+        {
+          "texte": "Le vent",
+          "condition": {
+            "sansDrapeau": "c6-enigme2-2"
+          },
+          "resultat": "« Hou hou ! Le vent court sans jambes, c'est vrai… mais il n'a pas de lit ! Essaie encore. »",
+          "drapeaux": [
+            "c6-enigme2-2"
+          ],
+          "suite": "c6-enigme2"
+        },
+        {
+          "texte": "Une rivière",
+          "resultat": "« Exact ! Tu en as même traversé une, il me semble. » Une deuxième lumière s'allume.",
+          "suite": "c6-enigme3"
+        }
+      ]
+    },
+    "c6-enigme3": {
+      "chapitre": 6,
+      "lieu": "❓",
+      "texte": "« Dernière énigme, la plus difficile. Plus on m'enlève de terre, plus je deviens grand. Qui suis-je ? »",
+      "choix": [
+        {
+          "texte": "Une montagne",
+          "condition": {
+            "sansDrapeau": "c6-enigme3-1"
+          },
+          "resultat": "« Hou hou ! Si on enlève de la terre à une montagne, elle rapetisse ! Réfléchis à l'envers… »",
+          "drapeaux": [
+            "c6-enigme3-1"
+          ],
+          "suite": "c6-enigme3"
+        },
+        {
+          "texte": "Un trou",
+          "resultat": "« Magnifique ! » La troisième lumière s'allume, et la grande porte grince doucement.",
+          "suite": "c6-porte"
+        },
+        {
+          "texte": "Un arbre",
+          "condition": {
+            "sansDrapeau": "c6-enigme3-2"
+          },
+          "resultat": "« Hou hou ! Un arbre grandit tout seul, sans qu'on lui enlève rien. Essaie encore ! »",
+          "drapeaux": [
+            "c6-enigme3-2"
+          ],
+          "suite": "c6-enigme3"
+        }
+      ]
+    },
+    "c6-porte": {
+      "chapitre": 6,
+      "lieu": "📚",
+      "texte": "La porte s'ouvre sur un escalier en colimaçon. « Avant que tu partes, dit Maître Hulotte, peux-tu m'attraper un vieux livre de cartes, tout en haut ? Mes ailes sont bien fatiguées… »",
+      "choix": [
+        {
+          "texte": "Grimper aux étagères comme à une échelle",
+          "condition": {
+            "talent": "sport"
+          },
+          "resultat": "Il monte, attrape le livre et redescend sans faire tomber une seule page.",
+          "suite": "c6-carte"
+        },
+        {
+          "texte": "Planer jusqu'à la plus haute étagère",
+          "condition": {
+            "drapeau": "sait-planer"
+          },
+          "resultat": "Un petit bond, les ailes ouvertes, et le voilà là-haut. Maître Hulotte en reste bouche bée.",
+          "suite": "c6-carte"
+        },
+        {
+          "texte": "Pousser la grande échelle à roulettes",
+          "resultat": "Il la fait rouler jusqu'au bon rayon et monte chercher le livre.",
+          "suite": "c6-carte"
+        }
+      ]
+    },
+    "c6-carte": {
+      "chapitre": 6,
+      "lieu": "🗺️",
+      "texte": "Maître Hulotte ouvre le livre. « Voici la route : le marché des nuages, la montagne enneigée, puis le pont des étoiles. » Il détache une page et la lui offre.",
+      "carnet": {
+        "objets": [
+          "🗺️ La carte de Maître Hulotte"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Lui lire une histoire, pour une fois",
+          "condition": {
+            "talent": "lecture",
+            "palier": 3
+          },
+          "resultat": "Maître Hulotte lit pour tout le monde, mais personne ne lui avait jamais lu d'histoire. Il en a les yeux tout brillants.",
+          "suite": "c6-sortie"
+        },
+        {
+          "texte": "Étudier la carte avec lui",
+          "condition": {
+            "talent": "lecture"
+          },
+          "resultat": "Ensemble, ils repèrent les raccourcis et les plus beaux points de vue. Il connaît maintenant la route par cœur.",
+          "drapeaux": [
+            "connait-la-route"
+          ],
+          "suite": "c6-sortie"
+        },
+        {
+          "texte": "Lui prêter son livre d'histoires pour la nuit",
+          "condition": {
+            "drapeau": "livre"
+          },
+          "resultat": "Maître Hulotte le lit d'une traite. « Merveilleux ! Ces histoires méritent une place d'honneur. »",
+          "suite": "c6-sortie"
+        },
+        {
+          "texte": "Le remercier et ranger la carte",
+          "resultat": "« Bonne route, jeune dragon. Les livres t'attendront toujours ici. »",
+          "suite": "c6-sortie"
+        }
+      ]
+    },
+    "c6-sortie": {
+      "chapitre": 6,
+      "lieu": "🌤️",
+      "texte": "L'escalier monte, monte, monte… et débouche tout en haut de la colline, au-dessus des nuages ! Au loin, des étals colorés flottent sur le ciel tout blanc.",
+      "choix": [
+        {
+          "texte": "Aller voir ce drôle de marché",
+          "resultat": "Il ne savait pas qu'on pouvait marcher sur les nuages. Fin du chapitre 6 !",
+          "suite": "c7-debut"
+        },
+        {
+          "texte": "Saluer Maître Hulotte une dernière fois",
+          "resultat": "Tout en bas de l'escalier, le hibou agite son aile. Fin du chapitre 6 !",
+          "suite": "c7-debut"
+        }
+      ]
+    },
+    "c7-debut": {
+      "chapitre": 7,
+      "lieu": "☁️",
+      "texte": "Le marché est posé sur des nuages bien dodus, reliés par des passerelles arc-en-ciel. On y vend des chapeaux de brume, des bonbons d'orage et des pelotes de rayons de soleil !",
+      "carnet": {
+        "lieux": [
+          "☁️ Le marché des nuages"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Planer d'un nuage à l'autre",
+          "condition": {
+            "drapeau": "sait-planer"
+          },
+          "resultat": "Il saute de nuage en nuage, léger comme une plume. Les marchands l'applaudissent !",
+          "suite": "c7-etals"
+        },
+        {
+          "texte": "Marcher sur la passerelle arc-en-ciel",
+          "resultat": "Elle est un peu molle et rebondit sous ses pattes. Boing, boing !",
+          "suite": "c7-etals"
+        }
+      ]
+    },
+    "c7-etals": {
+      "chapitre": 7,
+      "lieu": "🛍️",
+      "texte": "Ici, on n'achète rien avec des pièces : on échange des services et des sourires. De tous les côtés, des marchands l'appellent. Où {nom} va-t-il d'abord ?",
+      "choix": [
+        {
+          "texte": "Chez le forgeron, qui a besoin d'un bon feu",
+          "condition": {
+            "trait": "feu"
+          },
+          "resultat": "Il suit l'odeur de braise jusqu'à une petite forge.",
+          "suite": "c7-forge"
+        },
+        {
+          "texte": "Chez la pâtissière, qui sent si bon",
+          "condition": {
+            "trait": "nourriture"
+          },
+          "resultat": "Son ventre gargouille. Il n'a pas pu résister !",
+          "suite": "c7-patisserie"
+        },
+        {
+          "texte": "Chez le marchand de capes, si élégantes",
+          "condition": {
+            "trait": "hygiene"
+          },
+          "resultat": "Toutes ces belles couleurs ! Il faut absolument aller voir.",
+          "suite": "c7-capes"
+        },
+        {
+          "texte": "Chez le jongleur, qui fait tomber ses balles",
+          "condition": {
+            "trait": "joie"
+          },
+          "resultat": "Un jongleur qui rate tout ? Voilà quelqu'un qui a besoin d'un ami.",
+          "suite": "c7-jongleur"
+        },
+        {
+          "texte": "Chez la marchande de cartes du ciel",
+          "condition": {
+            "trait": "apprentissage"
+          },
+          "resultat": "Des cartes d'étoiles ! Il en a les yeux qui pétillent.",
+          "suite": "c7-astronome"
+        },
+        {
+          "texte": "Se promener entre les étals",
+          "resultat": "Il flâne entre les nuages, le nez en l'air.",
+          "suite": "c7-promenade"
+        }
+      ]
+    },
+    "c7-forge": {
+      "chapitre": 7,
+      "lieu": "⚒️",
+      "texte": "Un vieux blaireau aux bras costauds fabrique des clochettes de cristal. « Mon feu est trop faible pour faire chanter le cristal… »",
+      "carnet": {
+        "amis": [
+          "🦡 Maître Blaireau, le forgeron"
+        ],
+        "objets": [
+          "🔔 Une clochette de cristal"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Souffler une grande flamme bleue",
+          "condition": {
+            "talent": "sport",
+            "palier": 2
+          },
+          "resultat": "Le cristal devient tout clair et chante comme une cloche. Maître Blaireau lui en offre une !",
+          "suite": "c7-cadeau",
+          "drapeaux": [
+            "clochette"
+          ]
+        },
+        {
+          "texte": "Accorder les clochettes avec lui",
+          "condition": {
+            "talent": "musique",
+            "palier": 2
+          },
+          "resultat": "Do, mi, sol… Grâce à son oreille, chaque clochette sonne juste. Maître Blaireau lui en offre une !",
+          "suite": "c7-cadeau",
+          "drapeaux": [
+            "clochette"
+          ]
+        },
+        {
+          "texte": "Actionner le grand soufflet",
+          "resultat": "Pfff, pfff, pfff ! Le feu grandit, et le cristal se met à chanter. Maître Blaireau lui offre une clochette.",
+          "suite": "c7-cadeau",
+          "drapeaux": [
+            "clochette"
+          ]
+        }
+      ]
+    },
+    "c7-patisserie": {
+      "chapitre": 7,
+      "lieu": "🧁",
+      "texte": "Une petite souris pâtissière court dans tous les sens. « Le grand concours de gâteaux commence bientôt, et mon four ne chauffe plus ! »",
+      "carnet": {
+        "amis": [
+          "🐭 Mademoiselle Miette, la pâtissière"
+        ],
+        "objets": [
+          "🧁 Le gâteau du concours"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Chauffer le four de son souffle",
+          "condition": {
+            "trait": "feu"
+          },
+          "resultat": "Le four ronronne, les gâteaux gonflent. Mademoiselle Miette gagne le concours !",
+          "suite": "c7-cadeau",
+          "drapeaux": [
+            "gateau-concours"
+          ]
+        },
+        {
+          "texte": "Lui donner la recette du gâteau de la maison",
+          "condition": {
+            "drapeau": "gateau"
+          },
+          "resultat": "Elle le goûte, ferme les yeux… « C'est ça ! C'est la recette qui va gagner ! »",
+          "suite": "c7-cadeau",
+          "drapeaux": [
+            "gateau-concours"
+          ]
+        },
+        {
+          "texte": "Goûter chaque gâteau pour l'aider à choisir",
+          "resultat": "Mmm… celui aux myrtilles ! Il avait raison : elle gagne le concours.",
+          "suite": "c7-cadeau",
+          "drapeaux": [
+            "gateau-concours"
+          ]
+        }
+      ]
+    },
+    "c7-capes": {
+      "chapitre": 7,
+      "lieu": "🧥",
+      "texte": "Le marchand de capes, un paon très élégant, soupire : « Le vent a froissé toutes mes capes ! Comment les vendre ainsi ? »",
+      "carnet": {
+        "amis": [
+          "🦚 Monsieur Paon, le marchand de capes"
+        ],
+        "objets": [
+          "🧥 La cape de brume"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Les repasser d'un souffle bien tiède",
+          "condition": {
+            "trait": "feu"
+          },
+          "resultat": "Plus un seul pli ! Monsieur Paon lui offre une cape de brume en remerciement.",
+          "suite": "c7-cadeau",
+          "drapeaux": [
+            "cape"
+          ]
+        },
+        {
+          "texte": "Les plier une à une avec soin",
+          "resultat": "Il plie, lisse, range. L'étal est impeccable ! Monsieur Paon lui offre une cape de brume.",
+          "suite": "c7-cadeau",
+          "drapeaux": [
+            "cape"
+          ]
+        },
+        {
+          "texte": "L'aider à ranger sa vitrine par couleurs",
+          "resultat": "Rouge, orange, jaune, vert, bleu… Un vrai arc-en-ciel ! Monsieur Paon lui offre une cape de brume.",
+          "suite": "c7-cadeau"
+        }
+      ]
+    },
+    "c7-jongleur": {
+      "chapitre": 7,
+      "lieu": "🤹",
+      "texte": "Un petit raton jongleur ramasse ses balles. « Personne ne s'arrête pour me regarder… Je ne suis pas assez doué. »",
+      "carnet": {
+        "amis": [
+          "🦝 Pirouette, le raton jongleur"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Jongler avec lui",
+          "condition": {
+            "talent": "sport"
+          },
+          "resultat": "Six balles, puis huit, puis dix ! Une foule se forme autour d'eux.",
+          "suite": "c7-cadeau"
+        },
+        {
+          "texte": "Sortir son ballon rouge pour un numéro à deux",
+          "condition": {
+            "drapeau": "ballon"
+          },
+          "resultat": "Le ballon rebondit de tête en tête, de queue en museau. Le public en redemande !",
+          "suite": "c7-cadeau"
+        },
+        {
+          "texte": "Jouer une musique de cirque",
+          "condition": {
+            "talent": "musique"
+          },
+          "resultat": "Tam-tadam ! Avec la musique, tout le monde s'arrête pour regarder.",
+          "suite": "c7-cadeau"
+        },
+        {
+          "texte": "Rire de bon cœur à chacune de ses chutes",
+          "resultat": "Pirouette comprend que ses chutes sont son meilleur numéro ! Il tombe exprès, et tout le monde rit.",
+          "suite": "c7-cadeau"
+        }
+      ]
+    },
+    "c7-astronome": {
+      "chapitre": 7,
+      "lieu": "🔭",
+      "texte": "Sous une tente bleue, une vieille chouette vend des cartes du ciel. « Pour traverser le pont des étoiles, mieux vaut connaître les constellations. Les connais-tu ? »",
+      "carnet": {
+        "amis": [
+          "🦉 Dame Céleste, la chouette des étoiles"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Lire ses cartes avec elle",
+          "condition": {
+            "talent": "lecture",
+            "palier": 2
+          },
+          "resultat": "Il apprend la Grande Ourse, le Petit Dragon et l'Étoile du Nord. Il est prêt pour le pont !",
+          "suite": "c7-cadeau",
+          "drapeaux": [
+            "constellations"
+          ]
+        },
+        {
+          "texte": "L'écouter raconter les étoiles",
+          "resultat": "Elle lui montre le Petit Dragon, une constellation qui lui ressemble. Il ne l'oubliera pas.",
+          "suite": "c7-cadeau",
+          "drapeaux": [
+            "constellations"
+          ]
+        },
+        {
+          "texte": "Regarder dans sa longue-vue",
+          "resultat": "Il voit la lune de tout près, avec ses cratères ! Dame Céleste lui apprend ensuite les étoiles du pont.",
+          "suite": "c7-cadeau"
+        }
+      ]
+    },
+    "c7-promenade": {
+      "chapitre": 7,
+      "lieu": "🐣",
+      "texte": "Entre deux étals, un petit nuage s'est détaché et dérive tout seul. Dessus, un oisillon appelle sa maman.",
+      "carnet": {
+        "amis": [
+          "🐣 Pioupiou, l'oisillon du nuage"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Le rattraper d'un grand bond",
+          "condition": {
+            "talent": "sport"
+          },
+          "resultat": "Hop ! Il saute sur le petit nuage et le ramène au marché à grands coups de pattes.",
+          "suite": "c7-cadeau"
+        },
+        {
+          "texte": "Planer jusqu'à lui",
+          "condition": {
+            "drapeau": "sait-planer"
+          },
+          "resultat": "Il le rejoint en deux battements d'ailes et pousse le nuage jusqu'à sa maman.",
+          "suite": "c7-cadeau"
+        },
+        {
+          "texte": "Lui lancer une longue ficelle de brume",
+          "resultat": "L'oisillon l'attrape du bec, et {nom} tire tout doucement le petit nuage jusqu'au marché.",
+          "suite": "c7-cadeau"
+        }
+      ]
+    },
+    "c7-cadeau": {
+      "chapitre": 7,
+      "lieu": "🎁",
+      "texte": "Avant de partir, {nom} veut trouver un cadeau pour toi, qui l'as si bien élevé. Il fait le tour du marché trois fois. Que choisir ?",
+      "choix": [
+        {
+          "texte": "Une bulle de nuage qui garde un rire",
+          "resultat": "Quand on la touche, elle rit tout doucement. Il la range avec mille précautions.",
+          "carnet": {
+            "objets": [
+              "🫧 Une bulle qui rit, pour toi"
+            ]
+          },
+          "suite": "c7-pluie",
+          "drapeaux": [
+            "cadeau-pour-toi"
+          ]
+        },
+        {
+          "texte": "Un flocon qui ne fond jamais",
+          "resultat": "Il brille de mille couleurs et reste tout frais. Il l'enveloppe dans une feuille.",
+          "carnet": {
+            "objets": [
+              "❄️ Un flocon éternel, pour toi"
+            ]
+          },
+          "suite": "c7-pluie",
+          "drapeaux": [
+            "cadeau-pour-toi"
+          ]
+        },
+        {
+          "texte": "Une plume d'arc-en-ciel",
+          "resultat": "Elle change de couleur selon l'humeur de celle qui la tient. Parfait pour toi !",
+          "carnet": {
+            "objets": [
+              "🪶 Une plume arc-en-ciel, pour toi"
+            ]
+          },
+          "suite": "c7-pluie",
+          "drapeaux": [
+            "cadeau-pour-toi"
+          ]
+        }
+      ]
+    },
+    "c7-pluie": {
+      "chapitre": 7,
+      "lieu": "🌦️",
+      "texte": "Soudain, une petite pluie tiède se met à tomber, et un grand arc-en-ciel apparaît. Tous les marchands se mettent à l'abri sous la même tente, serrés les uns contre les autres.",
+      "choix": [
+        {
+          "texte": "Partager le gâteau du concours avec tout le monde",
+          "condition": {
+            "drapeau": "gateau-concours"
+          },
+          "resultat": "Chacun en a une part, même toute petite. On n'a jamais vu une averse aussi gourmande !",
+          "suite": "c7-depart"
+        },
+        {
+          "texte": "Faire tinter la clochette de cristal",
+          "condition": {
+            "drapeau": "clochette"
+          },
+          "resultat": "Son petit son clair fait sourire tout le monde. On dirait que la pluie tombe en musique.",
+          "suite": "c7-depart"
+        },
+        {
+          "texte": "Raconter l'histoire de son voyage",
+          "condition": {
+            "talent": "lecture"
+          },
+          "resultat": "Gaspard, Noisette, Lumi… Tout le monde l'écoute. Même la pluie s'arrête pour entendre la fin.",
+          "suite": "c7-depart"
+        },
+        {
+          "texte": "Danser sous la pluie",
+          "resultat": "Il danse dans les flaques de nuage. Un à un, les marchands le rejoignent !",
+          "suite": "c7-depart"
+        }
+      ]
+    },
+    "c7-depart": {
+      "chapitre": 7,
+      "lieu": "🏔️",
+      "texte": "La pluie s'arrête. Au loin, au-dessus des nuages, une grande montagne toute blanche brille au soleil. Le Nid des Anciens se trouve au-delà !",
+      "choix": [
+        {
+          "texte": "Mettre sa cape de brume pour avoir chaud là-haut",
+          "condition": {
+            "drapeau": "cape"
+          },
+          "resultat": "Elle est légère et toute douce. Fin du chapitre 7 !",
+          "suite": "c8-debut"
+        },
+        {
+          "texte": "Dire au revoir au marché et partir",
+          "resultat": "Tous les marchands agitent la main. Fin du chapitre 7 !",
+          "suite": "c8-debut"
+        },
+        {
+          "texte": "Emporter un bonbon d'orage pour la route",
+          "resultat": "Il pétille et crépite sur la langue ! Fin du chapitre 7 !",
+          "suite": "c8-debut"
+        }
+      ]
+    },
+    "c8-debut": {
+      "chapitre": 8,
+      "lieu": "🏔️",
+      "texte": "Plus il monte, plus il fait froid. La neige crisse sous ses pattes, et chaque souffle fait un petit nuage blanc. Tout est silencieux et magnifique.",
+      "carnet": {
+        "lieux": [
+          "🏔️ La montagne enneigée"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Prendre le raccourci de la carte",
+          "condition": {
+            "drapeau": "connait-la-route"
+          },
+          "resultat": "Il le reconnaît tout de suite : un passage entre deux rochers, à l'abri du vent.",
+          "suite": "c8-sapins"
+        },
+        {
+          "texte": "S'emmitoufler dans sa cape de brume",
+          "condition": {
+            "drapeau": "cape"
+          },
+          "resultat": "Bien au chaud dans sa cape, il avance d'un bon pas.",
+          "suite": "c8-pente"
+        },
+        {
+          "texte": "Garder son feu intérieur bien allumé",
+          "condition": {
+            "trait": "feu"
+          },
+          "resultat": "Son ventre chauffe comme un petit poêle. Le froid ne lui fait rien !",
+          "suite": "c8-pente"
+        },
+        {
+          "texte": "Avancer en faisant des bonds pour se réchauffer",
+          "resultat": "Boing, boing, boing ! Ça réchauffe, et c'est très amusant.",
+          "suite": "c8-pente"
+        }
+      ]
+    },
+    "c8-pente": {
+      "chapitre": 8,
+      "lieu": "⛷️",
+      "texte": "Devant lui, une longue pente de neige toute lisse descend jusqu'à un petit lac gelé. Le chemin, lui, fait un grand détour par la forêt de sapins.",
+      "choix": [
+        {
+          "texte": "Faire une partie de ballon avec les lapins des neiges",
+          "condition": {
+            "drapeau": "ballon"
+          },
+          "resultat": "Le ballon rouge roule dans la neige et grossit comme une boule de neige ! Tout le monde rit.",
+          "suite": "c8-ours"
+        },
+        {
+          "texte": "Descendre en glissant sur le ventre",
+          "condition": {
+            "talent": "sport"
+          },
+          "resultat": "Wiiiii ! Il file comme une luge et arrive en bas en riant aux éclats.",
+          "suite": "c8-ours"
+        },
+        {
+          "texte": "Faire la course avec des lapins des neiges",
+          "condition": {
+            "trait": "joie"
+          },
+          "resultat": "Les lapins gagnent, mais c'est lui qui fait les plus belles culbutes !",
+          "suite": "c8-ours"
+        },
+        {
+          "texte": "Prendre le détour, tranquillement",
+          "resultat": "Le détour passe sous les sapins, tout poudrés de blanc comme du sucre glace.",
+          "suite": "c8-sapins"
+        }
+      ]
+    },
+    "c8-sapins": {
+      "chapitre": 8,
+      "lieu": "🌲",
+      "texte": "Sous les sapins, il découvre de grosses empreintes qui tournent en rond, encore et encore. Quelqu'un ne sait plus où aller…",
+      "choix": [
+        {
+          "texte": "Lire les empreintes",
+          "condition": {
+            "talent": "lecture",
+            "palier": 2
+          },
+          "resultat": "Grosses pattes, longues griffes, pas lourds… C'est un ours ! Il suit la piste jusqu'au lac.",
+          "suite": "c8-ours"
+        },
+        {
+          "texte": "Suivre les empreintes",
+          "resultat": "Elles mènent tout droit au bord d'un lac gelé.",
+          "suite": "c8-ours"
+        },
+        {
+          "texte": "Appeler doucement : « Il y a quelqu'un ? »",
+          "resultat": "Un gros soupir lui répond, tout près, au bord d'un lac gelé.",
+          "suite": "c8-ours"
+        }
+      ]
+    },
+    "c8-ours": {
+      "chapitre": 8,
+      "lieu": "🐻‍❄️",
+      "texte": "Au bord du lac gelé, un gros ours blanc est assis dans la neige, l'air très bougon. « Grrr… Laisse-moi tranquille. Mon abri est tout gelé, et je n'arrive plus à dormir. »",
+      "carnet": {
+        "amis": [
+          "🐻‍❄️ Grognon, l'ours blanc"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Lui faire une grimace pour le dérider",
+          "condition": {
+            "trait": "joie"
+          },
+          "resultat": "L'ours essaie de rester fâché… mais un petit sourire lui échappe.",
+          "suite": "c8-abri"
+        },
+        {
+          "texte": "Lui proposer de partager son goûter",
+          "condition": {
+            "trait": "nourriture"
+          },
+          "resultat": "L'ours renifle, hésite, puis croque. « Hmm… C'est pas mauvais. »",
+          "suite": "c8-abri"
+        },
+        {
+          "texte": "Lui proposer de l'aider",
+          "resultat": "« M'aider ? Toi ? » L'ours le regarde, tout surpris. « Bon… Suis-moi. »",
+          "suite": "c8-abri"
+        },
+        {
+          "texte": "S'asseoir à côté de lui sans rien dire",
+          "resultat": "Ils regardent le lac ensemble. Au bout d'un moment, l'ours soupire : « Bon… Tu veux bien m'aider ? »",
+          "suite": "c8-abri"
+        }
+      ]
+    },
+    "c8-abri": {
+      "chapitre": 8,
+      "lieu": "🧊",
+      "texte": "L'abri de Grognon est une grotte de glace. Au fond, le foyer est couvert de givre, et tout le bois est mouillé.",
+      "choix": [
+        {
+          "texte": "Se souvenir d'une astuce lue dans un livre de voyage",
+          "condition": {
+            "talent": "lecture",
+            "palier": 2
+          },
+          "resultat": "« Le bois sec se cache sous l'écorce ! » Il gratte un peu, trouve du bois bien sec, et le feu prend aussitôt.",
+          "suite": "c8-nuit"
+        },
+        {
+          "texte": "Sécher le bois d'une longue flamme",
+          "condition": {
+            "talent": "sport",
+            "palier": 2
+          },
+          "resultat": "Le bois fume, siffle, puis s'enflamme d'un coup. Grognon en lâche un « Oh ! » d'admiration.",
+          "suite": "c8-nuit"
+        },
+        {
+          "texte": "Allumer le foyer avec la lanterne des lucioles",
+          "condition": {
+            "drapeau": "lanterne"
+          },
+          "resultat": "La petite lanterne ne s'éteint jamais : il en tire une flamme pour le foyer. Tout s'illumine !",
+          "suite": "c8-nuit"
+        },
+        {
+          "texte": "Se blottir contre Grognon pour le réchauffer",
+          "condition": {
+            "trait": "feu"
+          },
+          "resultat": "Son ventre de dragon est chaud comme une bouillotte. Grognon s'y installe en soupirant d'aise.",
+          "suite": "c8-nuit"
+        },
+        {
+          "texte": "Aller chercher du bois sec sous les sapins",
+          "resultat": "Il revient les bras chargés de branches sèches. Bientôt, un beau feu crépite.",
+          "suite": "c8-nuit"
+        }
+      ]
+    },
+    "c8-nuit": {
+      "chapitre": 8,
+      "lieu": "🔥",
+      "texte": "Le feu crépite, la grotte se réchauffe. Grognon se met enfin à parler : « Avant, j'avais des amis ici. Mais j'étais tellement grognon qu'ils sont tous partis… »",
+      "choix": [
+        {
+          "texte": "Lui lire une histoire de son livre",
+          "condition": {
+            "drapeau": "livre"
+          },
+          "resultat": "Grognon écoute, le museau posé sur les pattes. À la fin, il demande : « Encore une ? »",
+          "drapeaux": [
+            "grognon-ami"
+          ],
+          "suite": "c8-matin"
+        },
+        {
+          "texte": "Lui jouer une chanson douce",
+          "condition": {
+            "talent": "musique"
+          },
+          "resultat": "Grognon ferme les yeux. Pour la première fois depuis longtemps, il sourit sans même s'en rendre compte.",
+          "suite": "c8-matin",
+          "drapeaux": [
+            "grognon-ami"
+          ]
+        },
+        {
+          "texte": "Lui raconter l'histoire d'un ours qui retrouve ses amis",
+          "condition": {
+            "talent": "lecture",
+            "palier": 2
+          },
+          "resultat": "Grognon écoute jusqu'au bout. « Et si… et si moi aussi, j'essayais ? »",
+          "suite": "c8-matin",
+          "drapeaux": [
+            "grognon-ami"
+          ]
+        },
+        {
+          "texte": "Lui prêter sa noisette porte-bonheur",
+          "condition": {
+            "drapeau": "noisette-porte-bonheur"
+          },
+          "resultat": "« Elle porte bonheur ? Vraiment ? » Grognon la serre dans sa grosse patte, tout ému.",
+          "suite": "c8-matin",
+          "drapeaux": [
+            "grognon-ami"
+          ]
+        },
+        {
+          "texte": "Lui dire qu'on peut toujours se faire de nouveaux amis",
+          "resultat": "« Comme toi ? » demande Grognon. « Comme moi ! » L'ours rit pour la première fois.",
+          "suite": "c8-matin",
+          "drapeaux": [
+            "grognon-ami"
+          ]
+        }
+      ]
+    },
+    "c8-matin": {
+      "chapitre": 8,
+      "lieu": "🌨️",
+      "texte": "Au matin, Grognon n'est plus du tout le même. « Je connais un chemin vers le sommet. Monte sur mon dos, je t'emmène ! » Dehors, les lapins des neiges n'en croient pas leurs yeux.",
+      "choix": [
+        {
+          "texte": "Inviter les lapins à venir avec eux",
+          "condition": {
+            "trait": "joie"
+          },
+          "resultat": "Les lapins hésitent… puis grimpent tous sur le dos de Grognon. L'ours a de nouveaux amis !",
+          "suite": "c8-sommet"
+        },
+        {
+          "texte": "Monter sur le dos de Grognon",
+          "resultat": "Grognon file dans la neige comme un traîneau. En haut, il le serre dans ses bras. « Merci, petit dragon. »",
+          "suite": "c8-sommet"
+        },
+        {
+          "texte": "Promettre de revenir le voir",
+          "resultat": "« Tu… tu reviendras ? » L'ours a les yeux qui brillent. Puis il le porte jusqu'au sommet.",
+          "suite": "c8-sommet"
+        }
+      ]
+    },
+    "c8-sommet": {
+      "chapitre": 8,
+      "lieu": "⛰️",
+      "texte": "Au sommet de la montagne, la nuit tombe. Le ciel se remplit d'étoiles, si proches qu'on pourrait presque les toucher. Et devant lui, un pont de lumière s'élance dans le ciel…",
+      "choix": [
+        {
+          "texte": "S'approcher du pont",
+          "resultat": "Il pose une patte sur la première étoile. Elle tinte comme une clochette. Fin du chapitre 8 !",
+          "suite": "c9-debut"
+        },
+        {
+          "texte": "Compter les étoiles du pont",
+          "resultat": "Il s'arrête à mille… et il y en a encore beaucoup plus ! Fin du chapitre 8 !",
+          "suite": "c9-debut"
+        }
+      ]
+    },
+    "c9-debut": {
+      "chapitre": 9,
+      "lieu": "🌌",
+      "texte": "Le pont des étoiles est fait de milliers de petites lumières posées côte à côte. Il traverse la nuit jusqu'à une montagne lointaine, où brille une grande lueur dorée : le Nid des Anciens !",
+      "carnet": {
+        "lieux": [
+          "🌌 Le pont des étoiles"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Demander à Lumi d'éclairer le chemin",
+          "condition": {
+            "drapeau": "lumi-compagne"
+          },
+          "resultat": "Lumi s'envole devant lui. À chaque battement d'ailes, une étoile du pont brille plus fort.",
+          "suite": "c9-melodie"
+        },
+        {
+          "texte": "Allumer la lanterne des lucioles",
+          "condition": {
+            "drapeau": "lanterne"
+          },
+          "resultat": "La petite lanterne éclaire le pont d'une douce lumière dorée. Les étoiles clignent de l'œil pour dire merci.",
+          "suite": "c9-melodie"
+        },
+        {
+          "texte": "Avancer, une étoile après l'autre",
+          "resultat": "Le pont est solide et doux comme un tapis.",
+          "suite": "c9-melodie"
+        }
+      ]
+    },
+    "c9-melodie": {
+      "chapitre": 9,
+      "lieu": "🎶",
+      "texte": "À chaque pas, une étoile du pont joue une note. Do, ré, mi… Le pont est une immense harpe ! Plus il avance, plus la musique remplit le ciel.",
+      "choix": [
+        {
+          "texte": "Jouer un air en marchant sur les bonnes étoiles",
+          "condition": {
+            "talent": "musique",
+            "palier": 2
+          },
+          "resultat": "Il joue la ritournelle de ses leçons d'enfance. Tout le ciel l'écoute en silence.",
+          "suite": "c9-passage"
+        },
+        {
+          "texte": "Sortir sa flûte et jouer avec le pont",
+          "condition": {
+            "drapeau": "flute"
+          },
+          "resultat": "La flûte et les étoiles jouent en duo. Les comètes s'arrêtent pour écouter.",
+          "suite": "c9-passage"
+        },
+        {
+          "texte": "Sauter d'étoile en étoile pour faire une musique rigolote",
+          "condition": {
+            "trait": "joie"
+          },
+          "resultat": "Ding ! Dong ! Pouet ! Les étoiles rient tellement qu'elles brillent deux fois plus fort.",
+          "suite": "c9-passage"
+        },
+        {
+          "texte": "Marcher doucement pour écouter chaque note",
+          "resultat": "C'est la plus belle musique qu'il ait jamais entendue.",
+          "suite": "c9-passage"
+        }
+      ]
+    },
+    "c9-passage": {
+      "chapitre": 9,
+      "lieu": "✨",
+      "texte": "Au milieu du pont, quelques étoiles se sont endormies et ne brillent plus. Il y a un grand espace sombre, et l'autre côté paraît bien loin. Comment passer ?",
+      "choix": [
+        {
+          "texte": "Jouer une musique si belle que le ciel entier se rallume",
+          "condition": {
+            "talent": "musique",
+            "palier": 3
+          },
+          "resultat": "Sa musique monte, monte… et d'un coup, toutes les étoiles du ciel s'allument en même temps. Le pont brille comme en plein jour !",
+          "suite": "c9-etoile"
+        },
+        {
+          "texte": "Replacer les étoiles grâce aux constellations",
+          "condition": {
+            "drapeau": "constellations"
+          },
+          "resultat": "Grande Ourse, Petit Dragon… Il sait où chaque étoile doit aller. Il les réveille une à une.",
+          "suite": "c9-etoile"
+        },
+        {
+          "texte": "Chanter pour réveiller les étoiles",
+          "condition": {
+            "talent": "musique",
+            "palier": 2
+          },
+          "resultat": "À chaque note, une étoile ouvre un œil, bâille, et se remet à briller. Le pont est réparé !",
+          "suite": "c9-etoile"
+        },
+        {
+          "texte": "Faire tinter la clochette de cristal",
+          "condition": {
+            "drapeau": "clochette"
+          },
+          "resultat": "Ding ! Les étoiles endormies sursautent et se rallument toutes en même temps.",
+          "suite": "c9-etoile"
+        },
+        {
+          "texte": "Planer par-dessus",
+          "condition": {
+            "drapeau": "sait-planer"
+          },
+          "resultat": "Il ouvre les ailes et plane, porté par le vent de la nuit, jusqu'aux étoiles suivantes.",
+          "suite": "c9-etoile"
+        },
+        {
+          "texte": "Parler doucement aux étoiles endormies",
+          "resultat": "Il leur parle de son voyage, de toi, de ses amis. Curieuses, les étoiles se réveillent pour écouter.",
+          "suite": "c9-etoile"
+        }
+      ]
+    },
+    "c9-etoile": {
+      "chapitre": 9,
+      "lieu": "⭐",
+      "texte": "Une toute petite étoile, tombée sur le bord du pont, n'arrive pas à se rallumer. Elle pleure des larmes d'argent. « Je suis trop petite… personne ne me voit… »",
+      "carnet": {
+        "amis": [
+          "⭐ Scintille, la petite étoile"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Lui lire son nom dans le grand livre du ciel",
+          "condition": {
+            "talent": "lecture",
+            "palier": 2
+          },
+          "resultat": "« Tu as un nom, là, regarde : Scintille. » La petite étoile se met à briller de fierté.",
+          "suite": "c9-voeu"
+        },
+        {
+          "texte": "Lui donner une étincelle de son feu",
+          "condition": {
+            "trait": "feu"
+          },
+          "resultat": "L'étincelle se pose sur elle, et la petite étoile s'allume d'un coup, toute dorée.",
+          "suite": "c9-voeu",
+          "drapeaux": [
+            "scintille"
+          ]
+        },
+        {
+          "texte": "La faire briller en la polissant doucement",
+          "condition": {
+            "trait": "hygiene"
+          },
+          "resultat": "Il la frotte délicatement avec le bout de son aile. Elle n'a jamais été aussi belle !",
+          "suite": "c9-voeu",
+          "drapeaux": [
+            "scintille"
+          ]
+        },
+        {
+          "texte": "Lui apprendre que les petites étoiles sont souvent les plus anciennes",
+          "condition": {
+            "trait": "apprentissage"
+          },
+          "resultat": "« C'est vrai ? Je suis… ancienne ? » Elle se met à briller de fierté.",
+          "suite": "c9-voeu",
+          "drapeaux": [
+            "scintille"
+          ]
+        },
+        {
+          "texte": "Lui raconter des blagues jusqu'à ce qu'elle rie",
+          "condition": {
+            "trait": "joie"
+          },
+          "resultat": "Elle pouffe, puis rit, puis brille. Elle scintille de rire !",
+          "suite": "c9-voeu",
+          "drapeaux": [
+            "scintille"
+          ]
+        },
+        {
+          "texte": "Lui préparer un bon lait chaud au miel",
+          "condition": {
+            "trait": "nourriture"
+          },
+          "resultat": "Elle le boit à petites gorgées. Une douce chaleur la rallume tout entière.",
+          "suite": "c9-voeu",
+          "drapeaux": [
+            "scintille"
+          ]
+        },
+        {
+          "texte": "La prendre dans ses pattes et la remettre à sa place",
+          "resultat": "Il la pose délicatement sur le pont. « Moi, je te vois. » Et elle se met à briller, toute fière.",
+          "suite": "c9-voeu",
+          "drapeaux": [
+            "scintille"
+          ]
+        }
+      ]
+    },
+    "c9-voeu": {
+      "chapitre": 9,
+      "lieu": "🌠",
+      "texte": "Au bout du pont, une étoile filante traverse le ciel. Scintille chuchote : « Vite, fais un vœu ! » {nom} ferme les yeux très fort.",
+      "choix": [
+        {
+          "texte": "Souhaiter que tu sois toujours heureuse",
+          "resultat": "Il le souhaite de tout son cœur. L'étoile filante laisse derrière elle une traînée en forme de cœur.",
+          "suite": "c9-arrivee"
+        },
+        {
+          "texte": "Souhaiter revoir un jour tous ses amis",
+          "resultat": "Gaspard, Noisette, Lumi, Grognon… Il les imagine tous réunis. L'étoile filante clignote : promis.",
+          "suite": "c9-arrivee"
+        },
+        {
+          "texte": "Souhaiter trouver sa vraie place",
+          "resultat": "L'étoile filante file droit vers le Nid des Anciens, comme pour lui montrer le chemin.",
+          "suite": "c9-arrivee"
+        }
+      ]
+    },
+    "c9-arrivee": {
+      "chapitre": 9,
+      "lieu": "🌄",
+      "texte": "Le pont se pose doucement au pied d'un grand escalier de pierre. Le jour se lève. Tout en haut, une lumière dorée l'attend.",
+      "choix": [
+        {
+          "texte": "Monter l'escalier",
+          "resultat": "Une marche, puis une autre… Son cœur bat très fort. Fin du chapitre 9 !",
+          "suite": "c10-debut"
+        },
+        {
+          "texte": "Remercier les étoiles avant de monter",
+          "resultat": "Toutes les étoiles du pont clignotent ensemble. Fin du chapitre 9 !",
+          "suite": "c10-debut"
+        }
+      ]
+    },
+    "c10-debut": {
+      "chapitre": 10,
+      "lieu": "🏯",
+      "texte": "En haut de l'escalier, un immense nid de branches dorées est posé au sommet du monde. Trois vieux dragons l'attendent, aux écailles grises et aux yeux très doux. « Bienvenue, jeune voyageur. »",
+      "carnet": {
+        "lieux": [
+          "🏯 Le Nid des Anciens"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Leur montrer son ballon rouge",
+          "condition": {
+            "drapeau": "ballon"
+          },
+          "resultat": "Braise le fait rebondir sur sa corne. « Les Anciens aussi aiment jouer ! »",
+          "suite": "c10-vue"
+        },
+        {
+          "texte": "Leur montrer son livre d'histoires",
+          "condition": {
+            "drapeau": "livre"
+          },
+          "resultat": "Sagesse le feuillette avec gourmandise. « Tu nous en liras une, ce soir ? »",
+          "suite": "c10-vue"
+        },
+        {
+          "texte": "Leur jouer un air de sa petite flûte",
+          "condition": {
+            "drapeau": "flute"
+          },
+          "resultat": "Mélodie ferme les yeux. « Cet air-là vient de la maison, n'est-ce pas ? »",
+          "suite": "c10-vue"
+        },
+        {
+          "texte": "Leur offrir les dernières miettes de son gâteau",
+          "condition": {
+            "drapeau": "gateau"
+          },
+          "resultat": "Trois vieux dragons se partagent trois miettes, très sérieusement. « Délicieux ! »",
+          "suite": "c10-vue"
+        },
+        {
+          "texte": "Se faire beau avant de les saluer",
+          "condition": {
+            "trait": "hygiene"
+          },
+          "resultat": "Il lisse ses écailles et redresse ses cornes. Les Anciens hochent la tête, amusés.",
+          "suite": "c10-vue"
+        },
+        {
+          "texte": "Leur faire un immense sourire",
+          "condition": {
+            "trait": "joie"
+          },
+          "resultat": "Les trois Anciens lui rendent son sourire. Il se sent tout de suite chez lui.",
+          "suite": "c10-vue"
+        },
+        {
+          "texte": "S'incliner respectueusement",
+          "resultat": "Les trois Anciens s'inclinent à leur tour. « Approche, approche. »",
+          "suite": "c10-vue"
+        },
+        {
+          "texte": "Leur dire bonjour en agitant la queue",
+          "resultat": "Les trois Anciens agitent la leur en retour. Il pouffe de rire.",
+          "suite": "c10-vue"
+        }
+      ]
+    },
+    "c10-vue": {
+      "chapitre": 10,
+      "lieu": "🌍",
+      "texte": "Du haut du Nid, on voit tout le chemin parcouru : la montagne, le marché des nuages, les collines, la forêt… Et tout au bout, minuscule, un petit toit.",
+      "choix": [
+        {
+          "texte": "Montrer à Lumi son village, tout en bas",
+          "condition": {
+            "drapeau": "lumi-compagne"
+          },
+          "resultat": "Lumi repère une minuscule lueur dorée : la grande lanterne ! Elle clignote de fierté.",
+          "suite": "c10-anciens"
+        },
+        {
+          "texte": "Retracer tout le voyage sur la carte",
+          "condition": {
+            "trait": "apprentissage"
+          },
+          "resultat": "Du doigt, il suit chaque étape. Quel chemin, depuis la maison !",
+          "suite": "c10-anciens"
+        },
+        {
+          "texte": "Faire un signe à la maison",
+          "resultat": "Il agite la patte vers le petit toit, tout au loin. C'est pour toi.",
+          "suite": "c10-anciens"
+        }
+      ]
+    },
+    "c10-anciens": {
+      "chapitre": 10,
+      "lieu": "🐉",
+      "texte": "« Je suis Braise, dit la première. Voici Sagesse et Mélodie. Chaque dragon qui arrive ici nous raconte son voyage. Raconte-nous : qu'as-tu appris en chemin ? »",
+      "carnet": {
+        "amis": [
+          "🐉 Braise, Sagesse et Mélodie, les Anciens"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Raconter ses sauts, ses courses et ses vols",
+          "condition": {
+            "talent": "sport",
+            "palier": 2
+          },
+          "resultat": "Braise sourit, une petite flamme au bout du museau. « Voilà un dragon qui a du souffle ! »",
+          "suite": "c10-amis"
+        },
+        {
+          "texte": "Raconter les énigmes et les histoires",
+          "condition": {
+            "talent": "lecture",
+            "palier": 2
+          },
+          "resultat": "Sagesse remonte ses lunettes. « Voilà un dragon qui a l'esprit vif ! »",
+          "suite": "c10-amis"
+        },
+        {
+          "texte": "Raconter les chansons et les musiques",
+          "condition": {
+            "talent": "musique",
+            "palier": 2
+          },
+          "resultat": "Mélodie se met à fredonner. « Voilà un dragon qui a le cœur qui chante ! »",
+          "suite": "c10-amis"
+        },
+        {
+          "texte": "Raconter tout, depuis le début",
+          "resultat": "Les trois Anciens écoutent sans l'interrompre, jusqu'au dernier mot.",
+          "suite": "c10-amis"
+        }
+      ]
+    },
+    "c10-amis": {
+      "chapitre": 10,
+      "lieu": "📔",
+      "texte": "« Et qui t'a aidé, en chemin ? » demande Sagesse. {nom} ouvre son carnet de voyage. Il y a tant de noms !",
+      "choix": [
+        {
+          "texte": "Parler de Grognon, l'ours qui a retrouvé le sourire",
+          "condition": {
+            "drapeau": "grognon-ami"
+          },
+          "resultat": "« Il était si triste, et maintenant il a plein d'amis ! » Braise hoche la tête : « C'est toi qui lui as ouvert la porte. »",
+          "suite": "c10-toi"
+        },
+        {
+          "texte": "Parler de Scintille, la petite étoile",
+          "condition": {
+            "drapeau": "scintille"
+          },
+          "resultat": "Mélodie lève les yeux. Là-haut, une toute petite étoile clignote, comme pour dire bonjour.",
+          "suite": "c10-toi"
+        },
+        {
+          "texte": "Parler de Noisette, le renardeau perdu",
+          "condition": {
+            "drapeau": "noisette"
+          },
+          "resultat": "« Il a retrouvé sa maman grâce à toi. » Sagesse sourit.",
+          "suite": "c10-toi"
+        },
+        {
+          "texte": "Parler de Mamie Pistache, qui lui a montré le chemin",
+          "resultat": "« Ah, Pistache ! disent les Anciens en riant. Elle envoie toujours les meilleurs voyageurs. »",
+          "suite": "c10-toi"
+        }
+      ]
+    },
+    "c10-toi": {
+      "chapitre": 10,
+      "lieu": "💛",
+      "texte": "« Et avant tout ça, demande Mélodie, qui t'a appris à être le dragon que tu es ? » {nom} sourit. Il pense à toi, qui as veillé sur son œuf, l'as nourri, consolé et fait grandir.",
+      "choix": [
+        {
+          "texte": "Raconter le dernier câlin avant le départ",
+          "condition": {
+            "drapeau": "calin-du-depart"
+          },
+          "resultat": "« Elle m'a serré fort. Je l'ai gardé avec moi pendant tout le voyage. » Les Anciens sont tout émus.",
+          "suite": "c10-ceremonie"
+        },
+        {
+          "texte": "Montrer le cadeau qu'il rapporte pour toi",
+          "condition": {
+            "drapeau": "cadeau-pour-toi"
+          },
+          "resultat": "« C'est pour elle. » Mélodie hoche la tête : « Voilà un cadeau qui vient du cœur. »",
+          "suite": "c10-ceremonie"
+        },
+        {
+          "texte": "Parler de toi",
+          "resultat": "« C'est elle qui m'a tout appris. Sans elle, je ne serais jamais arrivé jusqu'ici. »",
+          "suite": "c10-ceremonie"
+        }
+      ]
+    },
+    "c10-ceremonie": {
+      "chapitre": 10,
+      "lieu": "✨",
+      "texte": "Les trois Anciens se lèvent. Le soleil aussi se lève, et tout le Nid se met à briller. « {nom}, ton voyage est accompli. Il est temps de découvrir ta vraie place… »",
+      "choix": [
+        {
+          "texte": "Fermer les yeux et écouter",
+          "resultat": "Une douce chaleur l'enveloppe tout entier. Les Anciens vont lui donner son titre…",
+          "suite": "fin"
+        },
+        {
+          "texte": "Penser très fort à toi",
+          "resultat": "Il serre les paupières et pense à toi. Une douce chaleur l'enveloppe… Les Anciens vont lui donner son titre.",
+          "suite": "fin"
+        }
+      ]
+    },
+    "c3-canards": {
+      "chapitre": 3,
+      "lieu": "🦆",
+      "texte": "Plus loin sur la berge, une cane compte ses petits : « Un, deux, trois, quatre… Il en manque un ! » Les roseaux sont si hauts qu'on n'y voit rien.",
+      "carnet": {
+        "amis": [
+          "🦆 Madame Cane et ses cinq canetons"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Se dresser sur ses pattes arrière pour regarder",
+          "condition": {
+            "talent": "sport"
+          },
+          "resultat": "Là ! Un petit caneton fait la sieste sur un nénuphar.",
+          "suite": "c3-soir"
+        },
+        {
+          "texte": "Imiter le cri du caneton",
+          "condition": {
+            "talent": "musique"
+          },
+          "resultat": "Coin ? Coin ! Un petit caneton sort des roseaux en se dandinant.",
+          "suite": "c3-soir"
+        },
+        {
+          "texte": "Chercher les traces de pattes palmées",
+          "condition": {
+            "trait": "apprentissage"
+          },
+          "resultat": "Les petites traces mènent derrière un rocher, où le caneton joue avec un escargot.",
+          "suite": "c3-soir"
+        },
+        {
+          "texte": "Écarter les roseaux un à un",
+          "resultat": "Derrière le dixième roseau, un caneton dort, roulé en boule.",
+          "suite": "c3-soir"
+        },
+        {
+          "texte": "Demander aux canetons où ils l'ont vu",
+          "resultat": "« Près du gros caillou ! » Et en effet, le voilà, qui fait des bulles dans l'eau.",
+          "suite": "c3-soir"
+        }
+      ]
+    },
+    "c5-moulin": {
+      "chapitre": 5,
+      "lieu": "🌾",
+      "texte": "Au sommet de la colline, les grandes ailes d'un moulin à vent ne tournent plus : une vieille corde les retient. Le meunier, un vieux lapin, se gratte les oreilles.",
+      "carnet": {
+        "amis": [
+          "🐇 Papi Lapin, le meunier du vent"
+        ]
+      },
+      "choix": [
+        {
+          "texte": "Grimper le long d'une aile pour défaire la corde",
+          "condition": {
+            "talent": "sport"
+          },
+          "resultat": "Il grimpe, dénoue le nœud… et les ailes se remettent à tourner, en le faisant tourner avec elles !",
+          "suite": "c5-soir"
+        },
+        {
+          "texte": "Planer jusqu'en haut du moulin",
+          "condition": {
+            "drapeau": "sait-planer"
+          },
+          "resultat": "Il se pose sur le toit, détache la corde d'un coup de griffe, et le moulin repart en grinçant de joie.",
+          "suite": "c5-soir"
+        },
+        {
+          "texte": "Siffler l'air du vent pour l'inviter à revenir",
+          "condition": {
+            "talent": "musique",
+            "palier": 2
+          },
+          "resultat": "Le vent, curieux, revient écouter… et se prend dans les ailes du moulin, qui se remettent à tourner !",
+          "suite": "c5-soir"
+        },
+        {
+          "texte": "Chercher le bout de la corde et tirer doucement",
+          "resultat": "Le nœud glisse, la corde tombe, et les grandes ailes repartent dans un « whoosh » joyeux.",
+          "suite": "c5-soir"
+        },
+        {
+          "texte": "Aider le vieux lapin à tourner les ailes à la main",
+          "resultat": "Un, deux, trois… pousse ! La corde cède, et le moulin se remet à moudre.",
+          "suite": "c5-soir"
+        }
+      ]
+    }
+  }
+}

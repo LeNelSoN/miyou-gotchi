@@ -253,7 +253,8 @@
     "multiplicateurPerte": 0.5,
     "fatigueParAction": {
       "jouer": 0.5,
-      "eduquer": 0.5
+      "eduquer": 0.5,
+      "quete": 0.5
     },
     "bloqueSiFatigue": [
       "eduquer"
@@ -268,5 +269,31 @@
   },
   "nom": {
     "longueurMax": 20
+  },
+  "quete": {
+    "ordre": [
+      "voyage-initiatique"
+    ],
+    "etapesParJour": 6,
+    "fuseauHoraire": "Africa/Casablanca",
+    "cout": {
+      "feu": -3,
+      "nourriture": -5,
+      "hygiene": -4,
+      "joie": 5
+    },
+    "messages": {
+      "endormi": "{nom} dort. L'aventure reprendra à son réveil.",
+      "fatigue": "{nom} tombe de sommeil. Couche-le : il repartira reposé.",
+      "besoin": "{nom} a besoin de toi avant de repartir.",
+      "assezPourAujourdhui": "{nom} a beaucoup marché aujourd'hui. Demain, l'aventure continue !",
+      "suiteBientot": "La suite de l'aventure arrive bientôt…",
+      "plusDeQuete": "{nom} se repose en attendant une nouvelle aventure.",
+      "talentInsuffisant": {
+        "sport": "Il n'a pas fait assez de sport…",
+        "lecture": "Il n'a pas assez lu…",
+        "musique": "Il n'a pas fait assez de musique…"
+      }
+    }
   }
 }

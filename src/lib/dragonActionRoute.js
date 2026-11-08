@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
-import { appliquerActionEtSauvegarder, appliquerLeconEtSauvegarder } from "./dragonRepository";
+import { appliquerActionEtSauvegarder, appliquerLeconEtSauvegarder, jouerChoixEtSauvegarder } from "./dragonRepository";
 import { dragonPourClient, messagesPonctuels } from "./dragonEngine";
 import { modeDebugActif, infosDebug } from "./dragonDebug";
+import { quetePourClient } from "./quete";
 
 export async function repondreDragon(dragon, extra = {}) {
   return NextResponse.json({
     ...dragonPourClient(dragon),
+    quete: quetePourClient(dragon),
     ...extra,
     ...(modeDebugActif() && { debug: infosDebug(dragon) }),
   });
@@ -26,4 +28,10 @@ export async function repondreLecon(lecon) {
     applique,
     toasts: applique ? messagesPonctuels(dragon, "eduquer") : [],
   });
+}
+
+// Une étape de quête : `resultatQuete` raconte ce qu'il vient de faire.
+export async function repondreQuete(index) {
+  const { dragon, applique, resultat } = await jouerChoixEtSauvegarder(index);
+  return repondreDragon(dragon, { applique, resultatQuete: resultat });
 }

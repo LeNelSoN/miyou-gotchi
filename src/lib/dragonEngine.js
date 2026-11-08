@@ -11,7 +11,7 @@ export function numeroEtape(nom) {
   return NOMS_ETAPES.indexOf(nom);
 }
 
-function caracteristiquesActives(nomEtapeCourante) {
+export function caracteristiquesActives(nomEtapeCourante) {
   return Object.values(config.caracteristiques).filter((carac) =>
     carac.etapesActives.includes(nomEtapeCourante)
   );
@@ -129,7 +129,7 @@ function heureEndormissement(dragon) {
   return decaler(heureFatigue(dragon), config.dodo.endormissementHeures);
 }
 
-function estFatigue(dragon, maintenant) {
+export function estFatigue(dragon, maintenant) {
   return Boolean(rythme(dragon)) && !estEndormi(dragon) && maintenant >= heureFatigue(dragon);
 }
 
@@ -263,7 +263,7 @@ export function validerNom(dragon, nom) {
   return nomNettoye;
 }
 
-function clamp(valeur, max) {
+export function clamp(valeur, max) {
   return Math.min(max, Math.max(0, valeur));
 }
 
@@ -426,9 +426,9 @@ export function avancerDragon(dragon, maintenant = new Date()) {
   return resultat;
 }
 
-// Jouer et apprendre le fatiguent : son heure de fatigue avance d'autant, sans
+// Jouer, apprendre et partir à l'aventure le fatiguent : son heure de fatigue avance d'autant, sans
 // dépasser l'instant présent, pour qu'une action ne l'endorme jamais d'un coup.
-function fatiguer(dragon, actionName, maintenant) {
+export function fatiguer(dragon, actionName, maintenant) {
   const heures = config.dodo.fatigueParAction[actionName];
   if (!heures || !rythme(dragon) || estFatigue(dragon, maintenant)) return;
   const plusTot = decaler(dragon.awake_since, -heures);
