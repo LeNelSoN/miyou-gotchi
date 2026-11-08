@@ -15,7 +15,7 @@ import {
 } from "@/lib/dragonDebug";
 
 // Corps : `{ avancerHeures: 6 }`, `{ finirEtape: true }`, `{ reveiller: true }`, `{ ajuster: { nom: "feu", delta: -20 } }`
-// `{ quete: "recommencer" | "nouveauJour" }`, `{ archetype: "Gourmand" }`, `{ lecons: { voie: "sport", delta: 5 } }`
+// `{ quete: "recommencer" | "nouveauJour" | "ceremonie" }`, `{ archetype: "Gourmand" }`, `{ lecons: { voie: "sport", delta: 5 } }`
 // ou `{ calibrer: { chemin: ["caracteristiques", "feu", "seuilMin"], valeur: 45 } }`.
 export async function POST(request) {
   if (!modeDebugActif()) {

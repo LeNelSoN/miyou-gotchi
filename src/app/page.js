@@ -268,8 +268,9 @@ export default function Home() {
     if (resultat) setResultatQuete(resultat);
 
     const passage = afficher(data, data.applique === false ? undefined : evenement);
-    // Un passage d'étape (la 30e leçon le fait devenir adulte) mérite sa fanfare.
-    jouerSon(passage ? "fanfare" : data.applique === false ? "refus" : sonAction(route, corps));
+    // Un passage d'étape (la 30e leçon le fait devenir adulte) ou la fin d'une quête mérite sa fanfare.
+    const finDeQuete = Boolean(data.quete?.fin) && !dragon.quete?.fin;
+    jouerSon(passage || finDeQuete ? "fanfare" : data.applique === false ? "refus" : sonAction(route, corps));
     // Nouvel objet à chaque fois pour relancer le minuteur si le message se répète.
     setToast(toasts[0] ? { ...toasts[0] } : null);
     return null;
@@ -468,6 +469,7 @@ export default function Home() {
           nom={dragon.named ? dragon.name : "Ton dragon"}
           archetype={dragon.archetype}
           description={dragon.descriptionArchetype}
+          titre={dragon.quete?.titres.at(-1)}
           carnet={dragon.quete?.carnet}
           fermer={() => setCarteOuverte(false)}
         />

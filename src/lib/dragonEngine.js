@@ -211,7 +211,8 @@ function actionsDisponibles(dragon, nomEtapeCourante, maintenant) {
 }
 
 // Talent qui se dessine avec les leçons : par type, le nombre de leçons et le palier atteint
-// (0 à 3, seuils `lecons.paliers`). `null` aux étapes où il n'apprend pas encore.
+// (0 à 3, seuils `lecons.paliers`). `null` aux étapes où il n'apprend pas encore. L'Adulte ne prend
+// plus de leçons mais garde ses talents : « éduquer » y reste un effet secondaire de la joie.
 function talents(dragon, nomEtapeCourante) {
   const apprend = caracteristiquesActives(nomEtapeCourante).some((carac) => carac.actions?.eduquer);
   if (!apprend) return null;

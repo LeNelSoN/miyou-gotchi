@@ -2,7 +2,7 @@
 // Usage : node --import ./scripts/quete/register.mjs scripts/quete/simuler.mjs [parties] [graine]
 import config from "../../config/game.json";
 import voyage from "../../config/quetes/voyage-initiatique.json";
-import { jouerChoix, quetePourClient } from "../../src/lib/quete.js";
+import { jouerChoix, quetePourClient, voieDuTitre } from "../../src/lib/quete.js";
 
 const PARTIES = Number(process.argv[2] ?? 10000);
 let graine = Number(process.argv[3] ?? 42);
@@ -15,6 +15,8 @@ function hasard() {
 }
 const auHasard = (liste) => liste[Math.floor(hasard() * liste.length)];
 
+// Dosages leçons du Jeune / voies de la quête comparés pour le titre de fin.
+const DOSAGES = [[1, 0], [1, 0.5], [1, 1], [1, 2], [0, 1]];
 const ARCHETYPES = Object.values(config.personnalite.archetypes);
 const VOIES = config.lecons.types;
 
@@ -42,7 +44,7 @@ const stats = {
   vus: new Map(), // "scène#index" → nombre de fois affiché
   joues: new Map(),
   grises: 0, affiches: 0, scenesUnSeulChoix: new Map(), choixParScene: [],
-  titres: {}, titreFidele: 0, egalites: 0, voiesNulles: 0, enigmesRatees: [], besoinsParJour: [],
+  titres: {}, dosages: {}, enigmesRatees: [], besoinsParJour: [],
   drapeauxOuverts: new Map(), // drapeau → parties où son choix est apparu
 };
 const incr = (map, cle, n = 1) => map.set(cle, (map.get(cle) ?? 0) + n);
@@ -57,10 +59,11 @@ for (let partie = 0; partie < PARTIES; partie++) {
   for (let garde = 0; garde < 2000; garde++) {
     const q = quetePourClient(d, maintenant);
     if (!q.disponible) {
-      if (q.raison === config.quete.messages.suiteBientot) {
+      if (q.fin) {
         stats.fins++;
         break;
       }
+      if (q.raison === config.quete.messages.suiteBientot) break;
       if (q.raison.includes("beaucoup marché") || q.raison.includes("sommeil") || q.raison.includes("dort")) {
         // Elle revient le lendemain après l'école ; le dragon a mangé, dormi, été lavé.
         stats.besoinsParJour.push(besoins);
@@ -109,16 +112,26 @@ for (let partie = 0; partie < PARTIES; partie++) {
   stats.enigmesRatees.push(enigmes);
   for (const drapeau of drapeauxVus) incr(stats.drapeauxOuverts, drapeau);
 
-  // Titre de fin (phase 7d) : la voie la plus empruntée.
-  const voies = d.quete.voies ?? {};
-  const max = Math.max(0, ...VOIES.map((v) => voies[v] ?? 0));
-  const meilleures = VOIES.filter((v) => (voies[v] ?? 0) === max);
-  if (max === 0) stats.voiesNulles++;
-  else if (meilleures.length > 1) stats.egalites++;
-  else stats.titres[meilleures[0]] = (stats.titres[meilleures[0]] ?? 0) + 1;
-  // Le titre ressemble-t-il à son enfance ? (voie où il a pris le plus de leçons)
-  const prefere = VOIES.reduce((a, b) => (d.lecons[b] > d.lecons[a] ? b : a));
-  if (meilleures.length === 1 && meilleures[0] === prefere) stats.titreFidele++;
+  // Titre de fin : celui que le jeu a donné, et ce qu'auraient donné d'autres dosages leçons / quête.
+  const terminee = d.quete.terminees?.at(-1);
+  if (terminee) {
+    stats.titres[terminee.voie] = (stats.titres[terminee.voie] ?? 0) + 1;
+    const enfance = VOIES.reduce((a, b) => (d.lecons[b] > d.lecons[a] ? b : a));
+    const voies = terminee.voies;
+    const maxQuete = Math.max(...VOIES.map((v) => voies[v] ?? 0));
+    const quete = VOIES.filter((v) => (voies[v] ?? 0) === maxQuete);
+    const reglage = { ...config.quete.titre };
+    for (const [poidsLecons, poidsQuete] of DOSAGES) {
+      Object.assign(config.quete.titre, { poidsLecons, poidsQuete });
+      const voie = voieDuTitre(d, voies);
+      const cle = `${poidsLecons}/${poidsQuete}`;
+      stats.dosages[cle] ??= { enfance: 0, quete: 0, titres: {} };
+      if (voie === enfance) stats.dosages[cle].enfance++;
+      if (quete.length === 1 && voie === quete[0]) stats.dosages[cle].quete++;
+      stats.dosages[cle].titres[voie] = (stats.dosages[cle].titres[voie] ?? 0) + 1;
+    }
+    Object.assign(config.quete.titre, reglage);
+  }
 }
 
 // ───────── Rapport
@@ -135,9 +148,11 @@ console.log(`Interruptions « besoin » par jour : ${moyenne(stats.besoinsParJou
 console.log(`Énigmes ratées par partie (joueuse au hasard incluse) : ${moyenne(stats.enigmesRatees).toFixed(1)}`);
 console.log(`Choix grisés : ${((100 * stats.grises) / stats.affiches).toFixed(1)} % des choix affichés`);
 console.log(`Choix possibles par étape : moyenne ${moyenne(stats.choixParScene).toFixed(2)}, étapes à un seul choix : ${((100 * stats.choixParScene.filter((n) => n === 1).length) / stats.choixParScene.length).toFixed(1)} %`);
-console.log(`Titres de fin : `, Object.fromEntries(Object.entries(stats.titres).map(([v, n]) => [v, pct(n)])), `égalités ${pct(stats.egalites)}, aucune voie ${pct(stats.voiesNulles)}`);
-console.log(`Titre = voie la plus travaillée enfant : ${pct(stats.titreFidele)}`);
-
+console.log(`Titres de fin (réglage ${config.quete.titre.poidsLecons}/${config.quete.titre.poidsQuete}) :`, Object.fromEntries(Object.entries(stats.titres).map(([v, n]) => [v, pct(n)])));
+console.log(`Dosages leçons/quête : titre = voie préférée enfant · = voie la plus jouée dans la quête · répartition`);
+for (const [cle, { enfance, quete, titres }] of Object.entries(stats.dosages)) {
+  console.log(`  ${cle.padEnd(7)} ${pct(enfance).padStart(7)} · ${pct(quete).padStart(7)} ·`, Object.entries(titres).map(([v, n]) => `${v} ${pct(n)}`).join(", "));
+}
 console.log(`\nScènes où il ne reste souvent qu'un choix possible (sur plusieurs écrits) :`);
 for (const [id, n] of [...stats.scenesUnSeulChoix].sort((a, b) => b[1] - a[1]).slice(0, 12)) console.log(`  ${id} : ${pct(n)}`);
 

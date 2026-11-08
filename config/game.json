@@ -109,7 +109,8 @@
           "effet": 25
         },
         "eduquer": {
-          "effet": -15
+          "effet": -15,
+          "secondaire": true
         }
       },
       "multiplicateurActionSiMauvais": {
@@ -141,8 +142,7 @@
       },
       "affecteCroissance": false,
       "etapesActives": [
-        "jeune",
-        "adulte"
+        "jeune"
       ],
       "bloque": {
         "eduquer": {
@@ -288,12 +288,16 @@
       "besoin": "{nom} a besoin de toi avant de repartir.",
       "assezPourAujourdhui": "{nom} a beaucoup marché aujourd'hui. Demain, l'aventure continue !",
       "suiteBientot": "La suite de l'aventure arrive bientôt…",
-      "plusDeQuete": "{nom} se repose en attendant une nouvelle aventure.",
+      "plusDeQuete": "{nom} se repose à la maison, en attendant une nouvelle aventure.",
       "talentInsuffisant": {
         "sport": "Il n'a pas fait assez de sport…",
         "lecture": "Il n'a pas assez lu…",
         "musique": "Il n'a pas fait assez de musique…"
       }
+    },
+    "titre": {
+      "poidsLecons": 1,
+      "poidsQuete": 1
     }
   }
 }

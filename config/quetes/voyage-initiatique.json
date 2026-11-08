@@ -14,6 +14,26 @@
     "9": "Le pont des étoiles",
     "10": "Le Nid des Anciens"
   },
+  "fin": {
+    "conclusion": "Puis {nom} déploie ses ailes et regarde vers la maison. Il est temps de rentrer : tu l'attends, et il a tant de choses à te raconter.",
+    "titres": {
+      "sport": {
+        "titre": "Gardien des Flammes",
+        "icone": "🔥",
+        "epilogue": "Braise pose sa patte sur son épaule. « Tu as couru, sauté, plané et soufflé le feu pour aider les autres. Tu seras le Gardien des Flammes : partout où il fera froid, on t'appellera. »"
+      },
+      "lecture": {
+        "titre": "Sage des Étoiles",
+        "icone": "✨",
+        "epilogue": "Sagesse sourit derrière ses lunettes. « Tu as lu les signes, résolu les énigmes et compris le monde. Tu seras le Sage des Étoiles : quand quelqu'un cherchera son chemin, c'est toi qu'il viendra voir. »"
+      },
+      "musique": {
+        "titre": "Chanteur des Vents",
+        "icone": "🎵",
+        "epilogue": "Mélodie se met à chanter, et le vent l'accompagne. « Ta musique a réveillé des braises, des étoiles et des cœurs. Tu seras le Chanteur des Vents : ta voix portera la joie partout. »"
+      }
+    }
+  },
   "scenes": {
     "c1-reveil": {
       "chapitre": 1,

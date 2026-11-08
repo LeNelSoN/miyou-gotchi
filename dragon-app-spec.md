@@ -35,7 +35,7 @@ create table dragon (
   besoins             jsonb not null default '{}',    -- suivi des besoins pendant la croissance, par trait : {notes, nombre, ouvert}
   lecons              jsonb not null default '{}',    -- leçons données, par type : {sport, lecture, musique} (base du talent de l'Adulte)
   derniere_activite   timestamptz,                    -- dernier soin, leçon, nom, coucher ou réveil de la joueuse (silence du petit mot du jour)
-  quete               jsonb not null default '{}',    -- quête de l'Adulte : {id, etape, drapeaux, carnet, terminees, jour, etapesDuJour} (section 5)
+  quete               jsonb not null default '{}',    -- quête de l'Adulte : {id, scene, drapeaux, carnet, voies, terminees, fin, jour, etapesDuJour} (section 5)
   tricks_learned      jsonb not null default '[]',    -- inutilisées : les tours sont remplacés par la quête
   available_tricks    jsonb not null default '[]',
   training_progress   jsonb not null default '{}',
@@ -110,7 +110,7 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
       "seuilMin": 30,
       "variationParHeure": -1,
       "anticipation": { "seuil": 70, "humeur": "ennui" },
-      "actions": { "jouer": { "effet": 25 }, "eduquer": { "effet": -15 } },
+      "actions": { "jouer": { "effet": 25 }, "eduquer": { "effet": -15, "secondaire": true } },
       "multiplicateurActionSiMauvais": { "jouer": 0.5 },
       "affecteCroissance": true,
       "etapesActives": ["jeune", "adulte"],
@@ -125,7 +125,7 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
       "anticipation": { "seuil": 70, "humeur": "curiosite" },
       "actions": { "eduquer": { "effet": 20 } },
       "affecteCroissance": false,
-      "etapesActives": ["jeune", "adulte"],
+      "etapesActives": ["jeune"],
       "bloque": { "eduquer": { "siAuDessus": 80 } },
       "humeurSiMauvais": "envieApprendre"
     }
@@ -231,7 +231,7 @@ Le dragon s'adresse à la joueuse (une petite fille) sur le second écran de la 
 
 - Caractéristiques actives : `feu`, `nourriture`, `hygiene` (inchangées) + `joie`, `apprentissage`.
 - **Joie** (`joy`) : baisse lentement d'elle-même (il s'ennuie), "Jouer" l'augmente, "Éduquer" la diminue. Hors zone (triste) → "Jouer" devient moins efficace (`multiplicateurActionSiMauvais`) **et** "Nourrir" est complètement bloqué (`bloque.nourrir = "siMauvais"`).
-- **Apprentissage** (`learning`) : baisse lentement d'elle-même (il oublie), "Éduquer" l'augmente. Sous `seuilMin` (40), il a envie d'apprendre (humeur `envieApprendre`, visible dans ses pensées). N'affecte pas la croissance (`affecteCroissance: false`) — progression à part, base pour les tours plus tard.
+- **Apprentissage** (`learning`) : baisse lentement d'elle-même (il oublie), "Éduquer" l'augmente. Sous `seuilMin` (40), il a envie d'apprendre (humeur `envieApprendre`, visible dans ses pensées). N'affecte pas la croissance (`affecteCroissance: false`). Active au Jeune seulement : l'Adulte ne prend plus de leçons (plus de bouton « Éduquer », ni d'envie d'apprendre), il part en quête. Ses talents restent ; côté joie, « éduquer » est `secondaire` pour ne pas rouvrir le bouton.
 - **Énergie** : retirée. Une jauge cachée qui ne descendait jamais sous 35 ; c'est la fatigue du Dodo qui en tient lieu (« Jouer et apprendre le fatiguent », section 4).
 - **Leçons** : « Éduquer » propose trois leçons (`lecons.types`) : ⚽ Sport, 📖 Lecture, 🎵 Musique. Même effet immédiat pour les trois (apprentissage +20, joie −15, fatigue) ; chaque leçon est comptée par type dans `lecons`, base du talent de l'Adulte (Sport → cracheur de feu, Lecture → sage, Musique → épanoui et musicien), qui façonnera aussi son attitude pendant la croissance (phase suivante).
 - **Croissance** : 30 leçons (`etapes.jeune.lecons`), ½ leçon si un besoin est en manque (voir « Règle de progression commune »).
@@ -333,8 +333,9 @@ Il garde les amis, les objets et les lieux découverts, et les titres des quête
 
 **Fin et suites**
 
-- Une fin par grand chemin : le dragon reçoit un **titre** selon la voie qu'il a le plus utilisée (« Gardien des Flammes », « Sage des Étoiles », « Chanteur des Vents »…), avec un court épilogue. Le titre s'inscrit sur la carte d'identité.
-  - À régler en 7d (d'après la simulation) : compter seulement les choix de la quête donne une égalité dans environ 9 % des parties, et un titre qui ne ressemble à son enfance que 6 fois sur 10. Le titre combinera donc les voies de la quête et les leçons du Jeune, ces dernières départageant les égalités.
+- Le dernier choix de la quête (`suite: "fin"`) la termine. Le dragon reçoit un **titre** selon sa voie (⚽ « Gardien des Flammes » 🔥, 📖 « Sage des Étoiles » ✨, 🎵 « Chanteur des Vents » 🎵), puis la page d'aventure affiche le titre et un court épilogue, avec une fanfare. Le titre s'inscrit sous l'archétype sur la carte d'identité, et dans le carnet (« Ses titres »).
+- **La voie du titre** additionne ses leçons de Jeune et les choix de talent joués pendant la quête (`quete.titre` : poids 1 et 1). Égalité : les leçons départagent, puis les choix de quête. Mesuré sur 10 000 parties : le titre est celui de sa voie préférée enfant 9 fois sur 10, ce qu'elle a joué pendant le voyage compte aussi, et les trois titres sortent à peu près aussi souvent. Compter seulement la quête donnait un titre étranger à son enfance 3 fois sur 10 ; seulement l'enfance rendait les choix de la quête sans effet.
+- Titres, épilogues et conclusion sont dans le fichier de quête (`fin`) : chaque add-on peut avoir les siens.
 - Les quêtes sont des fichiers à part, `config/quetes/<id>.json`, jouées dans l'ordre de `quete.ordre`. Ajouter une quête (un « add-on ») revient à ajouter un fichier. Quand il n'y en a plus, il se repose en attendant la prochaine aventure.
 
 **Première quête : le voyage initiatique** (`voyage-initiatique`, synopsis à valider)
@@ -356,7 +357,7 @@ Chaque jeune dragon doit un jour monter jusqu'au **Nid des Anciens**, au sommet 
 
 Données : colonne `quete` (section 3). Route : `POST /api/dragon/quest` (section 6). Config : `quete` dans `config/game.json` (rythme) et `config/quetes/` (histoires). Code : `src/lib/quete.js`, page `src/app/Aventure.js`.
 
-**Format d'une quête** (`config/quetes/<id>.json`) : `debut` (première scène), `chapitres` (titres), `scenes`. Une scène a `chapitre`, `lieu` (emoji), `texte` (`{nom}` devient le prénom), `carnet` (inscrit à l'arrivée) et `choix`. Un choix a `texte`, `resultat`, `suite` (scène suivante), et au besoin `condition` (`{ talent, palier }`, `{ trait }`, `{ drapeau }`, ou `{ sansDrapeau }` qui retire le choix une fois le drapeau posé), `drapeaux` et `carnet`. Une `suite` pas encore écrite affiche « La suite de l'aventure arrive bientôt… » : on peut publier un chapitre à la fois.
+**Format d'une quête** (`config/quetes/<id>.json`) : `debut` (première scène), `chapitres` (titres), `fin` (`titres` par voie avec `titre`, `icone`, `epilogue`, et une `conclusion` commune), `scenes`. Une scène a `chapitre`, `lieu` (emoji), `texte` (`{nom}` devient le prénom), `carnet` (inscrit à l'arrivée) et `choix`. Un choix a `texte`, `resultat`, `suite` (scène suivante), et au besoin `condition` (`{ talent, palier }`, `{ trait }`, `{ drapeau }`, ou `{ sansDrapeau }` qui retire le choix une fois le drapeau posé), `drapeaux` et `carnet`. Une `suite` pas encore écrite affiche « La suite de l'aventure arrive bientôt… » : on peut publier un chapitre à la fois.
 
 **Vérifier une quête** : `pnpm simuler-quete [parties]` joue des milliers de parties (dragons de tous archétypes, 30 leçons réparties au hasard, trois façons de choisir) et signale les parties bloquées, les étapes à un seul choix, les souvenirs qui ne reviennent jamais, les choix jamais affichés et la répartition des titres. Code : `scripts/quete/`.
 
@@ -439,7 +440,7 @@ Appli installable (manifeste, icônes, service worker) et une notification quoti
 - 7a : moteur de quête (étapes, choix, conditions de talent et de trait, drapeaux, rythme), route `quest`, page d'aventure, carnet de voyage, avec le chapitre 1 écrit pour tester.
 - 7b : l'animation `adulte-quete` — livrée.
 - 7c : écriture des chapitres 2 à 10 (82 scènes), éprouvés par 10 000 parties simulées — à relire.
-- 7d : fin, titres et épilogues.
+- 7d : fin, titres et épilogues — livrée.
 
 **Phase 8 — Déploiement final**
 Variables d'environnement en prod, test complet sur mobile avant de l'offrir.

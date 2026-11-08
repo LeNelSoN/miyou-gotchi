@@ -5,8 +5,14 @@ import Illustration from "./Illustration";
 // Page de la quête de l'Adulte, à la façon d'un livre dont on est le héros : la scène en cours et
 // ses choix, puis ce qu'il a fait après un choix (`resultat`), jusqu'à « Continuer ». En haut, il
 // marche avec son baluchon tant qu'il peut repartir (la page cache l'écran principal sur téléphone).
+// Quête terminée : son titre et l'épilogue (`quete.fin`), jusqu'à ce qu'une nouvelle quête commence.
 export default function Aventure({ nom, quete, resultat, enCours, choisir, continuer, fermer }) {
-  const { scene, chapitre } = quete;
+  const { scene, chapitre, fin } = quete;
+  const entete = chapitre
+    ? `CHAPITRE ${chapitre.numero} · ${chapitre.titre.toUpperCase()}`
+    : fin
+      ? `${fin.quete.toUpperCase()} · FIN`
+      : "AVENTURE";
 
   return (
     <div className="fixed inset-0 z-10 flex items-center justify-center bg-black/60 p-4 motion-safe:animate-fondu">
@@ -17,7 +23,7 @@ export default function Aventure({ nom, quete, resultat, enCours, choisir, conti
         className="flex max-h-full w-full max-w-sm flex-col gap-4 overflow-y-auto rounded-2xl border-4 border-amber-500 bg-stone-900 p-5 font-pixel text-amber-50 shadow-[0_0_40px_rgba(234,88,12,0.4)]"
       >
         <p id="titre-aventure" className="text-center text-sm tracking-[0.2em] text-amber-300">
-          {chapitre ? `CHAPITRE ${chapitre.numero} · ${chapitre.titre.toUpperCase()}` : "AVENTURE"}
+          {entete}
         </p>
 
         {quete.disponible && (
@@ -47,6 +53,19 @@ export default function Aventure({ nom, quete, resultat, enCours, choisir, conti
                 <p className="leading-snug">{scene.texte}</p>
               </div>
             ) : null}
+
+            {!scene && fin && (
+              <>
+                <div className="ecran flex flex-col items-center gap-2 rounded-lg px-4 py-4 text-center motion-safe:animate-fondu">
+                  <p className="text-5xl leading-none" aria-hidden="true">
+                    {fin.icone}
+                  </p>
+                  <p className="text-sm">{nom},</p>
+                  <h2 className="text-2xl leading-tight">{fin.titre}</h2>
+                </div>
+                <p className="leading-snug">{fin.epilogue}</p>
+              </>
+            )}
 
             {quete.raison && <p className="text-center leading-snug text-amber-300">{quete.raison}</p>}
 

@@ -78,6 +78,9 @@ export default function DebugPanel({ dragon, enCours, envoyer }) {
               <button className={BOUTON} disabled={enCours} onClick={() => commande({ quete: "recommencer" })}>
                 Recommencer
               </button>
+              <button className={BOUTON} disabled={enCours} onClick={() => commande({ quete: "ceremonie" })}>
+                Cérémonie
+              </button>
               {["sport", "lecture", "musique"].map((voie) => (
                 <button key={voie} className={BOUTON} disabled={enCours} onClick={() => commande({ lecons: { voie, delta: 5 } })}>
                   +5 {voie}

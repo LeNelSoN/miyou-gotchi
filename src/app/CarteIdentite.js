@@ -1,14 +1,16 @@
 "use client";
 
 const RUBRIQUES_CARNET = [
+  ["titres", "Ses titres"],
   ["amis", "Ses amis"],
   ["objets", "Ses trésors"],
   ["lieux", "Les lieux traversés"],
 ];
 
 // Révèle l'archétype figé au passage à Adulte ; rouvrable ensuite depuis la coque.
-// En dessous, le carnet de voyage de sa quête : ce qu'il a rencontré, trouvé et traversé.
-export default function CarteIdentite({ nom, archetype, description, carnet = {}, fermer }) {
+// En dessous, le carnet de voyage de sa quête : ce qu'il a rencontré, trouvé et traversé. Son dernier
+// titre de quête (`titre`) s'affiche sous son archétype.
+export default function CarteIdentite({ nom, archetype, titre, description, carnet = {}, fermer }) {
   const rubriques = RUBRIQUES_CARNET.filter(([cle]) => carnet[cle]?.length);
   return (
     <div className="fixed inset-0 z-10 flex items-center justify-center bg-black/60 p-4 motion-safe:animate-fondu">
@@ -24,6 +26,11 @@ export default function CarteIdentite({ nom, archetype, description, carnet = {}
             {nom}
           </h2>
           <p className="text-lg">🐉 {archetype}</p>
+          {titre && (
+            <p className="text-lg text-orange-800">
+              {titre.icone} {titre.titre}
+            </p>
+          )}
         </div>
         <p className="leading-snug">{description}</p>
         {rubriques.length > 0 && (

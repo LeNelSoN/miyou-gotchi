@@ -3,6 +3,7 @@ import path from "path";
 import config from "../../config/game.json";
 import { nomEtape, scoresBesoins, seuilEtape } from "./dragonEngine";
 import { recupererDragonSynchronise, sauvegarderDragon } from "./dragonRepository";
+import { QUETES } from "./quete";
 
 const HEURE_MS = 3600000;
 const CHEMIN_CONFIG = path.join(process.cwd(), "config", "game.json");
@@ -109,10 +110,24 @@ export async function reveillerMaintenant() {
 // d'étapes du jour.
 export async function modifierQuete(commande) {
   const dragon = await recupererDragonSynchronise();
-  const quete = commande === "recommencer" ? {} : { ...dragon.quete, etapesDuJour: 0 };
+  const quete =
+    commande === "recommencer"
+      ? {}
+      : commande === "ceremonie"
+        ? allerALaCeremonie(dragon.quete)
+        : { ...dragon.quete, etapesDuJour: 0 };
   const resultat = { ...dragon, quete };
   await sauvegarderDragon(resultat);
   return resultat;
+}
+
+// Saute à la dernière scène de la quête en cours (celle qui donne le titre), pour tester la fin.
+function allerALaCeremonie(quete = {}) {
+  const id = quete.id ?? config.quete.ordre.find((q) => !(quete.terminees ?? []).some((t) => t.id === q));
+  const scenes = QUETES[id]?.scenes ?? {};
+  const derniere = Object.keys(scenes).find((cle) => scenes[cle].choix.some((c) => c.suite === "fin"));
+  if (!derniere) return quete;
+  return { drapeaux: [], carnet: {}, voies: {}, terminees: [], ...quete, id, scene: derniere, fin: undefined, etapesDuJour: 0 };
 }
 
 // Pour tester la quête sans refaire toute l'enfance : choisir l'archétype, ajouter des leçons.
