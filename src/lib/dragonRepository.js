@@ -34,7 +34,7 @@ export async function appliquerActionEtSauvegarder(actionName) {
   if (!resultat.applique) return resultat;
   const dragonSoigne = avecActivite(resultat.dragon);
   await sauvegarderDragon(dragonSoigne);
-  return { dragon: dragonSoigne, applique: true };
+  return { dragon: dragonSoigne, applique: true, exces: resultat.exces };
 }
 
 export async function appliquerLeconEtSauvegarder(lecon) {

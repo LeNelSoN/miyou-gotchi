@@ -49,6 +49,13 @@
           "effet": 30
         }
       },
+      "exces": {
+        "action": "nourrir",
+        "siAuDessus": 85,
+        "fatigueHeures": 0.75,
+        "message": "Oh là là, il a trop mangé… Ventre tout rond, il a sommeil !",
+        "dureeSecondes": 4
+      },
       "affecteCroissance": true,
       "etapesActives": [
         "bebe",

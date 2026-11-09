@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "simuler-quete": "node --no-warnings --import ./scripts/quete/register.mjs scripts/quete/simuler.mjs"
+    "simuler-quete": "node --no-warnings --import ./scripts/quete/register.mjs scripts/quete/simuler.mjs",
+    "simuler-vie": "node --no-warnings --import ./scripts/quete/register.mjs scripts/vie/simuler.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.4",

@@ -225,6 +225,14 @@
           "Rot ! Oups... pardon !",
           "Miaaam !"
         ],
+        "tropMange": [
+          "Ventre tout rond...",
+          "Trop plein... dodo ?",
+          "Oups, trop mangé !",
+          "Pfiou... gros bidon !",
+          "Ventre lourd... zzz ?",
+          "Plus de place !"
+        ],
         "laver": [
           "Plouf !",
           "Bulles ! Hihi !",
@@ -537,6 +545,14 @@
           "C'est le meilleur repas du monde !",
           "Merci, j'avais un gros creux !",
           "Je me sens plein d'énergie !"
+        ],
+        "tropMange": [
+          "Ouf... j'ai trop mangé, j'ai un peu sommeil.",
+          "Mon ventre est tout rond ! Une sieste ?",
+          "J'avais pas faim, mais c'était bon...",
+          "Oh là là, je suis plein comme un œuf !",
+          "Trop mangé... mes paupières sont lourdes.",
+          "La prochaine fois, j'attends d'avoir un petit creux !"
         ],
         "laver": [
           "Plouf ! J'adore les bulles !",
@@ -969,6 +985,14 @@
           "Un repas partagé avec toi, c'est le meilleur.",
           "Je suis rassasié, merci beaucoup.",
           "Avec ça, je pourrais voler jusqu'à la lune !"
+        ],
+        "tropMange": [
+          "Ouf, j'ai trop mangé… Une petite sieste me ferait du bien.",
+          "Mon ventre est tout rond ! Je n'avais pas vraiment faim.",
+          "Plein comme un œuf ! Mes paupières deviennent lourdes…",
+          "La prochaine fois, j'attendrai d'avoir un petit creux.",
+          "C'était bon… mais c'était trop. Je bâille déjà !",
+          "Je suis aussi rond qu'une citrouille. Zzz…"
         ],
         "laver": [
           "Ahh, je me sens comme neuf !",

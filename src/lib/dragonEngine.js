@@ -430,11 +430,25 @@ export function avancerDragon(dragon, maintenant = new Date()) {
 // Jouer, apprendre et partir à l'aventure le fatiguent : son heure de fatigue avance d'autant, sans
 // dépasser l'instant présent, pour qu'une action ne l'endorme jamais d'un coup.
 export function fatiguer(dragon, actionName, maintenant) {
-  const heures = config.dodo.fatigueParAction[actionName];
+  fatiguerDe(dragon, config.dodo.fatigueParAction[actionName], maintenant);
+}
+
+// Avance l'heure de la fatigue de `heures`, sans aller plus loin que « fatigué maintenant ».
+function fatiguerDe(dragon, heures, maintenant) {
   if (!heures || !rythme(dragon) || estFatigue(dragon, maintenant)) return;
   const plusTot = decaler(dragon.awake_since, -heures);
   const auPlusTot = decaler(maintenant, -rythme(dragon).eveilHeures);
   dragon.awake_since = new Date(Math.max(plusTot, auPlusTot)).toISOString();
+}
+
+// Soin donné alors qu'il n'en avait pas besoin (`exces` : nourri sans petit creux, jauge d'`avant`
+// le soin). Il en profite quand même, mais ça le fatigue (`fatigueHeures`). Renvoie les messages à afficher.
+function excesDeSoin(avant, apres, actives, actionName, maintenant) {
+  const exces = actives.filter(
+    (carac) => carac.exces?.action === actionName && avant[carac.champDb] >= carac.exces.siAuDessus
+  );
+  for (const carac of exces) fatiguerDe(apres, carac.exces.fatigueHeures, maintenant);
+  return exces.map(({ exces: { message, dureeSecondes } }) => ({ message, dureeSecondes }));
 }
 
 export function appliquerAction(dragon, actionName, maintenant = new Date()) {
@@ -462,8 +476,9 @@ export function appliquerAction(dragon, actionName, maintenant = new Date()) {
   // Un soin peut combler un besoin (ou en créer un : trop de bois, une leçon qui attriste).
   suivreBesoins(resultat, false);
   fatiguer(resultat, actionName, maintenant);
+  const exces = excesDeSoin(dragon, resultat, actives, actionName, maintenant);
 
-  return { dragon: resultat, applique: true };
+  return { dragon: resultat, applique: true, exces };
 }
 
 // Une leçon (`lecons.types` : sport, lecture, musique) est un « Éduquer » dont le type est retenu

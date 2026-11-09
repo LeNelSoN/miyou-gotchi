@@ -268,7 +268,9 @@ export default function Home() {
     setEnCours(false);
     if (resultat) setResultatQuete(resultat);
 
-    const passage = afficher(data, data.applique === false ? undefined : evenement);
+    // Trop mangé : il en parle, plutôt que de remercier pour le repas.
+    const evenementVu = data.exces ? { ...evenement, soin: "tropMange" } : evenement;
+    const passage = afficher(data, data.applique === false ? undefined : evenementVu);
     // Un passage d'étape (la 30e leçon le fait devenir adulte) ou la fin d'une quête mérite sa fanfare.
     const finDeQuete = Boolean(data.quete?.fin) && !dragon.quete?.fin;
     jouerSon(passage || finDeQuete ? "fanfare" : data.applique === false ? "refus" : sonAction(route, corps));

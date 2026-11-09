@@ -13,11 +13,13 @@ export async function repondreDragon(dragon, extra = {}) {
   });
 }
 
+// Un soin donné sans besoin (`exces`, ex : trop mangé) remplace le message habituel par le sien.
 export async function repondreAction(actionName) {
-  const { dragon, applique } = await appliquerActionEtSauvegarder(actionName);
+  const { dragon, applique, exces = [] } = await appliquerActionEtSauvegarder(actionName);
   return repondreDragon(dragon, {
     applique,
-    toasts: applique ? messagesPonctuels(dragon, actionName) : [],
+    exces: exces.length > 0,
+    toasts: !applique ? [] : exces.length ? exces : messagesPonctuels(dragon, actionName),
   });
 }
 

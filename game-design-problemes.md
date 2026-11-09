@@ -97,9 +97,10 @@ Même une enfant attentive met **six semaines** pour atteindre l'Adulte.
 - Un vrai tamagotchi sonne quand il a besoin de quelque chose. Ici, rien ne prévient l'enfant : tout repose sur sa mémoire.
 - **Piste :** des notifications de l'appli installée sur l'écran d'accueil (PWA, possible sur iOS et Android), par exemple « Coco a faim ! » ou « Coco s'est réveillé ».
 
-### 11. Trop nourrir ou trop laver ne coûte rien
+### 11. Trop nourrir ou trop laver ne coûte rien — ✅ corrigé (ventre trop plein)
 
 - Le bon réflexe reste de remplir à fond à chaque visite, sans décision à prendre. Les réactions du second écran rendent ça plus vivant, mais pas plus intéressant.
+- **Correction :** nourri sans petit creux (faim ≥ 85), il mange quand même mais a le ventre tout rond et sa fatigue avance de 45 min. Le bain coûtait déjà (refusé s'il est propre, il refroidit le feu). Simulation (`pnpm simuler-vie`) : remplir à chaque visite passe de meilleure stratégie (Adulte jour 19,2) à moins bonne que l'attente du petit creux (22,9 contre 20,5).
 
 ## Corrections du 18 octobre (problèmes 1 à 3)
 

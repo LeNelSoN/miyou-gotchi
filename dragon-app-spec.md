@@ -86,6 +86,7 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
       "variationParHeure": -3,
       "anticipation": { "seuil": 85, "humeur": "petitCreux" },
       "actions": { "nourrir": { "effet": 30 } },
+      "exces": { "action": "nourrir", "siAuDessus": 85, "fatigueHeures": 0.75, "message": "Oh là là, il a trop mangé… Ventre tout rond, il a sommeil !", "dureeSecondes": 4 },
       "affecteCroissance": true,
       "etapesActives": ["bebe", "jeune", "adulte"],
       "indicateur": { "type": "ponctuel", "declencheur": "bon", "dureeSecondes": 3, "message": "Il a assez mangé !" },
@@ -224,6 +225,7 @@ Le dragon s'adresse à la joueuse (une petite fille) sur le second écran de la 
 
 - Caractéristiques actives : `feu` (inchangé), `nourriture`, `hygiene`.
 - **Nourriture** (`hunger`) : bouton "Nourrir", indicateur ponctuel positif ("Il a assez mangé !", disparaît après `dureeSecondes`). Hors zone, le bébé est illustré affamé (bulle avec un morceau de viande), sans message.
+- **Ventre trop plein** (`nourriture.exces`, toutes étapes) : nourri sans avoir de petit creux (faim à 85 ou plus avant le repas), il mange quand même, mais il s'alourdit : « Oh là là, il a trop mangé… Ventre tout rond, il a sommeil ! » remplace le message habituel, il en parle sur le second écran (`soins.tropMange`), et sa fatigue avance de 45 min. Mesuré (`pnpm simuler-vie`, 200 vies) : sans cette règle, remplir la gamelle à chaque visite était la meilleure stratégie (Adulte au jour 19,2 contre 20,2 en attendant le petit creux) ; avec elle, la joueuse attentive arrive la première (jour 20,5 contre 22,9). Le bain, lui, coûte déjà : refusé tant qu'il est propre, il refroidit le feu.
 - **Hygiène** (`clean`) : bouton "Laver", indicateur persistant négatif ("Il est très sale !", reste affiché tant que hors zone).
 - Durée : `etapes.bebe.dureeHeures` = 168h (7 jours).
 
