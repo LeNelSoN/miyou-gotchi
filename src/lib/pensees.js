@@ -17,7 +17,13 @@ function phrasesPossibles(dragon, evenement) {
   if (evenement?.soin && etape.soins?.[evenement.soin]) return etape.soins[evenement.soin];
   if (dragon.dodo?.endormi) return etape.reves ?? [];
 
-  const actifs = new Set([...dragon.humeurs, dragon.indicateurs.feu, dragon.dodo?.fatigue && "fatigue"]);
+  const actifs = new Set([
+    ...dragon.humeurs,
+    dragon.indicateurs.feu,
+    dragon.dodo?.fatigue && "fatigue",
+    // Levé grognon après une nuit sans coucher : il le dit, après ses vrais besoins.
+    dragon.dodo?.grognon && "grognon",
+  ]);
   // Triste, il refuse de manger : il le dit plutôt que de réclamer un repas au bouton grisé.
   const repasBloque = dragon.actions?.some(({ nom, bloquee }) => nom === "nourrir" && bloquee);
   if (repasBloque && actifs.has("triste") && (actifs.has("faim") || actifs.has("petitCreux"))) actifs.add("tristeFaim");

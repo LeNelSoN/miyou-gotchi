@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "simuler-quete": "node --no-warnings --import ./scripts/quete/register.mjs scripts/quete/simuler.mjs",
-    "simuler-vie": "node --no-warnings --import ./scripts/quete/register.mjs scripts/vie/simuler.mjs"
+    "simuler-vie": "node --no-warnings --import ./scripts/quete/register.mjs scripts/vie/simuler.mjs",
+    "simuler-dodo": "node --no-warnings --import ./scripts/quete/register.mjs scripts/vie/simuler-dodo.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.4",

@@ -117,8 +117,28 @@ function heureReveilPossible(dragon) {
   return decaler(dragon.sleeping_since, config.dodo.dureeMinHeures);
 }
 
+// Heure locale de la joueuse (`quete.fuseauHoraire`), en heures décimales.
+function heureLocale(date) {
+  const parties = new Intl.DateTimeFormat("en-GB", {
+    timeZone: config.quete.fuseauHoraire,
+    hour: "numeric",
+    minute: "numeric",
+    hourCycle: "h23",
+  }).formatToParts(date);
+  const valeur = (type) => Number(parties.find((p) => p.type === type).value);
+  return valeur("hour") + valeur("minute") / 60;
+}
+
+// Réveil au bout de son temps de sommeil, mais jamais après `dodo.reveilAuPlusTard` (heure locale) :
+// un soir sans coucher donne un lever tardif le lendemain, pas un rythme qui dérive jour après jour.
+// Le plafond ne raccourcit pas le sommeil sous `dodo.dureeMinHeures`.
 function heureReveilNaturel(dragon) {
-  return decaler(dragon.sleeping_since, rythme(dragon).sommeilHeures);
+  const auBoutDuSommeil = decaler(dragon.sleeping_since, rythme(dragon).sommeilHeures);
+  if (config.dodo.reveilAuPlusTard == null) return auBoutDuSommeil;
+  const auPlusTot = decaler(dragon.sleeping_since, config.dodo.dureeMinHeures);
+  const attente = (config.dodo.reveilAuPlusTard - heureLocale(auPlusTot) + 24) % 24;
+  const plafond = decaler(auPlusTot, attente);
+  return plafond < auBoutDuSommeil ? plafond : auBoutDuSommeil;
 }
 
 function heureFatigue(dragon) {
@@ -133,6 +153,30 @@ export function estFatigue(dragon, maintenant) {
   return Boolean(rythme(dragon)) && !estEndormi(dragon) && maintenant >= heureFatigue(dragon);
 }
 
+// Endormi tout seul, sans que la joueuse le couche : son endormissement est exactement celui du
+// rythme (un coucher a forcément lieu avant, pendant qu'il est fatigué mais encore éveillé).
+function sEstEndormiSeul(dragon) {
+  return new Date(dragon.sleeping_since).getTime() === heureEndormissement(dragon).getTime();
+}
+
+// A veillé tard faute d'être couché : endormi seul, à partir de `dodo.grognon.apresHeure` (heure locale).
+// S'endormir seul tôt dans la soirée n'est pas une nuit ratée : elle n'a peut-être pas pu passer.
+function aVeilleTard(dragon) {
+  if (!sEstEndormiSeul(dragon)) return false;
+  const { apresHeure } = config.dodo.grognon;
+  const heure = heureLocale(new Date(dragon.sleeping_since));
+  return heure >= apresHeure || heure < config.dodo.reveilAuPlusTard;
+}
+
+// Réveil (naturel ou par la joueuse). Après avoir veillé tard, il se lève grognon pour la
+// journée (`dodo.grognon`) : il le dit, et sa fatigue arrive plus tôt.
+function seReveiller(dragon, instant) {
+  const grognon = aVeilleTard(dragon);
+  dragon.grognon = grognon;
+  dragon.sleeping_since = null;
+  dragon.awake_since = decaler(instant, grognon ? -config.dodo.grognon.fatigueHeures : 0).toISOString();
+}
+
 // Réveil naturel au bout de son temps de sommeil, endormissement seul quand il est
 // resté fatigué trop longtemps. Les horodatages sont ceux du rythme, pas `instant`,
 // pour ne pas dépendre de l'heure à laquelle le joueur revient.
@@ -140,13 +184,13 @@ function appliquerRythme(dragon, instant) {
   if (!rythme(dragon)) return;
   if (estEndormi(dragon)) {
     const reveil = heureReveilNaturel(dragon);
-    if (instant >= reveil) {
-      dragon.sleeping_since = null;
-      dragon.awake_since = reveil.toISOString();
-    }
+    if (instant >= reveil) seReveiller(dragon, reveil);
   } else {
     const endormissement = heureEndormissement(dragon);
-    if (instant >= endormissement) dragon.sleeping_since = endormissement.toISOString();
+    if (instant >= endormissement) {
+      dragon.sleeping_since = endormissement.toISOString();
+      dragon.grognon = false;
+    }
   }
 }
 
@@ -157,6 +201,7 @@ function etatDodo(dragon, maintenant) {
   return {
     endormi,
     fatigue: estFatigue(dragon, maintenant),
+    grognon: !endormi && Boolean(dragon.grognon),
     messageFatigue: config.dodo.fatigue.message,
     dureeMinHeures: config.dodo.dureeMinHeures,
     sommeilHeures: rythme(dragon).sommeilHeures,
@@ -167,7 +212,7 @@ function etatDodo(dragon, maintenant) {
 // Renvoie le dragon endormi, ou `null` s'il ne peut pas être couché (pas encore fatigué).
 export function coucher(dragon, maintenant = new Date()) {
   if (!estFatigue(dragon, maintenant)) return null;
-  return { ...dragon, sleeping_since: maintenant.toISOString() };
+  return { ...dragon, sleeping_since: maintenant.toISOString(), grognon: false };
 }
 
 // Message ponctuel affiché quand un réveil est refusé parce qu'il dort depuis trop peu de temps.
@@ -178,7 +223,9 @@ export function messagesRefusReveil(dragon) {
 // Renvoie le dragon réveillé, ou `null` s'il ne dort pas ou pas depuis assez longtemps.
 export function reveiller(dragon, maintenant = new Date()) {
   if (!estEndormi(dragon) || maintenant < heureReveilPossible(dragon)) return null;
-  return { ...dragon, sleeping_since: null, awake_since: maintenant.toISOString() };
+  const reveille = { ...dragon };
+  seReveiller(reveille, maintenant);
+  return reveille;
 }
 
 // Un dragon endormi ne peut rien faire : toutes ses actions sont bloquées.

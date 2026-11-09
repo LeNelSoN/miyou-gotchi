@@ -269,7 +269,9 @@ export default function Home() {
     if (resultat) setResultatQuete(resultat);
 
     // Trop mangé : il en parle, plutôt que de remercier pour le repas.
-    const evenementVu = data.exces ? { ...evenement, soin: "tropMange" } : evenement;
+    let evenementVu = data.exces ? { ...evenement, soin: "tropMange" } : evenement;
+    // Réveillé après une nuit sans coucher : pas de « Bien dormi ! ».
+    if (evenement?.moment === "reveil" && data.dodo?.grognon) evenementVu = { moment: "reveilGrognon" };
     const passage = afficher(data, data.applique === false ? undefined : evenementVu);
     // Un passage d'étape (la 30e leçon le fait devenir adulte) ou la fin d'une quête mérite sa fanfare.
     const finDeQuete = Boolean(data.quete?.fin) && !dragon.quete?.fin;

@@ -67,7 +67,7 @@ Même une enfant attentive met **six semaines** pour atteindre l'Adulte.
 
 **Piste :** des paliers comme les fissures de l'œuf (taille, cornes, ailes), ou une phrase « grandir » à mi-étape.
 
-### 6. La fin est vide
+### 6. La fin est vide — ✅ corrigé (quête de l'Adulte)
 
 - À l'Adulte, les jauges continuent de baisser (la joie et l'apprentissage aussi, maintenant) mais n'ont plus aucun enjeu.
 - La carte d'identité et la voix de l'archétype donnent une récompense, mais il n'y a toujours rien à faire.
@@ -122,7 +122,7 @@ Même simulation, enfant qui utilise le Dodo :
 | Heures de faim (Bébé + Jeune) | 435 h | **99 h** |
 
 Restent à suivre :
-- **Sans Dodo, le rythme dérive vers le soir** (cycle de 25 à 26h) : il dort à 41 % des visites. Le coucher est donc le rituel qui tient la journée ; le message « Il tombe de sommeil » et le GIF fatigué doivent suffire à le rappeler.
+- ✅ *Corrigé le 9 novembre (voir plus bas).* **Sans Dodo, le rythme dérive vers le soir** (cycle de 25 à 26h) : il dort à 41 % des visites. Le coucher est donc le rituel qui tient la journée ; le message « Il tombe de sommeil » et le GIF fatigué doivent suffire à le rappeler.
 - **Le feu bien tenu n'a plus de besoins** : son score d'archétype reste à 50 (neutre), et une joueuse attentive ne peut presque plus obtenir Ardent. Cela renforce le problème 7 (prévenir un besoin ne rapporte rien).
 
 ## Correction du 18 octobre (problème 7)
@@ -176,6 +176,34 @@ Avec 15 min par action, l'effet est presque nul (5 % des visites) ; avec 1 h par
 ## Correction du 19 octobre (problème 10)
 
 Une seule notification par jour, à 17 h heure du Maroc, sauf si elle s'est occupée du dragon dans les 3 h précédentes. Le message utilise le prénom du dragon et reste une invitation tendre (« Coco a gardé une place au chaud pour toi 🔥 »), adaptée à son état sans jamais culpabiliser. Pas de rappel à chaque besoin : le but est le rituel, pas l'accroche.
+
+## Correction du 8 novembre (problème 6)
+
+L'Adulte part sur une quête, un voyage initiatique en 10 chapitres à la façon d'un livre dont on est le héros (spec : `dragon-app-spec.md`, « Étape 4 bis »). Les tours du backlog sont remplacés par les actions de la quête :
+- **L'enfance compte** : les talents (sport, lecture, musique) et l'archétype ouvrent des choix ; un talent trop peu travaillé est grisé avec sa raison.
+- **Les jauges retrouvent un enjeu** : chaque étape coûte (feu −3, nourriture −5, hygiène −4, une demi-heure de fatigue), et il ne repart pas s'il dort, s'il est fatigué ou si un besoin est en manque.
+- **Une vraie fin** : titre, épilogue et fanfare au bout du voyage, carnet de voyage ouvert depuis la carte d'identité.
+- Rythme : au plus 6 étapes par jour, environ 72 étapes, soit 12 à 13 jours de jeu (`pnpm simuler-quete`).
+
+À côté, l'Adulte a ses soins animés (repas, feu de camp, bain), son jeu au ballon et sa marche au baluchon pendant la quête.
+
+## Correction du 9 novembre (rythme sans Dodo)
+
+Sans coucher, le cycle de 25 à 26 h décalait le dragon d'une à deux heures par jour : au bout de quelques jours, il dormait aux visites de l'après-midi. La conséquence d'un soir oublié arrivait trop tard pour qu'elle fasse le lien, et elle la privait du jeu.
+
+- **Lever au plus tard à 9 h** (`dodo.reveilAuPlusTard`), heure du Maroc : un soir sans coucher donne un lever tardif, le rythme se recale tout seul.
+- **Grognon** : endormi seul à partir de 22 h, il a veillé faute d'être couché. Il se lève grognon jusqu'au soir : il le dit (« Hmpf, j'ai mal dormi... personne ne m'a bordé hier. »), et sa fatigue arrive 1 h plus tôt. S'endormir seul plus tôt ne compte pas : sinon un dragon couché mais trop fatigué par ses jeux avant 20 h entrait dans un cercle (grognon → fatigué plus tôt → endormi seul → grognon), mesuré à 62 % de levers grognons même chez une joueuse qui le couche.
+
+Simulation (`pnpm simuler-dodo`, 200 vies, 60 jours) :
+
+| | Adulte | Visites où il dort | dont le soir | Levés 6 h-10 h | Levers grognons |
+|---|---|---|---|---|---|
+| Avant · couche | j20,6 | 12 % | 15 % | 49 % | — |
+| Avant · sans Dodo | j30,8 | 43 % | 42 % | 12 % | — |
+| Après · couche | j20,6 | 9 % | 11 % | 56 % | 4 % |
+| Après · sans Dodo | j20,0 | 23 % | 7 % | 93 % | 75 % |
+
+Sans Dodo, il dort encore à la visite d'avant l'école, et il est grognon trois matins sur quatre : la conséquence est immédiate, lisible, et ne dure qu'une journée. Il grandit à peine plus vite sans Dodo (moins fatigué aux leçons du soir), écart jugé négligeable.
 
 ## Corrigé depuis l'analyse du 3 octobre
 

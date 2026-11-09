@@ -11,6 +11,7 @@
     "chaud",
     "sale",
     "triste",
+    "grognon",
     "envieApprendre",
     "frais",
     "petitCreux",
@@ -210,6 +211,18 @@
           "Écailles ternes...",
           "Un peu de boue...",
           "Bulles ? Bientôt ?"
+        ],
+        "grognon": [
+          "Grrr... pas content...",
+          "Mal dormi... bouh...",
+          "Pas bordé... grrr...",
+          "Hmpf !",
+          "Bisou ce soir ? Dodo ?",
+          "Grognon, moi...",
+          "Nuit toute seule... bouh...",
+          "Câlin ? Grrr... bon d'accord.",
+          "Pas de dodo bordé... hmpf.",
+          "Ce soir, tu me couches ?"
         ]
       },
       "soins": {
@@ -314,6 +327,12 @@
           "Nouvelle journée !",
           "Mmh... encore dodo ? Non ! Jouer !",
           "Hop, debout !"
+        ],
+        "reveilGrognon": [
+          "Grrr... trop tôt...",
+          "Hmpf... mal dormi...",
+          "Bouh... pas bordé hier...",
+          "Grrr... matin..."
         ]
       }
     },
@@ -531,6 +550,18 @@
           "Tu m'apprends un mot nouveau ?",
           "Je commence à oublier ma dernière leçon...",
           "Raconte-moi quelque chose d'intéressant !"
+        ],
+        "grognon": [
+          "Hmpf, j'ai mal dormi... personne ne m'a bordé hier.",
+          "Je suis grognon aujourd'hui, grrr...",
+          "Je me suis endormi tout seul dans un coin... j'ai le dos tout tordu.",
+          "Ce soir, tu me couches ? Je dors mieux quand tu es là.",
+          "Grrr... Je bougonne, mais je t'aime bien quand même.",
+          "J'ai compté les étoiles toute la nuit... c'était long.",
+          "Je suis de mauvais poil, enfin, de mauvaises écailles !",
+          "Hier soir, j'attendais mon histoire... et je me suis endormi sans.",
+          "Pas de bonne nuit hier... alors je boude un peu.",
+          "Si tu me couches ce soir, demain je serai tout sourire !"
         ]
       },
       "soins": {
@@ -669,6 +700,12 @@
           "Tu m'apprendras des trucs ?",
           "Merci de m'avoir aidé à grandir !",
           "Coucou ! C'est moi, en plus grand !"
+        ],
+        "reveilGrognon": [
+          "Grrr... encore cinq minutes...",
+          "Hmpf... j'ai mal dormi, moi.",
+          "Bonjour... enfin, bonjour grognon.",
+          "Je me suis endormi tout seul... j'ai froid aux ailes."
         ]
       },
       "lecons": {
@@ -971,6 +1008,18 @@
           "Mon esprit a soif de nouveautés.",
           "On réfléchit ensemble à une question ?",
           "J'ai une question qui me trotte dans la tête."
+        ],
+        "grognon": [
+          "Je me suis endormi sans bonne nuit... la journée commence de travers.",
+          "Pardon si je ronchonne : j'ai mal dormi.",
+          "Sans toi pour me coucher, j'ai veillé bien trop tard.",
+          "Mes ailes sont froissées comme un vieux parchemin, ce matin.",
+          "Je suis grognon, mais ça passera. Surtout si tu me souhaites bonne nuit ce soir.",
+          "J'ai regardé la lune jusqu'à ce que mes yeux se ferment tout seuls.",
+          "Un dragon bordé est un dragon de bonne humeur. Je dis ça, je dis rien.",
+          "Ce matin, même mes flammes ont mal dormi.",
+          "Grrr... Je ronchonne un peu, ne fais pas attention.",
+          "Ce soir, tu me couches ? Je serai plus aimable demain."
         ]
       },
       "soins": {
@@ -1117,6 +1166,12 @@
           "Tu as fait de moi un dragon heureux.",
           "Maintenant, c'est moi qui veillerai sur toi.",
           "On a réussi, toi et moi !"
+        ],
+        "reveilGrognon": [
+          "Grrr... déjà ? J'ai mal dormi...",
+          "Hmpf. Bonjour quand même.",
+          "Je me suis endormi tout seul hier... j'ai le cou tout raide.",
+          "Encore un peu de sommeil... grrr..."
         ]
       },
       "archetypes": {

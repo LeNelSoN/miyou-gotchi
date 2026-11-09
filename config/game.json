@@ -256,6 +256,11 @@
       }
     },
     "endormissementHeures": 3,
+    "reveilAuPlusTard": 9,
+    "grognon": {
+      "apresHeure": 22,
+      "fatigueHeures": 1
+    },
     "dureeMinHeures": 4,
     "multiplicateurPerte": 0.5,
     "fatigueParAction": {

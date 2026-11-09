@@ -41,6 +41,7 @@ create table dragon (
   training_progress   jsonb not null default '{}',
   sleeping_since      timestamptz,                    -- heure du coucher (mode Dodo), null = éveillé
   awake_since         timestamptz not null default now(), -- heure du dernier réveil (ou de l'éclosion), base de la fatigue
+  grognon             boolean not null default false,  -- levé grognon : il a veillé tard faute d'être couché (section 4, mode Dodo)
   last_seen           timestamptz not null default now(),
   last_trick_refresh  timestamptz not null default now(),
   created_at          timestamptz not null default now()
@@ -152,6 +153,8 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
       "adulte": { "eveilHeures": 13, "sommeilHeures": 10 }
     },
     "endormissementHeures": 3,
+    "reveilAuPlusTard": 9,
+    "grognon": { "apresHeure": 22, "fatigueHeures": 1 },
     "dureeMinHeures": 4,
     "multiplicateurPerte": 0.5,
     "fatigueParAction": { "jouer": 0.5, "eduquer": 0.5 },
@@ -191,10 +194,12 @@ Toutes les valeurs numériques du jeu vivent dans une **config centralisée**, j
 
 ### Mode Dodo (Bébé, Jeune, Adulte)
 
-Le dragon suit un rythme veille/sommeil propre à chaque étape (`dodo.etapes`) : un bébé dort plus qu'un adulte. Les durées sont choisies pour que **le coucher du soir (vers 20h) cale la journée** : le dragon est fatigué avant (Bébé 18h, Jeune et Adulte 19h s'il s'est levé à son heure) et ne s'endort seul qu'après, puis se réveille à heure stable (Bébé 8h, Jeune 7h, Adulte 6h). Sans coucher par la joueuse, le cycle dure 25 à 26h et se décale d'une à deux heures par jour.
+Le dragon suit un rythme veille/sommeil propre à chaque étape (`dodo.etapes`) : un bébé dort plus qu'un adulte. Les durées sont choisies pour que **le coucher du soir (vers 20h) cale la journée** : le dragon est fatigué avant (Bébé 18h, Jeune et Adulte 19h s'il s'est levé à son heure) et ne s'endort seul qu'après, puis se réveille à heure stable (Bébé 8h, Jeune 7h, Adulte 6h). Sans coucher par la joueuse, le cycle durerait 25 à 26h et se décalerait d'une à deux heures par jour : le lever au plus tard (`dodo.reveilAuPlusTard`) l'en empêche.
 
 - Après `eveilHeures` passées éveillé (comptées depuis son dernier réveil, ou l'éclosion), il est **fatigué** : le message `dodo.fatigue` s'affiche (GIF « fatigué » pour le Bébé) et le bouton "Dodo" devient utilisable. Avant, impossible de le coucher.
 - Si le joueur ne le couche pas, il s'endort seul après `endormissementHeures` (3h) de fatigue — sans avoir été préparé.
+- Il se réveille seul après `sommeilHeures`, mais **jamais après 9h** heure de la joueuse (`dodo.reveilAuPlusTard`, fuseau `quete.fuseauHoraire`), sans dormir moins de `dureeMinHeures`. Un soir sans coucher donne un lever tardif le lendemain (il dort encore à la visite d'avant l'école), pas un rythme qui dérive jour après jour.
+- **Grognon** : s'il s'est endormi seul à partir de 22h (`dodo.grognon.apresHeure`), il a veillé faute d'être couché. Au réveil, il est grognon jusqu'à son prochain sommeil (colonne `grognon`) : il le dit dans ses pensées (état `grognon`, après ses vrais besoins ; moment `reveilGrognon` s'il est réveillé par la joueuse) et sa fatigue arrive 1h plus tôt (`dodo.grognon.fatigueHeures`). S'endormir seul plus tôt n'est pas une nuit ratée : elle n'a peut-être pas pu passer.
 - Il se réveille seul après `sommeilHeures`. Le joueur peut le réveiller plus tôt (bouton "Réveil"), mais pas avant `dodo.dureeMinHeures` (4h) de sommeil — un réveil demandé plus tôt est refusé (`dodo.refusReveil`).
 
 - **Jouer et apprendre le fatiguent** (`dodo.fatigueParAction`, en heures) : chaque partie ou leçon avance son heure de fatigue d'autant, sans dépasser l'instant présent (une action le rend fatigué, jamais endormi d'un coup). Beaucoup jouer le soir le fait donc s'endormir plus tôt, avant d'être préparé.
