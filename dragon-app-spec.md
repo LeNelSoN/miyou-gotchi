@@ -404,7 +404,7 @@ Avec l'App Router, des **Server Actions** directement dans les composants peuven
 
 - Œuf : un état de base + une variante visuelle par indicateur de température (🥶 trop froid / 🔥 parfait / 🥵 trop chaud) et par stade de fissures (jauge de progression de l'étape, section 5)
 - Bébé, Jeune, Adulte : repos, content, faim, fatigue, triste, fâché (bleu si froid, rouge si trop chaud), amour (après un bain, un jeu ou une leçon), surprise (quand un soin comble un besoin en manque ou le froid)
-- Soins et tours : Bébé, Jeune et Adulte qui mangent, se réchauffent et se lavent, et Jeune qui fait du sport, lit et joue de la musique (leçons), livrés ; cracher du feu (flamme de plus en plus grosse) — à faire
+- Soins et tours : Bébé, Jeune et Adulte qui mangent, se réchauffent et se lavent, Jeune qui fait du sport, lit et joue de la musique (leçons), et Adulte qui joue au ballon (`adulte-joue`, à la place de l'amour après une partie), livrés ; cracher du feu (flamme de plus en plus grosse) — à faire
 - Quête : l'Adulte qui marche avec son baluchon (`adulte-quete`), animation générique en boucle, jouée tant que la page d'aventure est ouverte et qu'il peut repartir — livrée
 
 ## 8. Roadmap

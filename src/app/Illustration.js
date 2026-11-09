@@ -65,8 +65,11 @@ export const ILLUSTRATIONS = {
   // Assis dans la mousse.
   "adulte-lave": { largeur: 96, centre: 51.5, sol: 12, echelle: 1.4, scene: GRANDE_SCENE, dureeMs: 6400 },
   // Marche en boucle avec son baluchon tant que la page d'aventure est ouverte. Planche PixelLab
-  // de 128 pixels, à la taille de l'Adulte au repos ; l'image 0 (deux bâtons) est écartée.
-  "adulte-quete": { largeur: 128, centre: 64, sol: 14, scene: GRANDE_SCENE },
+  // de 128 pixels, à la taille de l'Adulte au repos ; le bâton reste dans la même patte, l'image 3 est recalée.
+  "adulte-quete": { largeur: 128, centre: 62, sol: 15, scene: GRANDE_SCENE },
+  // Joué une fois après une partie de jeu : il lance son ballon, le fait rebondir sur son museau et le
+  // rattrape, trois fois, puis le serre en riant. Planche de 128 pixels, images 3 et 4 recalées au sol.
+  "adulte-joue": { largeur: 128, centre: 62, sol: 6, scene: GRANDE_SCENE, dureeMs: 6400 },
   "adulte-amour": { largeur: 91, centre: 36, sol: 3, scene: GRANDE_SCENE, dureeMs: 5400 },
   "adulte-surprise": { largeur: 82, centre: 38, sol: 1, scene: GRANDE_SCENE, dureeMs: 3000 },
 };

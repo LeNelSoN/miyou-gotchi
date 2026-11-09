@@ -58,8 +58,9 @@ function messageSommeil(dodo) {
 }
 
 // Animation jouée une fois après un soin réussi, pour les étapes qui l'ont. Une leçon a la sienne
-// selon son type (`<étape>-sport`, `<étape>-lecture`, `<étape>-musique`).
-const ANIMATIONS_SOINS = { nourrir: "mange", ajouterBois: "rechauffe", laver: "lave" };
+// selon son type (`<étape>-sport`, `<étape>-lecture`, `<étape>-musique`). Une étape sans `<étape>-joue`
+// garde la réaction « amour » après une partie de jeu.
+const ANIMATIONS_SOINS = { nourrir: "mange", ajouterBois: "rechauffe", laver: "lave", jouer: "joue" };
 // Moments de complicité : de l'amour après un bain (quand l'étape n'a pas d'animation de bain),
 // une partie de jeu ou une leçon.
 const SOINS_AMOUR = ["laver", "jouer", "eduquer"];
