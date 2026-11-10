@@ -1,7 +1,7 @@
 import { readFile, writeFile } from "fs/promises";
 import path from "path";
 import config from "../../config/game.json";
-import { nomEtape, scoresBesoins, seuilEtape } from "./dragonEngine";
+import { nomEtape, reveiller, scoresBesoins, seuilEtape } from "./dragonEngine";
 import { recupererDragonSynchronise, sauvegarderDragon } from "./dragonRepository";
 import { QUETES } from "./quete";
 
@@ -98,10 +98,11 @@ export async function ajusterCaracteristique(nom, delta) {
 }
 
 // Réveille le dragon tout de suite, sans attendre `dodo.dureeMinHeures` (refusé au vrai réveil).
+// Même réveil que dans le jeu : grognon compris.
 export async function reveillerMaintenant() {
   const dragon = await recupererDragonSynchronise();
-  if (!dragon.sleeping_since) return dragon;
-  const resultat = { ...dragon, sleeping_since: null, awake_since: new Date().toISOString() };
+  const resultat = reveiller(dragon, new Date(), { sansAttendre: true });
+  if (!resultat) return dragon;
   await sauvegarderDragon(resultat);
   return resultat;
 }

@@ -2,17 +2,11 @@
 // Usage : node --import ./scripts/quete/register.mjs scripts/quete/simuler.mjs [parties] [graine]
 import config from "../../config/game.json";
 import voyage from "../../config/quetes/voyage-initiatique.json";
+import { hasardReproductible, moyenne } from "../commun.mjs";
 import { jouerChoix, quetePourClient, voieDuTitre } from "../../src/lib/quete.js";
 
 const PARTIES = Number(process.argv[2] ?? 10000);
-let graine = Number(process.argv[3] ?? 42);
-// Hasard reproductible (mulberry32) : deux lancers donnent les mêmes chiffres.
-function hasard() {
-  graine = (graine + 0x6d2b79f5) | 0;
-  let t = Math.imul(graine ^ (graine >>> 15), 1 | graine);
-  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-}
+const hasard = hasardReproductible(Number(process.argv[3] ?? 42));
 const auHasard = (liste) => liste[Math.floor(hasard() * liste.length)];
 
 // Dosages leçons du Jeune / voies de la quête comparés pour le titre de fin.
@@ -135,7 +129,6 @@ for (let partie = 0; partie < PARTIES; partie++) {
 }
 
 // ───────── Rapport
-const moyenne = (l) => l.reduce((a, b) => a + b, 0) / l.length;
 const centile = (l, p) => [...l].sort((a, b) => a - b)[Math.floor((l.length - 1) * p)];
 const pct = (n) => `${((100 * n) / PARTIES).toFixed(1)} %`;
 

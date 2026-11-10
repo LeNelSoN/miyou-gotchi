@@ -3,41 +3,25 @@
 // Compare sans et avec le lever au plus tard (`dodo.reveilAuPlusTard`).
 // Usage : pnpm simuler-dodo [vies par cas]
 import config from "../../config/game.json";
+import { ECLOSION, HEURE, bebe, hasardReproductible, instantVisite, moyenne, visites } from "../commun.mjs";
 import { appliquerAction, appliquerLecon, avancerDragon, coucher, nomEtape } from "../../src/lib/dragonEngine.js";
 
 const VIES = Number(process.argv[2] ?? 200);
-const HEURE = 3600e3;
 const JOURS_MESURES = 60; // l'Adulte est mesuré aussi, jusqu'à ce jour
 
-let graine = 7;
-function hasard() {
-  graine = (graine + 0x6d2b79f5) | 0;
-  let t = Math.imul(graine ^ (graine >>> 15), 1 | graine);
-  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-}
+let hasard;
 
-// Heures de visite, heure du Maroc (UTC+1) : école en semaine, plus de temps le mercredi et le week-end.
-function visites(jour) {
-  const libre = [0, 3, 6].includes(jour % 7);
-  return libre ? [8.5, 11, 14.5, 17, 20] : [7.5, 17, 20];
-}
 
 // Heure locale (Maroc, UTC+1) d'un instant, en heures décimales.
 const heureLocale = (t) => (((t.getTime() / HEURE + 1) % 24) + 24) % 24;
 
 function vie(utiliseDodo) {
-  const debut = new Date("2026-11-09T07:00:00Z"); // 8 h au Maroc : il vient d'éclore
-  let d = {
-    stage: 1, stage_progress: 0, named: true, name: "Coco", personality: null, lecons: {}, besoins: {},
-    fire: 60, hunger: 100, clean: 100, joy: 100, learning: 50,
-    sleeping_since: null, awake_since: debut.toISOString(), last_seen: debut.toISOString(), quete: {},
-  };
+  let d = bebe();
   const stats = { adulte: null, visites: 0, endormi: 0, endormiSoir: 0, visitesSoir: 0, levers: [], grognons: 0 };
   let dormait = false;
   for (let jour = 0; jour < JOURS_MESURES; jour++) {
     for (const heure of visites(jour)) {
-      const t = new Date(debut.getTime() + (jour * 24 + heure - 8 + (hasard() - 0.5) * 1.5) * HEURE);
+      const t = instantVisite(jour, heure, hasard);
       d = avancerDragon(d, t);
       // Heure de lever : le réveil survenu depuis la dernière visite.
       if (dormait && !d.sleeping_since) {
@@ -76,13 +60,12 @@ function vie(utiliseDodo) {
           dormait = true;
         }
       }
-      if (d.stage >= 3 && stats.adulte == null) stats.adulte = (t - debut) / (24 * HEURE);
+      if (d.stage >= 3 && stats.adulte == null) stats.adulte = (t - ECLOSION) / (24 * HEURE);
     }
   }
   return stats;
 }
 
-const moyenne = (l) => l.reduce((a, b) => a + b, 0) / l.length;
 console.log(`${VIES} vies par cas, ${JOURS_MESURES} jours · visites vers 7 h 30, 17 h et 20 h (5 les jours libres), à ± 45 min\n`);
 console.log("cas                                             Adulte  visites où il dort  dont le soir (17h, 20h)  levés 6h-10h  levers grognons");
 const { reveilAuPlusTard: PLAFOND, grognon: GROGNON } = config.dodo;
@@ -97,7 +80,7 @@ const CAS = [
 for (const [plafond, fatigueGrognon, utiliseDodo] of CAS) {
   config.dodo.reveilAuPlusTard = plafond;
   config.dodo.grognon = { ...GROGNON, fatigueHeures: fatigueGrognon };
-  graine = 7;
+  hasard = hasardReproductible(7);
   const vies = Array.from({ length: VIES }, () => vie(utiliseDodo));
   const pct = (a, b) => `${((100 * moyenne(vies.map((v) => v[a] / v[b])))).toFixed(0)} %`;
   const levers = vies.flatMap((v) => v.levers);

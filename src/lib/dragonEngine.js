@@ -33,7 +33,7 @@ function besoinApproche(carac, valeur) {
   return carac.anticipation != null && estDansBonneZone(carac, valeur) && valeur < carac.anticipation.seuil;
 }
 
-export function etatQualitatif(carac, valeur) {
+function etatQualitatif(carac, valeur) {
   const [froid, parfait, chaud] = carac.indicateur.etats;
   if (carac.seuilMin != null && valeur < carac.seuilMin) return froid;
   if (carac.seuilMax != null && valeur > carac.seuilMax) return chaud;
@@ -169,10 +169,12 @@ function aVeilleTard(dragon) {
 }
 
 // Réveil (naturel ou par la joueuse). Après avoir veillé tard, il se lève grognon pour la
-// journée (`dodo.grognon`) : il le dit, et sa fatigue arrive plus tôt.
+// journée (`dodo.grognon`) : il le dit, et sa fatigue arrive plus tôt. Il boude (tête fâchée)
+// jusqu'au premier soin (`grognon_apaise`).
 function seReveiller(dragon, instant) {
   const grognon = aVeilleTard(dragon);
   dragon.grognon = grognon;
+  dragon.grognon_apaise = false;
   dragon.sleeping_since = null;
   dragon.awake_since = decaler(instant, grognon ? -config.dodo.grognon.fatigueHeures : 0).toISOString();
 }
@@ -202,6 +204,7 @@ function etatDodo(dragon, maintenant) {
     endormi,
     fatigue: estFatigue(dragon, maintenant),
     grognon: !endormi && Boolean(dragon.grognon),
+    boude: !endormi && Boolean(dragon.grognon) && !dragon.grognon_apaise,
     messageFatigue: config.dodo.fatigue.message,
     dureeMinHeures: config.dodo.dureeMinHeures,
     sommeilHeures: rythme(dragon).sommeilHeures,
@@ -221,8 +224,10 @@ export function messagesRefusReveil(dragon) {
 }
 
 // Renvoie le dragon réveillé, ou `null` s'il ne dort pas ou pas depuis assez longtemps.
-export function reveiller(dragon, maintenant = new Date()) {
-  if (!estEndormi(dragon) || maintenant < heureReveilPossible(dragon)) return null;
+// `sansAttendre` (mode debug) : réveil permis avant `dodo.dureeMinHeures`.
+export function reveiller(dragon, maintenant = new Date(), { sansAttendre = false } = {}) {
+  if (!estEndormi(dragon)) return null;
+  if (!sansAttendre && maintenant < heureReveilPossible(dragon)) return null;
   const reveille = { ...dragon };
   seReveiller(reveille, maintenant);
   return reveille;
@@ -428,7 +433,7 @@ export function scoresBesoins(dragon) {
 // Un meilleur score → archétype de base ; deux à moins de `margeEgalite` → hybride ;
 // trois ou plus → deux tirés au hasard parmi eux. Les clés d'hybrides suivent
 // l'ordre de `ordrePriorite`, jointes par "+".
-export function determinerArchetype(scores, aleatoire = Math.random) {
+function determinerArchetype(scores, aleatoire = Math.random) {
   const { margeEgalite, ordrePriorite, archetypes } = config.personnalite;
   const maximum = Math.max(...ordrePriorite.map((trait) => scores[trait]));
   const retenus = ordrePriorite.filter((trait) => maximum - scores[trait] <= margeEgalite);
@@ -523,6 +528,8 @@ export function appliquerAction(dragon, actionName, maintenant = new Date()) {
   // Un soin peut combler un besoin (ou en créer un : trop de bois, une leçon qui attriste).
   suivreBesoins(resultat, false);
   fatiguer(resultat, actionName, maintenant);
+  // Le premier soin de la journée l'apaise : il ne boude plus, même s'il ronchonne encore.
+  if (resultat.grognon) resultat.grognon_apaise = true;
   const exces = excesDeSoin(dragon, resultat, actives, actionName, maintenant);
 
   return { dragon: resultat, applique: true, exces };

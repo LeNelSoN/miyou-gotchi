@@ -128,6 +128,8 @@ function choisirIllustration(dragon, toast, eclosion, animationSoin, enAventure)
   if (dragon.dodo.fatigue) return { nom: `${dragon.etape}-fatigue` };
   if (dragon.humeurs.includes("triste")) return { nom: `${dragon.etape}-triste` };
   if (feu !== "parfait") return { nom: `${dragon.etape}-fache`, variante: feu };
+  // Levé grognon, il boude jusqu'au premier soin : tête fâchée, de sa couleur normale.
+  if (dragon.dodo?.boude) return { nom: `${dragon.etape}-fache` };
   return { nom: dragon.etape };
 }
 

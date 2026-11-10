@@ -123,7 +123,7 @@ Même simulation, enfant qui utilise le Dodo :
 
 Restent à suivre :
 - ✅ *Corrigé le 9 novembre (voir plus bas).* **Sans Dodo, le rythme dérive vers le soir** (cycle de 25 à 26h) : il dort à 41 % des visites. Le coucher est donc le rituel qui tient la journée ; le message « Il tombe de sommeil » et le GIF fatigué doivent suffire à le rappeler.
-- **Le feu bien tenu n'a plus de besoins** : son score d'archétype reste à 50 (neutre), et une joueuse attentive ne peut presque plus obtenir Ardent. Cela renforce le problème 7 (prévenir un besoin ne rapporte rien).
+- ✅ *Corrigé avec le problème 7 : prévenir le besoin (« Il commence à faire frais... ») compte, Ardent s'obtient en anticipant le feu.* **Le feu bien tenu n'a plus de besoins** : son score d'archétype reste à 50 (neutre), et une joueuse attentive ne peut presque plus obtenir Ardent. Cela renforce le problème 7 (prévenir un besoin ne rapporte rien).
 
 ## Correction du 18 octobre (problème 7)
 
@@ -192,7 +192,7 @@ L'Adulte part sur une quête, un voyage initiatique en 10 chapitres à la façon
 Sans coucher, le cycle de 25 à 26 h décalait le dragon d'une à deux heures par jour : au bout de quelques jours, il dormait aux visites de l'après-midi. La conséquence d'un soir oublié arrivait trop tard pour qu'elle fasse le lien, et elle la privait du jeu.
 
 - **Lever au plus tard à 9 h** (`dodo.reveilAuPlusTard`), heure du Maroc : un soir sans coucher donne un lever tardif, le rythme se recale tout seul.
-- **Grognon** : endormi seul à partir de 22 h, il a veillé faute d'être couché. Il se lève grognon jusqu'au soir : il le dit (« Hmpf, j'ai mal dormi... personne ne m'a bordé hier. »), et sa fatigue arrive 1 h plus tôt. S'endormir seul plus tôt ne compte pas : sinon un dragon couché mais trop fatigué par ses jeux avant 20 h entrait dans un cercle (grognon → fatigué plus tôt → endormi seul → grognon), mesuré à 62 % de levers grognons même chez une joueuse qui le couche.
+- **Grognon** : endormi seul à partir de 22 h, il a veillé faute d'être couché. Il se lève grognon jusqu'au soir : il le dit (« Hmpf, j'ai mal dormi... personne ne m'a bordé hier. »), et sa fatigue arrive 1 h plus tôt. À l'écran, il boude (tête fâchée) jusqu'au premier soin : le geste est récompensé tout de suite. S'endormir seul plus tôt ne compte pas : sinon un dragon couché mais trop fatigué par ses jeux avant 20 h entrait dans un cercle (grognon → fatigué plus tôt → endormi seul → grognon), mesuré à 62 % de levers grognons même chez une joueuse qui le couche.
 
 Simulation (`pnpm simuler-dodo`, 200 vies, 60 jours) :
 

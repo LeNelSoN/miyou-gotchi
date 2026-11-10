@@ -3,25 +3,14 @@
 // « ventre trop plein » (`caracteristiques.nourriture.exces`).
 // Usage : pnpm simuler-vie [vies par cas]
 import config from "../../config/game.json";
+import { ECLOSION, HEURE, bebe, hasardReproductible, instantVisite, moyenne, visites } from "../commun.mjs";
 import { appliquerAction, appliquerLecon, avancerDragon, coucher, estFatigue, nomEtape } from "../../src/lib/dragonEngine.js";
 
 const VIES = Number(process.argv[2] ?? 200);
-const HEURE = 3600e3;
 const EXCES = config.caracteristiques.nourriture.exces;
 
-let graine = 7;
-function hasard() {
-  graine = (graine + 0x6d2b79f5) | 0;
-  let t = Math.imul(graine ^ (graine >>> 15), 1 | graine);
-  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-}
+const hasard = hasardReproductible(7);
 
-// Heures de visite, heure du Maroc (UTC+1) : école en semaine, plus de temps le mercredi et le week-end.
-function visites(jour) {
-  const libre = [0, 3, 6].includes(jour % 7);
-  return libre ? [8.5, 11, 14.5, 17, 20] : [7.5, 17, 20];
-}
 
 // Façons de nourrir : à chaque visite jusqu'à remplir, ou seulement quand il a un petit creux.
 const NOURRIR = {
@@ -30,17 +19,12 @@ const NOURRIR = {
 };
 
 function vie(facon) {
-  const debut = new Date("2026-11-09T07:00:00Z"); // 8 h au Maroc : il vient d'éclore
-  let d = {
-    stage: 1, stage_progress: 0, named: true, name: "Coco", personality: null, lecons: {}, besoins: {},
-    fire: 60, hunger: 100, clean: 100, joy: 100, learning: 50,
-    sleeping_since: null, awake_since: debut.toISOString(), last_seen: debut.toISOString(), quete: {},
-  };
+  let d = bebe();
   const stats = { jeune: null, adulte: null, exces: 0, repas: 0, heuresFatigue: 0, lecons: 0 };
   for (let jour = 0; jour < 80 && d.stage < 3; jour++) {
     for (const heure of visites(jour)) {
       // Elle ne passe jamais tout à fait à la même heure (± 45 min).
-      const t = new Date(debut.getTime() + (jour * 24 + heure - 8 + (hasard() - 0.5) * 1.5) * HEURE);
+      const t = instantVisite(jour, heure, hasard);
       d = avancerDragon(d, t);
       if (d.sleeping_since) continue;
       if (estFatigue(d, t)) stats.heuresFatigue++;
@@ -68,7 +52,7 @@ function vie(facon) {
         }
       }
       if (heure >= 20) d = coucher(d, t) ?? d;
-      const jours = (t - debut) / (24 * HEURE);
+      const jours = (t - ECLOSION) / (24 * HEURE);
       if (d.stage >= 2 && stats.jeune == null) stats.jeune = jours;
       if (d.stage >= 3 && stats.adulte == null) stats.adulte = jours;
     }
@@ -76,7 +60,6 @@ function vie(facon) {
   return stats;
 }
 
-const moyenne = (l) => l.reduce((a, b) => a + b, 0) / l.length;
 console.log(`${VIES} vies par cas · visites vers 7 h 30, 17 h et 20 h (5 visites les jours libres), à ± 45 min\n`);
 console.log("cas                          Jeune   Adulte  repas  trop pleins  visites fatigué  leçons");
 for (const avecExces of [false, true]) {
