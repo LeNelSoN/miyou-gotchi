@@ -41,11 +41,11 @@ Ne jamais régénérer les clés une fois des appareils abonnés : leurs abonnem
 1. Ouvrir le jeu dans Safari et se connecter.
 2. Bouton Partager, puis « Sur l'écran d'accueil ».
 3. Ouvrir l'appli depuis sa nouvelle icône, se reconnecter si besoin.
-4. Toucher « 🔔 Recevoir un petit mot chaque jour » sous la coque, puis « Autoriser ».
+4. Toucher « 🔔 Activer les rappels » sous la coque, puis « Autoriser ».
 
 **Android**
 1. Ouvrir le jeu dans Chrome et se connecter (l'installer sur l'écran d'accueil est conseillé, pas obligatoire).
-2. Toucher « 🔔 Recevoir un petit mot chaque jour », puis « Autoriser ».
+2. Toucher « 🔔 Activer les rappels », puis « Autoriser ».
 
 Tu peux aussi l'activer sur ton propre téléphone : chaque appareil abonné reçoit le même petit mot.
 
@@ -61,7 +61,7 @@ Réponse attendue : `{"envoye":1}` (un par appareil abonné). Sans `forcer=1` : 
 
 ## Dépannage
 
-- **`aucun abonnement`** : l'abonnement n'a pas été enregistré. Vérifier que la table existe et que le bouton affiche « Petit mot du jour activé ».
+- **`aucun abonnement`** : l'abonnement n'a pas été enregistré. Vérifier que la table existe et que le bouton affiche « Rappels activés ».
 - **Le bouton n'apparaît pas** : le navigateur ne gère pas les notifications (sur iPhone, l'appli doit être ouverte depuis l'écran d'accueil).
 - **« Les notifications sont bloquées »** : la permission a été refusée. La réactiver dans les réglages de l'appareil (iPhone : Réglages → Notifications → Miyou-Gotchi).
 - **Rien n'arrive à 17 h** : en offre gratuite, Vercel déclenche le cron n'importe quand entre 16 h et 17 h UTC, donc entre 17 h et 18 h au Maroc. Les exécutions sont visibles dans Vercel → Settings → Cron Jobs.

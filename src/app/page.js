@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import DebugPanel from "./DebugPanel";
 import Illustration, { EFFETS_TALENT, ILLUSTRATIONS, illustrationUrl } from "./Illustration";
@@ -9,7 +9,7 @@ import CarteIdentite from "./CarteIdentite";
 import Aventure from "./Aventure";
 import PetitMot from "./PetitMot";
 import { INTERVALLE_PENSEES_MS, penser } from "@/lib/pensees";
-import { abonnerSon, basculerSon, jouerSon, sonActive } from "@/lib/sons";
+import { jouerSon } from "@/lib/sons";
 import { choisirTalent } from "@/lib/talents";
 
 // Toutes les 12 s, le dragon montre un peu de son talent (fumée, idée, notes), s'il en a un.
@@ -170,8 +170,6 @@ export default function Home() {
   const [aventureOuverte, setAventureOuverte] = useState(false);
   // Ce qu'il vient de faire dans sa quête, affiché jusqu'à « Continuer ».
   const [resultatQuete, setResultatQuete] = useState(null);
-  // Côté serveur, le son est supposé actif ; le réglage de l'appareil est lu à l'hydratation.
-  const son = useSyncExternalStore(abonnerSon, sonActive, () => true);
 
   useEffect(() => {
     fetch("/api/dragon").then(async (res) => {
@@ -318,23 +316,9 @@ export default function Home() {
 
       <main className="relative w-full max-w-sm px-3 py-3 sm:max-w-md sm:px-5 sm:py-10">
         <div className="coque flex flex-col items-center gap-5 px-[9%] pb-[9%] pt-[8%] sm:gap-5 sm:px-[18%] sm:pb-[20%] sm:pt-[20%]">
-          {/* Le bouton du son est posé à droite du titre, sans décaler le boîtier. */}
-          <div className="relative flex w-full justify-center">
-            <p className="font-pixel text-xs tracking-[0.3em] sm:text-sm text-amber-200 drop-shadow-[0_2px_0_rgba(0,0,0,0.6)]">
-              MIYOU-GOTCHI
-            </p>
-            <button
-              onClick={() => {
-                basculerSon();
-                jouerSon("bip");
-              }}
-              aria-label={son ? "Couper le son" : "Remettre le son"}
-              aria-pressed={!son}
-              className="absolute -right-2 top-1/2 -translate-y-1/2 p-2 text-sm leading-none opacity-80 transition hover:opacity-100"
-            >
-              {son ? "🔊" : "🔇"}
-            </button>
-          </div>
+          <p className="font-pixel text-xs tracking-[0.3em] sm:text-sm text-amber-200 drop-shadow-[0_2px_0_rgba(0,0,0,0.6)]">
+            MIYOU-GOTCHI
+          </p>
 
           {/* Pendant le Dodo, l'écran s'assombrit et le dragon n'est plus visible. */}
           <div

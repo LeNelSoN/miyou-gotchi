@@ -1,8 +1,6 @@
 // Petits sons façon tamagotchi, générés par le navigateur (Web Audio) : aucun fichier à charger.
 // Chaque son est une suite de notes `[fréquence en Hz, durée en ms]` ; 0 = silence.
 
-const CLE_SON = "miyou-gotchi:son";
-const EVENEMENT_SON = "miyou-gotchi:son";
 const VOLUME = 0.06;
 
 // Notes utiles (Hz).
@@ -32,29 +30,6 @@ const SONS = {
 
 let contexte = null;
 
-export function sonActive() {
-  try {
-    return localStorage.getItem(CLE_SON) !== "coupe";
-  } catch {
-    return true;
-  }
-}
-
-export function basculerSon() {
-  try {
-    localStorage.setItem(CLE_SON, sonActive() ? "coupe" : "actif");
-  } catch {
-    // Stockage indisponible : le réglage ne sera pas retenu.
-  }
-  window.dispatchEvent(new Event(EVENEMENT_SON));
-}
-
-// Pour `useSyncExternalStore` : prévient les composants quand le son est coupé ou remis.
-export function abonnerSon(rappel) {
-  window.addEventListener(EVENEMENT_SON, rappel);
-  return () => window.removeEventListener(EVENEMENT_SON, rappel);
-}
-
 // Les navigateurs (iPhone surtout) n'autorisent le son qu'après un geste : le contexte est créé ou
 // relancé au premier appui, puis les sons joués après une réponse du serveur passent aussi.
 function contexteAudio() {
@@ -67,7 +42,7 @@ function contexteAudio() {
 
 export function jouerSon(nom) {
   const notes = SONS[nom];
-  if (!notes || !sonActive()) return;
+  if (!notes) return;
   const audio = contexteAudio();
   if (!audio) return;
 

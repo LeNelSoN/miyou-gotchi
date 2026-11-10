@@ -371,7 +371,7 @@ Petits sons façon tamagotchi, générés par le navigateur (Web Audio, onde car
 - Un **bip** à chaque appui sur un bouton de la coque (c'est aussi le geste qui autorise le son sur iPhone).
 - Quand le serveur accepte l'action : un arpège pour un soin, une petite mélodie pour une leçon de sport ou de lecture, une **ritournelle pour la leçon de musique**, une berceuse au coucher, un air montant au réveil. Une **fanfare** à l'éclosion et à chaque passage d'étape (la 30e leçon comprise).
 - Un son grave quand l'action est refusée.
-- **🔊 / 🔇** à droite du titre de la coque coupe ou remet le son ; le réglage est retenu sur l'appareil (`localStorage`). Sur iPhone, le bouton silencieux du téléphone coupe aussi ces sons.
+- Pas de bouton pour couper le son dans l'appli : c'est le volume ou le mode silencieux du téléphone qui s'en charge.
 
 ### Petit mot du jour (notifications)
 
@@ -381,7 +381,7 @@ Une seule notification par jour, après l'école, pour garder le rituel sans ren
 - **Silence** si elle s'est occupée du dragon dans les `silenceSiActiviteHeures` (3 h) précédentes (`derniere_activite` : soin, leçon, nom, coucher ou réveil) : le petit mot rappelle, il n'insiste pas.
 - Le message dépend de l'état du dragon : œuf, pas encore de prénom, endormi, un besoin (faim, froid, fatigue, tristesse, saleté, dans cet ordre), ou content. Il utilise le prénom qu'elle lui a donné. Le ton est toujours une invitation tendre, jamais un reproche ni une alerte.
 - La phrase tourne avec le jour : jamais la même deux jours de suite pour un même état, sans rien mémoriser. Phrases et réglages : `config/notifications.json`.
-- L'abonnement se fait sous la coque (« Recevoir un petit mot chaque jour »), sur chaque appareil voulu. Sur iPhone et iPad, il faut d'abord ajouter l'appli à l'écran d'accueil (iOS 16.4+) ; le bouton l'explique.
+- L'abonnement se fait sous la coque (« Activer les rappels »), sur chaque appareil voulu. Sur iPhone et iPad, il faut d'abord ajouter l'appli à l'écran d'accueil (iOS 16.4+) ; le bouton l'explique.
 
 ## 6. API (routes ou Server Actions, au choix)
 

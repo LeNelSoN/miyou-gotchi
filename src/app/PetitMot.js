@@ -63,7 +63,7 @@ export default function PetitMot() {
   if (etat === "aInstaller") {
     return (
       <p className="font-pixel text-xs text-amber-100/80">
-        🔔 Pour recevoir un petit mot chaque jour : bouton Partager, puis « Sur l&apos;écran d&apos;accueil ».
+        🔔 Pour activer les rappels : bouton Partager, puis « Sur l&apos;écran d&apos;accueil ».
       </p>
     );
   }
@@ -73,14 +73,14 @@ export default function PetitMot() {
   if (etat === "abonne") {
     return (
       <button onClick={desabonner} className={classe}>
-        🔔 Petit mot du jour activé · arrêter
+        🔔 Rappels activés · arrêter
       </button>
     );
   }
   if (etat === "libre" || etat === "enCours") {
     return (
       <button onClick={abonner} disabled={etat === "enCours"} className={classe}>
-        🔔 Recevoir un petit mot chaque jour
+        🔔 Activer les rappels
       </button>
     );
   }
