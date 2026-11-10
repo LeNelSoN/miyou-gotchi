@@ -40,6 +40,7 @@ const stats = {
   grises: 0, affiches: 0, scenesUnSeulChoix: new Map(), choixParScene: [],
   titres: {}, dosages: {}, enigmesRatees: [], besoinsParJour: [],
   drapeauxOuverts: new Map(), // drapeau → parties où son choix est apparu
+  doublons: new Set(), // "scène : texte" d'un bouton affiché deux fois à la fois
 };
 const incr = (map, cle, n = 1) => map.set(cle, (map.get(cle) ?? 0) + n);
 
@@ -77,6 +78,8 @@ for (let partie = 0; partie < PARTIES; partie++) {
     stats.affiches += q.scene.choix.length;
     stats.grises += q.scene.choix.length - possibles.length;
     stats.choixParScene.push(possibles.length);
+    const textes = q.scene.choix.map((c) => c.texte);
+    textes.filter((t, i) => textes.indexOf(t) !== i).forEach((t) => stats.doublons.add(`${sceneId} : ${t}`));
     if (possibles.length === 1 && voyage.scenes[sceneId].choix.length > 1) incr(stats.scenesUnSeulChoix, sceneId);
     for (const c of q.scene.choix) {
       incr(stats.vus, `${sceneId}#${c.index}`);
@@ -134,6 +137,7 @@ const pct = (n) => `${((100 * n) / PARTIES).toFixed(1)} %`;
 
 console.log(`\n${PARTIES} parties simulées`);
 console.log(`Arrivées au bout : ${pct(stats.fins)} · bloquées : ${stats.bloquees.length}`, stats.bloquees.slice(0, 5));
+console.log(`Boutons en double : ${stats.doublons.size}`, [...stats.doublons]);
 console.log(`Étapes jouées : moyenne ${moyenne(stats.etapes).toFixed(1)}, min ${Math.min(...stats.etapes)}, max ${Math.max(...stats.etapes)}`);
 console.log(`Jours de jeu : moyenne ${moyenne(stats.jours).toFixed(1)}, médiane ${centile(stats.jours, 0.5)}, 90e centile ${centile(stats.jours, 0.9)}`);
 console.log(`Étapes par chapitre (moyenne) :`, Object.fromEntries(Object.entries(stats.etapesParChapitre).map(([c, l]) => [c, +(l.length / PARTIES).toFixed(1)])));

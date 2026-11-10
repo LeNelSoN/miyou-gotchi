@@ -430,21 +430,6 @@
           "texte": "Demander son avis à Lumi",
           "resultat": "Lumi file à droite, revient, repart… Par là ! Il lui fait confiance.",
           "suite": "c1-au-revoir"
-        },
-        {
-          "texte": "Demander son avis à Lumi",
-          "resultat": "Lumi file à droite, revient, repart… Par là ! Il lui fait confiance.",
-          "suite": "c1-au-revoir"
-        },
-        {
-          "texte": "Demander son avis à Lumi",
-          "resultat": "Lumi file à droite, revient, repart… Par là ! Il lui fait confiance.",
-          "suite": "c1-au-revoir"
-        },
-        {
-          "texte": "Demander son avis à Lumi",
-          "resultat": "Lumi file à droite, revient, repart… Par là ! Il lui fait confiance.",
-          "suite": "c1-au-revoir"
         }
       ]
     },
@@ -456,21 +441,6 @@
         {
           "texte": "Entrer dans la forêt qui chuchote",
           "resultat": "Un pas, puis un autre… Les arbres se referment doucement derrière lui. Fin du chapitre 1 !",
-          "suite": "c2-debut"
-        },
-        {
-          "texte": "Envoyer un dernier bisou vers la maison",
-          "resultat": "Il souffle un petit nuage en forme de cœur vers le toit. Puis il entre dans la forêt. Fin du chapitre 1 !",
-          "suite": "c2-debut"
-        },
-        {
-          "texte": "Envoyer un dernier bisou vers la maison",
-          "resultat": "Il souffle un petit nuage en forme de cœur vers le toit. Puis il entre dans la forêt. Fin du chapitre 1 !",
-          "suite": "c2-debut"
-        },
-        {
-          "texte": "Envoyer un dernier bisou vers la maison",
-          "resultat": "Il souffle un petit nuage en forme de cœur vers le toit. Puis il entre dans la forêt. Fin du chapitre 1 !",
           "suite": "c2-debut"
         },
         {
