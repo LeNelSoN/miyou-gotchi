@@ -38,12 +38,16 @@ const LECONS = {
 // Son joué quand le serveur accepte une action, selon la route (soin par défaut).
 function sonAction(route, corps) {
   if (route === "sleep") return "dodo";
-  if (route === "wake") return "reveil";
+  if (route === "wake" || route === "start") return "reveil";
   if (route === "educate") return corps?.lecon === "musique" ? "musique" : "lecon";
   if (route === "quest") return "lecon";
   if (route === "debug" || route === "reset") return null;
   return "soin";
 }
+
+// Œuf tout neuf (cadeau pas encore ouvert) : un seul bouton, qui fait démarrer le temps du jeu.
+const REVEIL_OEUF = { libelle: "Réveiller l'œuf", route: "start" };
+const MESSAGE_ATTENTE = "Un œuf t'attend... Réveille-le !";
 
 const CARTE = { libelle: "Carte d'identité", court: "Carte", icone: "🪪" };
 const AVENTURE = { libelle: "Aventure", court: "Aventure", icone: "🧭", route: "quest" };
@@ -373,7 +377,9 @@ export default function Home() {
                   <p key={toast?.message} className={toast ? "motion-safe:animate-fondu" : ""}>
                     {toast
                       ? toast.message
-                      : endormi
+                      : dragon.enAttente
+                        ? "Il dort encore tout au fond..."
+                        : endormi
                         ? messageSommeil(dragon.dodo)
                         : MESSAGES_FEU[dragon.indicateurs.feu]}
                   </p>
@@ -390,20 +396,37 @@ export default function Home() {
             }`}
             aria-live="polite"
           >
-            {pensee && !eclosion && (
-              <p key={pensee} className="motion-safe:animate-fondu">
-                {pensee}
-              </p>
+            {dragon?.enAttente ? (
+              <p className="motion-safe:animate-pulse">{MESSAGE_ATTENTE}</p>
+            ) : (
+              pensee &&
+              !eclosion && (
+                <p key={pensee} className="motion-safe:animate-fondu">
+                  {pensee}
+                </p>
+              )
             )}
           </div>
 
           {/* Soins et choix de leçon superposés : la zone garde la hauteur de la plus grande des deux
               (deux rangées de soins contre une de leçons), pour que le boîtier ne bouge pas. */}
           <div className="grid min-h-16 sm:min-h-20">
+            {dragon?.enAttente && (
+              <button
+                onClick={() => {
+                  jouerSon("bip");
+                  envoyer(REVEIL_OEUF.route);
+                }}
+                disabled={occupe}
+                className="bouton-coque col-start-1 row-start-1 self-center rounded-full px-5 py-3 font-pixel text-sm text-amber-950 transition disabled:opacity-50 sm:text-base"
+              >
+                🥚 {REVEIL_OEUF.libelle}
+              </button>
+            )}
             <div
-              inert={choixLecon}
+              inert={choixLecon || dragon?.enAttente}
               className={`col-start-1 row-start-1 flex flex-wrap items-start justify-center gap-x-3 gap-y-1.5 sm:gap-y-2 ${
-                choixLecon ? "invisible" : ""
+                choixLecon || dragon?.enAttente ? "invisible" : ""
               }`}
             >
               {dragon?.actions.map(({ nom, bloquee }) => (

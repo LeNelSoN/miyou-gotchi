@@ -1,5 +1,5 @@
 import { getSupabaseServerClient } from "./supabaseServer";
-import { avancerDragon, appliquerAction, appliquerLecon, coucher, reveiller, validerNom } from "./dragonEngine";
+import { avancerDragon, appliquerAction, appliquerLecon, coucher, demarrer, reveiller, validerNom } from "./dragonEngine";
 import { jouerChoix } from "./quete";
 
 export async function sauvegarderDragon(dragon) {
@@ -66,7 +66,8 @@ export async function nommerDragon(nom) {
   return { dragon: resultat, applique: true };
 }
 
-async function basculerDodo(transition) {
+// Applique une transition du moteur (coucher, réveiller, réveiller l'œuf) ; `null` = refusée.
+async function transitionner(transition) {
   const dragon = await recupererDragonSynchronise();
   const transitionne = transition(dragon);
   if (!transitionne) return { dragon, applique: false };
@@ -76,21 +77,26 @@ async function basculerDodo(transition) {
 }
 
 export function coucherDragon() {
-  return basculerDodo(coucher);
+  return transitionner(coucher);
 }
 
 export function reveillerDragon() {
-  return basculerDodo(reveiller);
+  return transitionner(reveiller);
+}
+
+export function demarrerDragon() {
+  return transitionner(demarrer);
 }
 
 // Supprime puis recrée la ligne pour repartir des valeurs par défaut du schéma
-// (section 3 de la spec), sans dupliquer ces valeurs dans le code.
+// (section 3 de la spec), sans dupliquer ces valeurs dans le code. Un œuf neuf attend d'être
+// réveillé (`demarre_le` vide) ; une autre étape (debug) démarre tout de suite.
 export async function reinitialiserDragon(stage = 0) {
   const supabase = getSupabaseServerClient();
   const { error: erreurSuppression } = await supabase.from("dragon").delete().not("id", "is", null);
   if (erreurSuppression) throw new Error(erreurSuppression.message);
 
-  const { data: dragon, error } = await supabase.from("dragon").insert({ stage }).select("*").single();
+  const { data: dragon, error } = await supabase.from("dragon").insert({ stage, demarre_le: stage === 0 ? null : new Date().toISOString() }).select("*").single();
   if (error) throw new Error(error.message);
   return dragon;
 }

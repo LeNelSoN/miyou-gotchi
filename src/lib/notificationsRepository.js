@@ -45,6 +45,8 @@ export async function envoyerPetitMot({ forcer = false } = {}) {
     process.env.VAPID_PRIVATE_KEY
   );
   const dragon = dragonPourClient(await recupererDragonSynchronise(), maintenant);
+  // Cadeau pas encore ouvert : on ne gâche pas la surprise.
+  if (dragon.enAttente && !forcer) return { envoye: 0, raison: "œuf pas encore réveillé" };
   const message = JSON.stringify(messageDuJour(dragon, maintenant));
 
   let envoye = 0;

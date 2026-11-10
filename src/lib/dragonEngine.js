@@ -288,6 +288,7 @@ export function dragonPourClient(dragon, maintenant = new Date()) {
   return {
     stage: dragon.stage,
     etape: etapeCourante,
+    enAttente: enAttente(dragon),
     named: dragon.named,
     name: dragon.name,
     // Archétype figé au passage à Adulte (`null` avant) : il donne sa voix aux pensées
@@ -447,10 +448,25 @@ function figerPersonnalite(dragon) {
   dragon.personality = determinerArchetype(scores);
 }
 
+// Œuf tout neuf qui attend d'être réveillé (`demarre_le` vide) : le temps ne compte pas encore,
+// rien ne baisse ni n'avance, et aucun soin n'est possible. Seul `null` compte : une ligne sans la
+// colonne (simulateurs) est un dragon déjà en route.
+export function enAttente(dragon) {
+  return dragon.demarre_le === null;
+}
+
+// Le réveil de l'œuf : le temps démarre maintenant. Renvoie `null` s'il était déjà en route.
+export function demarrer(dragon, maintenant = new Date()) {
+  if (!enAttente(dragon)) return null;
+  const instant = maintenant.toISOString();
+  return { ...dragon, demarre_le: instant, last_seen: instant, awake_since: instant };
+}
+
 // Simule heure par heure (et non en un seul calcul) car les caractéristiques actives
 // changent selon l'étape : un passage d'étape en cours d'intervalle doit faire basculer
 // la décroissance/progression sur les nouvelles caractéristiques dès l'heure suivante.
 export function avancerDragon(dragon, maintenant = new Date()) {
+  if (enAttente(dragon)) return { ...dragon };
   const dernierPassage = new Date(dragon.last_seen);
   const heuresEcoulees = Math.max(0, Math.floor((maintenant.getTime() - dernierPassage.getTime()) / HEURE_MS));
 
@@ -504,6 +520,7 @@ function excesDeSoin(avant, apres, actives, actionName, maintenant) {
 }
 
 export function appliquerAction(dragon, actionName, maintenant = new Date()) {
+  if (enAttente(dragon)) return { dragon, applique: false };
   const etapeCourante = nomEtape(dragon.stage);
   const actives = caracteristiquesActives(etapeCourante);
 

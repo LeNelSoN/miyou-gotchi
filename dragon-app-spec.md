@@ -37,6 +37,7 @@ create table dragon (
   quete               jsonb not null default '{}',    -- quête de l'Adulte : {id, scene, drapeaux, carnet, voies, terminees, fin, jour, etapesDuJour} (section 5)
   sleeping_since      timestamptz,                    -- heure du coucher (mode Dodo), null = éveillé
   awake_since         timestamptz not null default now(), -- heure du dernier réveil (ou de l'éclosion), base de la fatigue
+  demarre_le          timestamptz,                    -- réveil de l'œuf par la joueuse ; null = œuf neuf en attente, le temps ne compte pas encore
   grognon             boolean not null default false,  -- levé grognon : il a veillé tard faute d'être couché (section 4, mode Dodo)
   grognon_apaise      boolean not null default false,  -- grognon, mais a déjà reçu un soin depuis son réveil : il ne boude plus
   last_seen           timestamptz not null default now(),
@@ -220,6 +221,7 @@ Le dragon s'adresse à la joueuse (une petite fille) sur le second écran de la 
 - Caractéristique active : `feu` uniquement.
 - Bouton "Ajouter du bois", indicateur qualitatif permanent (🥶 trop froid / 🪵 frais / 🔥 parfait / 🥵 trop chaud), aucune valeur brute affichée. « Frais » (`anticipation`, sous 60) est encore dans la bonne zone : c'est le signal qu'on peut ajouter du bois sans risque, un pas de bois (20) depuis moins de 60 restant sous 80. Rempli ainsi, le feu tient au moins 10h éveillé (une journée d'école). Les illustrations de « frais » sont celles de « parfait ».
 - Durée : `etapes.oeuf.dureeHeures` = 72h.
+- **Œuf en attente** : après un reset, l'œuf ne vit pas encore (`demarre_le` vide). Rien ne baisse ni n'avance, aucun soin n'est possible, et le petit mot du jour n'est pas envoyé. L'écran n'affiche qu'un bouton « 🥚 Réveiller l'œuf » : c'est elle qui lance le temps du jeu en ouvrant son cadeau, avec le feu à 80.
 - Jauge de progression : l'œuf se fissure au fil de `stage_progress`, découpé en `etapes.oeuf.paliers` paliers égaux (6 : intact, puis 5 stades de fissures, soit un nouveau stade toutes les 12h de progression). Seul le numéro de palier est envoyé au client.
 
 ### Étape 2 — Bébé ✅ (validé)
@@ -395,11 +397,12 @@ Une seule notification par jour, après l'école, pour garder le rituel sans ren
 | `POST /api/dragon/educate` | `{ lecon: "sport" \| "lecture" \| "musique" }` — une leçon : augmente l'apprentissage, baisse la joie, le fatigue, fait grandir le Jeune ; refusée s'il est fatigué ou n'a pas envie d'apprendre (étape Jeune+) |
 | `POST /api/dragon/sleep` | Coucher le dragon (mode Dodo, étape Bébé+) |
 | `POST /api/dragon/wake` | Réveiller le dragon, refusé avant la durée minimale de sommeil |
+| `POST /api/dragon/start` | Réveiller l'œuf en attente : le temps du jeu démarre maintenant ; refusé s'il est déjà en route |
 | `POST /api/notifications` | Abonne l'appareil au petit mot quotidien (corps : abonnement push du navigateur) ; `DELETE` `{ endpoint }` le désabonne |
 | `GET /api/notifications/envoi` | Cron Vercel (secret `CRON_SECRET`) : envoie le petit mot du jour ; `?forcer=1` ignore l'activité récente, pour tester |
 | `POST /api/dragon/quest` | `{ choix }` — joue un choix de l'étape de quête en cours (Adulte) ; refusé s'il dort, est fatigué, a un besoin en manque ou a atteint `quete.etapesParJour` |
 | `POST /api/dragon/name` | `{ name }` — nommer le dragon après éclosion |
-| `POST /api/dragon/reset` | Optionnel, pratique pour les tests |
+| `POST /api/dragon/reset` | Mode debug seulement : efface le dragon ; un œuf (`{ etape: "oeuf" }`, par défaut) repart en attente, une autre étape démarre tout de suite |
 
 Avec l'App Router, des **Server Actions** directement dans les composants peuvent remplacer ces routes si plus simple. Dans les deux cas : un client Supabase créé côté serveur avec la clé `service_role` (jamais côté client), qui lit/écrit la ligne `dragon`.
 
