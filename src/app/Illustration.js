@@ -48,6 +48,9 @@ export const ILLUSTRATIONS = {
   // Assis, de trois quarts : centré sur la tête, comme les autres dessins.
   "jeune-lecture": { largeur: 96, centre: 52, sol: 12, echelle: 1.4, scene: GRANDE_SCENE, dureeMs: 6400 },
   "jeune-musique": { largeur: 96, centre: 51.5, sol: 10, echelle: 1.4, scene: GRANDE_SCENE, dureeMs: 6400 },
+  // Joué une fois après une partie de jeu (avant : la réaction « amour ») : lance le ballon, rebond sur
+  // le museau, rattrape (3 fois), puis le serre en riant (6,4 s). Cornes alignées sur le Jeune au repos.
+  "jeune-joue": { largeur: 58, centre: 29, sol: 0, scene: GRANDE_SCENE, dureeMs: 6400 },
   "jeune-amour": { largeur: 82, centre: 39, sol: 6, scene: GRANDE_SCENE, dureeMs: 4200 },
   "jeune-surprise": { largeur: 82, centre: 39, sol: 6, scene: GRANDE_SCENE, dureeMs: 3000 },
   // Nouveau dessin (docs/animations-adulte.md) : respiration et clignement, 4 images de 0,4 s.
