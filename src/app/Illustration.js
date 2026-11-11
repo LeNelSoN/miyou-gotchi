@@ -50,28 +50,39 @@ export const ILLUSTRATIONS = {
   "jeune-musique": { largeur: 96, centre: 51.5, sol: 10, echelle: 1.4, scene: GRANDE_SCENE, dureeMs: 6400 },
   "jeune-amour": { largeur: 82, centre: 39, sol: 6, scene: GRANDE_SCENE, dureeMs: 4200 },
   "jeune-surprise": { largeur: 82, centre: 39, sol: 6, scene: GRANDE_SCENE, dureeMs: 3000 },
-  adulte: { largeur: 72, centre: 37, sol: 1, scene: GRANDE_SCENE },
+  // Nouveau dessin (docs/animations-adulte.md) : respiration et clignement, 4 images de 0,4 s.
+  adulte: { largeur: 78, centre: 45, sol: 0, scene: GRANDE_SCENE },
   // Variantes `froid` et `chaud`, comme le Bébé.
-  "adulte-fache": { largeur: 82, centre: 38, sol: 1, scene: GRANDE_SCENE },
-  "adulte-content": { largeur: 80, centre: 38, sol: 3, scene: GRANDE_SCENE },
-  "adulte-faim": { largeur: 94, centre: 40, sol: 2, scene: GRANDE_SCENE },
-  "adulte-fatigue": { largeur: 82, centre: 38, sol: 1, scene: GRANDE_SCENE },
-  "adulte-triste": { largeur: 91, centre: 36, sol: 3, scene: GRANDE_SCENE },
+  // Nouveau dessin : bras croisés de trois quarts, fumée, 4 images de 0,4 s. Variantes recolorées.
+  "adulte-fache": { largeur: 78, centre: 48, sol: 1, scene: GRANDE_SCENE },
+  // Nouveau dessin (docs/animations-adulte.md) : 4 poses enchaînées, 0,3 s chacune.
+  "adulte-content": { largeur: 80, centre: 46, sol: 0, scene: GRANDE_SCENE },
+  // Nouveau dessin : se frotte le ventre, bulle de pensée avec un morceau de viande (dessinée à part).
+  "adulte-faim": { largeur: 92, centre: 46, sol: 0, scene: GRANDE_SCENE },
+  // Nouveau dessin : paupières lourdes, bâillement, 4 images de 0,5 s.
+  "adulte-fatigue": { largeur: 76, centre: 45, sol: 0, scene: GRANDE_SCENE },
+  // Nouveau dessin : tête basse, larme, 4 images de 0,5 s (un peu plus petit, tête baissée).
+  "adulte-triste": { largeur: 72, centre: 42.5, sol: 1, scene: GRANDE_SCENE },
   // Soins joués une fois, comme le Jeune. Planches PixelLab de 96 pixels : `echelle` lui rend
   // la taille de l'Adulte.
-  "adulte-mange": { largeur: 96, centre: 51, sol: 11, echelle: 1.4, scene: GRANDE_SCENE, dureeMs: 6400 },
-  // Le feu de camp dépasse sous ses pieds.
-  "adulte-rechauffe": { largeur: 96, centre: 50, sol: 12, echelle: 1.4, scene: GRANDE_SCENE, dureeMs: 6400 },
-  // Assis dans la mousse.
-  "adulte-lave": { largeur: 96, centre: 51.5, sol: 12, echelle: 1.4, scene: GRANDE_SCENE, dureeMs: 6400 },
-  // Marche en boucle avec son baluchon tant que la page d'aventure est ouverte. Planche PixelLab
-  // de 128 pixels, à la taille de l'Adulte au repos ; le bâton reste dans la même patte, l'image 3 est recalée.
-  "adulte-quete": { largeur: 128, centre: 62, sol: 15, scene: GRANDE_SCENE },
-  // Joué une fois après une partie de jeu : il lance son ballon, le fait rebondir sur son museau et le
-  // rattrape, trois fois, puis le serre en riant. Planche de 128 pixels, images 3 et 4 recalées au sol.
-  "adulte-joue": { largeur: 128, centre: 62, sol: 6, scene: GRANDE_SCENE, dureeMs: 6400 },
-  "adulte-amour": { largeur: 91, centre: 36, sol: 3, scene: GRANDE_SCENE, dureeMs: 5400 },
-  "adulte-surprise": { largeur: 82, centre: 38, sol: 1, scene: GRANDE_SCENE, dureeMs: 3000 },
+  // Nouveau dessin, à la taille du dragon (plus d'échelle) : trois bouchées (3 × 3 images de 0,55 s) puis l'os. La viande
+  // levée dépasse un peu la scène en haut (116 px de haut).
+  "adulte-mange": { largeur: 97, centre: 53.5, sol: 0, scene: GRANDE_SCENE, dureeMs: 6400 },
+  // Nouveau dessin, recalé sur les bûches : il se frotte les pattes 3 fois devant le feu puis rayonne (6,4 s).
+  "adulte-rechauffe": { largeur: 79, centre: 46, sol: 0, scene: GRANDE_SCENE, dureeMs: 6400 },
+  // Nouveau dessin, recalé sur la mousse : il se savonne 3 fois puis finit tout propre (6,4 s).
+  "adulte-lave": { largeur: 90, centre: 46.5, sol: 0, scene: GRANDE_SCENE, dureeMs: 6400 },
+  // Nouveau dessin, de face : marche sur place avec son baluchon, 4 images de 0,25 s, en boucle tant que
+  // la page d'aventure est ouverte. Centre sur le ventre (le baluchon dépasse à gauche).
+  "adulte-quete": { largeur: 76, centre: 45, sol: 1, scene: GRANDE_SCENE },
+  // Nouveau dessin, recalé sur les pieds : lance le ballon, rebond sur le museau, rattrape (3 fois),
+  // puis le serre en riant (6,4 s). Le ballon au plus haut dépasse la scène de 2 px.
+  "adulte-joue": { largeur: 76, centre: 45, sol: 0, scene: GRANDE_SCENE, dureeMs: 6400 },
+  // Nouveau dessin, recalé sur les pieds : il se serre dans ses bras deux fois, les cœurs montent (5,4 s).
+  // Le cœur le plus haut dépasse la scène de 2 px.
+  "adulte-amour": { largeur: 76, centre: 45, sol: 0, scene: GRANDE_SCENE, dureeMs: 5400 },
+  // Nouveau dessin : « oh ! », ailes qui s'ouvrent avec un petit saut (image 2), puis grand sourire (3 s).
+  "adulte-surprise": { largeur: 92, centre: 47, sol: 0, scene: GRANDE_SCENE, dureeMs: 3000 },
   // En grève (variable d'environnement GREVE), à toutes les étapes : le Bébé au repos, avec une
   // pancarte « GRÈVE » devant le ventre.
   "bebe-greve": { largeur: 64, centre: 32.5, sol: 4 },
@@ -95,7 +106,8 @@ export const EFFETS_TALENT = {
 // vers le haut) : narine droite et coin haut droit de la tête. Les mêmes dans tous les dessins d'une étape.
 const REPERES = {
   jeune: { museau: [-2, 61], tete: [11, 92] },
-  adulte: { museau: [-2, 63], tete: [10, 94] },
+  // Mesurés sur le nouveau adulte.gif (narine droite à x 47, ligne 26, abaissée de 3 px pour dégager l'œil ; coin de la tête à x 54, ligne 13).
+  adulte: { museau: [2, 76], tete: [9, 92] },
 };
 
 // Où poser le coin bas gauche de l'effet, depuis un repère : la fumée et la flamme sortent du museau,
