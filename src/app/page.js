@@ -122,6 +122,7 @@ function choisirIllustration(dragon, toast, eclosion, animationSoin, enAventure)
   // « Frais » reste dans la bonne zone : mêmes illustrations que « parfait ».
   const feu = dragon.indicateurs.feu === "frais" ? "parfait" : dragon.indicateurs.feu;
   if (eclosion) return { nom: "eclosion" };
+  if (dragon.greve) return { nom: "bebe-greve" };
   if (animationSoin) return animationSoin;
   // Page d'aventure ouverte et rien ne le retient : il marche avec son baluchon.
   if (enAventure && dragon.quete?.disponible) return { nom: `${dragon.etape}-quete` };
@@ -308,6 +309,8 @@ export default function Home() {
   const fatigue = dragon?.dodo?.fatigue;
   const boutonDodo = dragon?.dodo && (endormi ? DODO.reveiller : DODO.coucher);
   const nomAttendu = dragon && dragon.etape !== "oeuf" && !dragon.named && !eclosion;
+  // En grève : plus aucun bouton sous l'écran.
+  const greve = Boolean(dragon?.greve);
   const illustration = dragon && choisirIllustration(dragon, toast, eclosion, animationSoin, aventureOuverte);
 
   return (
@@ -359,7 +362,7 @@ export default function Home() {
                     <Illustration
                       {...illustration}
                       rebond={rebond}
-                      effet={!animationSoin && !eclosion ? effetTalent : null}
+                      effet={!animationSoin && !eclosion && !dragon.greve ? effetTalent : null}
                     />
                   )}
                 </div>
@@ -411,7 +414,7 @@ export default function Home() {
           {/* Soins et choix de leçon superposés : la zone garde la hauteur de la plus grande des deux
               (deux rangées de soins contre une de leçons), pour que le boîtier ne bouge pas. */}
           <div className="grid min-h-16 sm:min-h-20">
-            {dragon?.enAttente && (
+            {dragon?.enAttente && !greve && (
               <button
                 onClick={() => {
                   jouerSon("bip");
@@ -424,9 +427,9 @@ export default function Home() {
               </button>
             )}
             <div
-              inert={choixLecon || dragon?.enAttente}
+              inert={choixLecon || dragon?.enAttente || greve}
               className={`col-start-1 row-start-1 flex flex-wrap items-start justify-center gap-x-3 gap-y-1.5 sm:gap-y-2 ${
-                choixLecon || dragon?.enAttente ? "invisible" : ""
+                choixLecon || dragon?.enAttente || greve ? "invisible" : ""
               }`}
             >
               {dragon?.actions.map(({ nom, bloquee }) => (

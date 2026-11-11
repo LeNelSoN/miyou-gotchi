@@ -15,13 +15,33 @@ function avecActivite(dragon) {
   return { ...dragon, derniere_activite: new Date().toISOString() };
 }
 
+// Blague : `GREVE=true` (variable d'environnement Vercel, puis redéployer) met le dragon en grève :
+// pancarte, plus de boutons, et le temps du jeu est figé.
+export const enGreve = () => process.env.GREVE === "true";
+
+const HORLOGES = ["last_seen", "sleeping_since", "awake_since"];
+
+// Le début de la grève est noté dans `greve_depuis`. À la reprise, ses horloges sont décalées
+// de la durée de la grève : le moteur ne rattrape que le temps d'avant et d'après.
+function suivreGreve(dragon, maintenant) {
+  if (enGreve()) return dragon.greve_depuis ? dragon : { ...avancerDragon(dragon, maintenant), greve_depuis: maintenant.toISOString() };
+  if (!dragon.greve_depuis) return avancerDragon(dragon, maintenant);
+
+  const pause = maintenant.getTime() - new Date(dragon.greve_depuis).getTime();
+  const repris = { ...dragon, greve_depuis: null };
+  for (const champ of HORLOGES) {
+    if (dragon[champ]) repris[champ] = new Date(new Date(dragon[champ]).getTime() + pause).toISOString();
+  }
+  return avancerDragon(repris, maintenant);
+}
+
 export async function recupererDragonSynchronise() {
   const supabase = getSupabaseServerClient();
   const { data: dragon, error } = await supabase.from("dragon").select("*").limit(1).single();
   if (error) throw new Error(error.message);
 
-  const dragonAJour = avancerDragon(dragon);
-  const champsTemps = ["last_seen", "sleeping_since", "awake_since"];
+  const dragonAJour = suivreGreve(dragon, new Date());
+  const champsTemps = [...HORLOGES, "greve_depuis"];
   if (champsTemps.some((champ) => dragonAJour[champ] !== dragon[champ])) {
     await sauvegarderDragon(dragonAJour);
   }

@@ -72,6 +72,9 @@ export const ILLUSTRATIONS = {
   "adulte-joue": { largeur: 128, centre: 62, sol: 6, scene: GRANDE_SCENE, dureeMs: 6400 },
   "adulte-amour": { largeur: 91, centre: 36, sol: 3, scene: GRANDE_SCENE, dureeMs: 5400 },
   "adulte-surprise": { largeur: 82, centre: 38, sol: 1, scene: GRANDE_SCENE, dureeMs: 3000 },
+  // En grève (variable d'environnement GREVE), à toutes les étapes : le Bébé au repos, avec une
+  // pancarte « GRÈVE » devant le ventre.
+  "bebe-greve": { largeur: 64, centre: 32.5, sol: 4 },
 };
 
 // Effets de talent (fumée, idées, notes), dessinés sur 32 pixels et posés à côté du dragon, à la

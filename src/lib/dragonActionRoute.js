@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { appliquerActionEtSauvegarder, appliquerLeconEtSauvegarder, jouerChoixEtSauvegarder } from "./dragonRepository";
+import { appliquerActionEtSauvegarder, appliquerLeconEtSauvegarder, enGreve, jouerChoixEtSauvegarder } from "./dragonRepository";
 import { dragonPourClient, messagesPonctuels } from "./dragonEngine";
 import { modeDebugActif, infosDebug } from "./dragonDebug";
 import { quetePourClient } from "./quete";
@@ -7,6 +7,7 @@ import { quetePourClient } from "./quete";
 export async function repondreDragon(dragon, extra = {}) {
   return NextResponse.json({
     ...dragonPourClient(dragon),
+    greve: enGreve(),
     quete: quetePourClient(dragon),
     ...extra,
     ...(modeDebugActif() && { debug: infosDebug(dragon) }),
