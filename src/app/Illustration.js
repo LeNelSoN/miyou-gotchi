@@ -1,3 +1,19 @@
+import { useEffect, useState } from "react";
+import { estNuit } from "../lib/soleil";
+
+// Décor de nuit entre le coucher et le lever réels du soleil (src/lib/soleil.js). Faux au premier rendu
+// (jour), puis mis à jour chaque minute : le serveur ne connaît pas l'heure de la joueuse.
+function useNuit() {
+  const [nuit, setNuit] = useState(false);
+  useEffect(() => {
+    const maj = () => setNuit(estNuit());
+    maj();
+    const minuteur = setInterval(maj, 60000);
+    return () => clearInterval(minuteur);
+  }, []);
+  return nuit;
+}
+
 // Scène (en pixels de GIF) dans laquelle tient la plus grande illustration de l'étape,
 // personnage posé en bas au centre.
 const SCENE = { largeur: 96, hauteur: 80 };
@@ -143,6 +159,7 @@ export function illustrationUrl(nom, variante, lecture) {
 // `effet` : `{ nom, etape, lecture }`, effet de talent posé à côté du dragon (voir `EFFETS_TALENT`).
 export default function Illustration({ nom, variante, lecture, rebond = 0, effet }) {
   const { largeur, centre, sol, scene = SCENE, echelle = 1 } = ILLUSTRATIONS[nom];
+  const nuit = useNuit();
 
   const fichier = illustrationUrl(nom, variante, lecture);
   const pose = effet && poseEffet(effet.etape, effet.nom);
@@ -151,6 +168,20 @@ export default function Illustration({ nom, variante, lecture, rebond = 0, effet
 
   return (
     <div className="relative flex-1 self-stretch" style={{ containerType: "size" }}>
+      {/* Décor (public/fond/ecran-jour.png et ecran-nuit.png, scripts/generer-fond.py) : même taille de pixel que le dragon,
+          aligné en bas pour que les pieds se posent dans l'herbe ; le ciel déborde en haut. */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0"
+        style={{
+          backgroundColor: nuit ? "#0a1721" : "#dfe8c4",
+          backgroundImage: `url(/fond/ecran-${nuit ? "nuit" : "jour"}.png)`,
+          backgroundSize: `calc(${GRANDE_SCENE.largeur} * ${pixel}) calc(${GRANDE_SCENE.hauteur} * ${pixel})`,
+          backgroundPosition: "50% 100%",
+          backgroundRepeat: "repeat-x",
+          imageRendering: "pixelated",
+        }}
+      />
       {/* GIF animé : next/image ne l'optimiserait pas. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
