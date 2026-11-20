@@ -324,7 +324,7 @@ export default function Home() {
       <main className="relative w-full max-w-sm px-3 py-3 sm:max-w-md sm:px-5 sm:py-10">
         <div className="coque flex flex-col items-center gap-5 px-[9%] pb-[9%] pt-[8%] sm:gap-5 sm:px-[18%] sm:pb-[20%] sm:pt-[20%]">
           <p className="font-pixel text-xs tracking-[0.3em] sm:text-sm text-amber-200 drop-shadow-[0_2px_0_rgba(0,0,0,0.6)]">
-            MIYOU-GOTCHI
+            NINA
           </p>
 
           {/* Pendant le Dodo, l'écran s'assombrit et le dragon n'est plus visible. */}
