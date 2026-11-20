@@ -5,6 +5,16 @@ qu'il grandisse (Bébé, Jeune, Adulte), puis il part sur une quête. Il ne meur
 
 Next.js (App Router), Supabase, Tailwind, déployé sur Vercel.
 
+
+## État du projet
+
+*(Section tenue à jour pour l'archiviste. Dernière mise à jour : 11 novembre 2026.)*
+
+- **Objet** : dragon virtuel offert en cadeau d'anniversaire à une petite fille. Il grandit de l'œuf à l'Adulte, puis part en quête.
+- **Avancement** : les étapes Œuf, Bébé, Jeune et Adulte sont validées dans `dragon-app-spec.md`. Sont aussi en place : le rythme veille/sommeil (Dodo), les pensées du dragon, les talents, les notifications push, trois simulateurs de réglage. 63 commits ; le dernier date du 11/11/2026 (nouvelles animations de l'Adulte et du Jeune).
+- **En cours** : la quête de l'Adulte (« Étape 4 bis ») est marquée « spec à valider » dans la spec, alors que du code existe déjà (`config/quetes/`, simulateur de quête). Les illustrations de l'Adulte ont été redessinées le 11/11.
+- **Avant de l'offrir** : remettre un œuf neuf (voir plus bas). La base Supabase de test est la même qu'en ligne.
+
 ## Lancer en local
 
 ```bash
