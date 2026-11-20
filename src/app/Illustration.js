@@ -14,6 +14,9 @@ function useNuit() {
   return nuit;
 }
 
+// Débord du décor autour de la zone du dragon, en px : plus grand que l'écran.
+const MARGE_DECOR = 1000;
+
 // Scène (en pixels de GIF) dans laquelle tient la plus grande illustration de l'étape,
 // personnage posé en bas au centre.
 const SCENE = { largeur: 96, hauteur: 80 };
@@ -169,16 +172,19 @@ export default function Illustration({ nom, variante, lecture, rebond = 0, effet
   return (
     <div className="relative flex-1 self-stretch" style={{ containerType: "size" }}>
       {/* Décor (public/fond/ecran-jour.png et ecran-nuit.png, scripts/generer-fond.py) : même taille de pixel que le dragon,
-          aligné en bas pour que les pieds se posent dans l'herbe ; le ciel déborde en haut. */}
+          aligné sur cette zone pour que les pieds se posent dans l'herbe. Il déborde de MARGE_DECOR de tous les côtés
+          pour couvrir tout l'écran de jeu (l'écran rogne ce qui dépasse) : le ciel monte au-dessus, la terre
+          descend sous les pieds. */}
       <div
         aria-hidden="true"
-        className="absolute inset-0"
+        className="absolute"
         style={{
+          inset: `-${MARGE_DECOR}px`,
           backgroundColor: nuit ? "#0a1721" : "#dfe8c4",
-          backgroundImage: `url(/fond/ecran-${nuit ? "nuit" : "jour"}.png)`,
-          backgroundSize: `calc(${GRANDE_SCENE.largeur} * ${pixel}) calc(${GRANDE_SCENE.hauteur} * ${pixel})`,
-          backgroundPosition: "50% 100%",
-          backgroundRepeat: "repeat-x",
+          backgroundImage: `url(/fond/ecran-${nuit ? "nuit" : "jour"}.png), linear-gradient(${nuit ? "#263326" : "#8a774a"}, ${nuit ? "#263326" : "#8a774a"})`,
+          backgroundSize: `calc(${GRANDE_SCENE.largeur} * ${pixel}) calc(${GRANDE_SCENE.hauteur} * ${pixel}), 100% ${MARGE_DECOR}px`,
+          backgroundPosition: `50% calc(100% - ${MARGE_DECOR}px), 0 100%`,
+          backgroundRepeat: "repeat-x, no-repeat",
           imageRendering: "pixelated",
         }}
       />

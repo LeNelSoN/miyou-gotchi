@@ -339,12 +339,12 @@ export default function Home() {
 
             {dragon && (
               <>
-                <div className="flex items-center justify-between text-lg leading-none">
-                  <h1 className="truncate">{dragon.named ? dragon.name : "???"}</h1>
+                <div className="relative z-10 flex items-center justify-between text-lg leading-none">
+                  <h1 className="voile-lcd truncate">{dragon.named ? dragon.name : "???"}</h1>
                   {/* Le Jeune grandit en apprenant : leçons faites sur l'objectif (demi-leçons possibles). */}
                   {dragon.croissance && (
                     <span
-                      className="shrink-0 text-sm"
+                      className="voile-lcd shrink-0 text-sm"
                       aria-label={`${dragon.croissance.faites.toLocaleString("fr-FR")} leçons sur ${dragon.croissance.objectif}`}
                     >
                       🎓 {dragon.croissance.faites.toLocaleString("fr-FR")}/{dragon.croissance.objectif}
@@ -369,15 +369,15 @@ export default function Home() {
 
                 {/* Hauteur fixe de trois lignes (saleté, fatigue, feu ou soin) : si la zone grandissait avec
                     les messages, le dragon rétrécirait d'un coup au-dessus. */}
-                <div className="flex h-[3.75em] shrink-0 flex-col justify-end text-center text-[13px] leading-tight sm:text-base" aria-live="polite">
+                <div className="relative z-10 flex h-[3.75em] shrink-0 flex-col items-center justify-end text-center text-[13px] leading-tight sm:text-base" aria-live="polite">
                   {!endormi && dragon.alertes.map((message) => (
-                    <p key={message} className="text-red-800 motion-safe:animate-fondu">
+                    <p key={message} className="voile-lcd text-red-800 motion-safe:animate-fondu">
                       ⚠ {message}
                     </p>
                   ))}
-                  {fatigue && <p className="motion-safe:animate-fondu">{dragon.dodo.messageFatigue}</p>}
+                  {fatigue && <p className="voile-lcd motion-safe:animate-fondu">{dragon.dodo.messageFatigue}</p>}
                   {/* Le message ponctuel remplace temporairement l'état du feu (ou du sommeil). */}
-                  <p key={toast?.message} className={toast ? "motion-safe:animate-fondu" : ""}>
+                  <p key={toast?.message} className={`voile-lcd ${toast ? "motion-safe:animate-fondu" : ""}`}>
                     {toast
                       ? toast.message
                       : dragon.enAttente

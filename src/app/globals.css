@@ -111,6 +111,18 @@ body {
     0 0 0 10px #78350f;
 }
 
+/* Voile clair sous le texte posé sur le décor (nom, messages) : lisible de jour comme de nuit. */
+.voile-lcd {
+  background: rgba(207, 220, 180, 0.88);
+  border-radius: 6px;
+  padding: 0 6px;
+}
+
+.ecran-eteint .voile-lcd {
+  background: none;
+  padding: 0;
+}
+
 .ecran-eteint {
   background:
     linear-gradient(rgba(0, 0, 0, 0.25) 1px, transparent 1px) 0 0 / 100% 4px,
